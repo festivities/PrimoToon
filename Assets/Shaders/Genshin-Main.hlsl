@@ -269,7 +269,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<fixed, 4> emission = _EmissionStrength * vector<fixed, 4>(diffuse.xyz, 1);
 
     /* END OF EMISSION */
-    
+
+
     /* COLOR CREATION */
 
     // apply diffuse ramp
