@@ -66,6 +66,8 @@ vsOut vert(vsIn v){
     return o;
 }
 
+#include "Genshin-Helpers.hlsl"
+
 // fragment
 vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // if frontFacing == 1, use uv.xy, else uv.zw
@@ -95,7 +97,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* DOT CREATION */
 
     // NdotL
-    half NdotL = dot(modifiedNormals, normalize(_WorldSpaceLightPos0));
+    half NdotL = dot(modifiedNormals, normalize(getlightDir()));
     // remap from { -1, 1 } to { 0, 1 }
     NdotL = NdotL / 2.0 + 0.5;
 
@@ -257,7 +259,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<half, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, newUVs).xyz, 1) * 
+    vector<fixed, 4> finalColor = vector<fixed, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, newUVs).xyz, 1) * 
                                   ShadowRampFinal;
 
     // apply metallic only to anything above 0.9 of lightmap.r

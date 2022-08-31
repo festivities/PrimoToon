@@ -17,8 +17,3 @@ struct vsOut{
     vector<float, 3> vertexWS : TEXCOORD4;
     vector<float, 4> vertexcol : COLOR0;
 };
-
-vsOut vert(vsIn v);
-
-vector<fixed, 4> frag(vsOut i);
-

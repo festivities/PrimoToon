@@ -28,6 +28,8 @@ vsOut vert(vsIn v){
     return o;
 }
 
+#include "Genshin-Helpers.hlsl"
+
 // fragment
 vector<fixed, 4> frag(vsOut i) : SV_Target{
     // sample textures to objects
@@ -38,7 +40,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     /* FACE CALCULATION */
 
     // get light direction
-    vector<half, 4> lightDir = _WorldSpaceLightPos0;
+    vector<half, 4> lightDir = getlightDir();
 
     // get head directions
     vector<half, 3> headForward = normalize(unity_ObjectToWorld._12_22_32);
@@ -71,7 +73,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     /* END OF FACE CALCULATION */
 
 
-    /* RAMP CREATION */
+    /* SHADOW RAMP CREATION */
 
     vector<half, 2> ShadowRampDayUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05);
     vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
@@ -84,13 +86,13 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // make lit areas 1
     ShadowRampFinal = lerp(ShadowRampFinal, 1, faceFactor);
 
-    /* END OF RAMP CREATION */
+    /* END OF SHADOW RAMP CREATION */
 
     
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<half, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, i.uv.xy).xyz, 1) * 
+    vector<fixed, 4> finalColor = vector<fixed, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, i.uv.xy).xyz, 1) * 
                                   ShadowRampFinal;
 
     return finalColor;
