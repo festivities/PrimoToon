@@ -6,9 +6,9 @@
 Texture2D _DiffuseTex;      SamplerState sampler_DiffuseTex;
 Texture2D _LightmapTex;     SamplerState sampler_LightmapTex;
 Texture2D _FaceShadowTex;   SamplerState sampler_FaceShadowTex;
-Texture2D _DiffuseRampTex;  SamplerState sampler_DiffuseRampTex;
+Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
 
-float _UseDiffuseRampTex;
+float _UseShadowRampTex;
 float _MaterialID;
 float _LightArea;
 float _DayOrNight;
@@ -73,16 +73,16 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
 
     /* RAMP CREATION */
 
-    vector<half, 2> rampDayUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05);
-    vector<fixed, 4> rampDay = _DiffuseRampTex.Sample(sampler_DiffuseRampTex, rampDayUVs);
+    vector<half, 2> ShadowRampDayUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05);
+    vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
 
-    vector<half, 2> rampNightUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05 + 0.5);
-    vector<fixed, 4> rampNight = _DiffuseRampTex.Sample(sampler_DiffuseRampTex, rampNightUVs);
+    vector<half, 2> ShadowRampNightUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05 + 0.5);
+    vector<fixed, 4> ShadowRampNight = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampNightUVs);
 
-    vector<fixed, 4> rampFinal = lerp(rampNight, rampDay, _DayOrNight);
+    vector<fixed, 4> ShadowRampFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
 
     // make lit areas 1
-    rampFinal = lerp(rampFinal, 1, faceFactor);
+    ShadowRampFinal = lerp(ShadowRampFinal, 1, faceFactor);
 
     /* END OF RAMP CREATION */
 
@@ -90,7 +90,8 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<half, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, i.uv.xy).xyz, 1) * rampFinal;
+    vector<fixed, 4> finalColor = vector<half, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, i.uv.xy).xyz, 1) * 
+                                  ShadowRampFinal;
 
     return finalColor;
 

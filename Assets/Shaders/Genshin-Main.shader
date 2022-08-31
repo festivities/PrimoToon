@@ -4,17 +4,14 @@
         [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}
         [NoScaleOffset] _FaceShadowTex ("Face Shadow [IF USING FACE SHADER]", 2D) = "white"{}
         [NoScaleOffset] _NormalTex ("Normal Map", 2D) = "bump"{}
-        [NoScaleOffset] _DiffuseRampTex ("Diffuse Ramp", 2D) = "white"{}
+        [NoScaleOffset] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
         [NoScaleOffset] _SpecularRampTex ("Specular Ramp", 2D) = "white"{}
         [NoScaleOffset] [HDR] _MetalMapTex ("Metallic Matcap", 2D) = "white"{}
 
-        [Header(Face Shader Options)] [Toggle] _ToggleFaceShader ("Use Face Shader?", Range(0.0, 1.0)) = 0.0
-        _MaterialID ("Material ID", Range(0.0, 5.0)) = 2.0
-
-        [Header(Miscellaneous and Lighting Options)] [Toggle] _UseDiffuseRampTex ("Use Diffuse Ramp Texture?", Float) = 1.0
+        [Header(Miscellaneous and Lighting Options)] [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
         [Toggle] _UseSpecularRampTex ("Use Specular Ramp Texture?", Float) = 0.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
-        _DiffuseRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
+        _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
         [Toggle] _UseMaterial2 ("Toggle Material 2", Float) = 1.0
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0

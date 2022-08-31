@@ -84,7 +84,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // form outline colors
     vector<fixed, 4> globalOutlineColor = _OutlineColor;
-    if(_ToggleFaceShader != 0){
+    if(_ToggleFaceShader == 0){
         if(materialID == 2){
             globalOutlineColor = _OutlineColor2;
         }

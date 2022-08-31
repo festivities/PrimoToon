@@ -6,14 +6,14 @@
 Texture2D _DiffuseTex;      SamplerState sampler_DiffuseTex;
 Texture2D _LightmapTex;     SamplerState sampler_LightmapTex;
 Texture2D _NormalTex;       SamplerState sampler_NormalTex;
-Texture2D _DiffuseRampTex;  SamplerState sampler_DiffuseRampTex;
-Texture2D _SpecularRampTex;  SamplerState sampler_SpecularRampTex;
+Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
+Texture2D _SpecularRampTex; SamplerState sampler_SpecularRampTex;
 Texture2D _MetalMapTex;     SamplerState sampler_MetalMapTex;
 
-float _UseDiffuseRampTex;
+float _UseShadowRampTex;
 float _UseSpecularRampTex;
 float _LightArea;
-float _DiffuseRampWidth;
+float _ShadowRampWidth;
 float _DayOrNight;
 float _UseMaterial2;
 float _UseMaterial3;
@@ -107,8 +107,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<half, 3> halfVector = normalize(viewDir + _WorldSpaceLightPos0);
     half NdotH = dot(modifiedNormals, halfVector);
 
-    // calculate diffuse ramp width from _DiffuseRampWidth and i.vertexcol.g
-    half difframpWidth = i.vertexcol.g * 2.0 * _DiffuseRampWidth;
+    // calculate shadow ramp width from _ShadowRampWidth and i.vertexcol.g
+    half ShadowRampWidthCalc = i.vertexcol.g * 2.0 * _ShadowRampWidth;
 
     // create ambient occlusion from lightmap.g
     half occlusion = lightmap.g * i.vertexcol.r;
@@ -120,8 +120,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     half NdotL_buf = NdotL;
     half NdotL_sharpFactor = NdotL_buf < _LightArea;
 
-    // add options for controlling diffuse ramp width and shadow push
-    NdotL = 1 - ((((_LightArea - NdotL) / _LightArea) / difframpWidth));
+    // add options for controlling shadow ramp width and shadow push
+    NdotL = 1 - ((((_LightArea - NdotL) / _LightArea) / ShadowRampWidthCalc));
 
     /* END OF DOT CREATION */
 
@@ -147,20 +147,20 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* END OF MATERIAL IDS */
 
 
-    /* RAMP CREATION */
+    /* SHADOW RAMP CREATION */
 
-    vector<half, 2> rampDayUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05);
-    vector<fixed, 4> rampDay = _DiffuseRampTex.Sample(sampler_DiffuseRampTex, rampDayUVs);
+    vector<half, 2> ShadowRampDayUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05);
+    vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
 
-    vector<half, 2> rampNightUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05 + 0.5);
-    vector<fixed, 4> rampNight = _DiffuseRampTex.Sample(sampler_DiffuseRampTex, rampNightUVs);
+    vector<half, 2> ShadowRampNightUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05 + 0.5);
+    vector<fixed, 4> ShadowRampNight = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampNightUVs);
 
-    vector<fixed, 4> rampFinal = lerp(rampNight, rampDay, _DayOrNight);
+    vector<fixed, 4> ShadowRampFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
 
     // switch between 1 and ramp edge like how the game does it, also make eyes always lit
-    rampFinal = (NdotL_sharpFactor && lightmap.g < 0.85) ? rampFinal : 1;
+    ShadowRampFinal = (NdotL_sharpFactor && lightmap.g < 0.85) ? ShadowRampFinal : 1;
 
-    /* END OF RAMP CREATION */
+    /* END OF SHADOW RAMP CREATION */
 
 
     /* METALLIC */
@@ -257,7 +257,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<half, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, newUVs).xyz, 1) * rampFinal;
+    vector<fixed, 4> finalColor = vector<half, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, newUVs).xyz, 1) * 
+                                  ShadowRampFinal;
 
     // apply metallic only to anything above 0.9 of lightmap.r
     finalColor = (lightmap.r > 0.9) ? finalColor * metal : finalColor;
