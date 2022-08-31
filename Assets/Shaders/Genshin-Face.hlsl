@@ -35,6 +35,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // sample textures to objects
     vector<fixed, 4> lightmap = _LightmapTex.Sample(sampler_LightmapTex, i.uv.xy);
     vector<fixed, 4> lightmap_mirrored = _LightmapTex.Sample(sampler_LightmapTex, vector<half, 2>(1 - i.uv.x, i.uv.y));
+    vector<fixed, 4> diffuse = _DiffuseTex.Sample(sampler_DiffuseTex, i.uv.xy);
 
 
     /* FACE CALCULATION */
@@ -92,8 +93,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<fixed, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, i.uv.xy).xyz, 1) * 
-                                  ShadowRampFinal;
+    vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
 
     return finalColor;
 

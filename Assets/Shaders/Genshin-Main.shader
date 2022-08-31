@@ -1,11 +1,11 @@
 ﻿Shader "festivity/Genshin-Main"{
     Properties{
-        [Header(Textures)] [MainTex] [NoScaleOffset] _DiffuseTex ("Diffuse", 2D) = "white"{}
+        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] _DiffuseTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}
         [NoScaleOffset] _FaceShadowTex ("Face Shadow [IF USING FACE SHADER]", 2D) = "white"{}
         [NoScaleOffset] _NormalTex ("Normal Map", 2D) = "bump"{}
-        [NoScaleOffset] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
-        [NoScaleOffset] _SpecularRampTex ("Specular Ramp", 2D) = "white"{}
+        [NoScaleOffset] [HDR] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
+        [NoScaleOffset] [HDR] _SpecularRampTex ("Specular Ramp", 2D) = "white"{}
         [NoScaleOffset] [HDR] _MetalMapTex ("Metallic Matcap", 2D) = "white"{}
 
         [Header(Miscellaneous and Lighting Options)] [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
@@ -13,6 +13,8 @@
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
+        _EmissionStrength ("Emission Strength", Float) = 1.0
+        [Toggle] _ToggleEmission ("Toggle Emission?", Float) = 1.0
         [Toggle] _UseMaterial2 ("Toggle Material 2", Float) = 1.0
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
@@ -81,5 +83,6 @@
 
             ENDHLSL
         }
+        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
     }
 }

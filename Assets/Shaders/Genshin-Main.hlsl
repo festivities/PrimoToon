@@ -15,6 +15,8 @@ float _UseSpecularRampTex;
 float _LightArea;
 float _ShadowRampWidth;
 float _DayOrNight;
+float _EmissionStrength;
+float _ToggleEmission;
 float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
@@ -75,6 +77,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // sample textures to objects
     vector<fixed, 4> lightmap = _LightmapTex.Sample(sampler_LightmapTex, newUVs);
+    vector<fixed, 4> diffuse = _DiffuseTex.Sample(sampler_DiffuseTex, newUVs);
     
 
     /* NORMAL CREATION */
@@ -255,12 +258,25 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* END OF SPECULAR */
 
+
+    /* EMISSION */
+
+    // use diffuse tex alpha channel for emission mask
+    fixed emissionFactor = (diffuse.w > 0.05) * diffuse.w;
+    // toggle between emission being on or not
+    emissionFactor = (_ToggleEmission != 0) ? emissionFactor : 0;
+
+    vector<fixed, 4> emission = _EmissionStrength * vector<fixed, 4>(diffuse.xyz, 1);
+
+    /* END OF EMISSION */
     
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<fixed, 4>(_DiffuseTex.Sample(sampler_DiffuseTex, newUVs).xyz, 1) * 
-                                  ShadowRampFinal;
+    vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
+
+    // apply emission
+    finalColor = lerp(finalColor, emission, emissionFactor);
 
     // apply metallic only to anything above 0.9 of lightmap.r
     finalColor = (lightmap.r > 0.9) ? finalColor * metal : finalColor;

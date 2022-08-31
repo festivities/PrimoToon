@@ -1,9 +1,9 @@
 ﻿Shader "festivity/Genshin-Face"{
     Properties{
-        [Header(Textures)] [MainTex] [NoScaleOffset] _DiffuseTex ("Diffuse", 2D) = "white"{}
+        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] _DiffuseTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}
         [NoScaleOffset] _FaceShadowTex ("Face Shadow", 2D) = "white"{}
-        [NoScaleOffset] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
+        [NoScaleOffset] [HDR] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
 
         [Header(Miscellaneous and Lighting Options)] [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
         [Toggle] [HideInInspector] _ToggleFaceShader ("Use Face Shader?", Range(0.0, 1.0)) = 1.0
@@ -12,7 +12,7 @@
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
 
         [Header(Outline Options)] _OutlineWidth ("Outline Width", Float) = 0.03
-        [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 0.0)
+        [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
         _ZOffset ("Z-Offset", Float) = 1
     }
     SubShader{
@@ -48,5 +48,6 @@
 
             ENDHLSL
         }
+        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
     }
 }
