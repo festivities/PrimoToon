@@ -83,6 +83,6 @@
 
             ENDHLSL
         }
-        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+        UsePass "Standard/SHADOWCASTER"
     }
 }
