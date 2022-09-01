@@ -95,6 +95,9 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // apply diffuse ramp
     vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
 
+    // apply global _LightColor0
+    finalColor *= lerp(_LightColor0, 1, 0.8);
+
     return finalColor;
 
     /* END OF COLOR CREATION */

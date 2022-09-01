@@ -7,7 +7,7 @@
 
         [Header(Miscellaneous and Lighting Options)] [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
         [Toggle] [HideInInspector] _ToggleFaceShader ("Use Face Shader?", Range(0.0, 1.0)) = 1.0
-        _MaterialID ("Material ID", Range(0.0, 5.0)) = 2.0
+        _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
 
@@ -28,6 +28,7 @@
             #pragma fragment frag
 
             #include "UnityCG.cginc"
+			#include "UnityLightingCommon.cginc"
 
             #include "Genshin-Face.hlsl"
 

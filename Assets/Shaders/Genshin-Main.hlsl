@@ -285,6 +285,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // add specular to finalColor if lightmap.r is less than 0.9, else add metallic specular
     finalColor = (lightmap.r > 0.9) ? finalColor + metalSpecular : finalColor + specular;
 
+	// apply global _LightColor0
+	finalColor *= lerp(_LightColor0, 1, 0.8);
+
     return finalColor;
 
     /* END OF COLOR CREATION */
