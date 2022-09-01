@@ -18,6 +18,7 @@
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
         [Toggle] _UseMaterial5 ("Toggle Material 5", Float) = 1.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 1.0
 
         [Header(Specular Options)] _Shininess ("Shininess 1", Float) = 10
         _Shininess2 ("Shininess 2", Float) = 10

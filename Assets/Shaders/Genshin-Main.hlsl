@@ -21,6 +21,7 @@ float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
+float _ToggleTonemapper;
 
 float _Shininess;
 float _Shininess2;
@@ -287,6 +288,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // apply global _LightColor0
     finalColor *= lerp(_LightColor0, 1, 0.8);
+
+    // apply enhancement tonemapper, i know this is wrong application shut up
+    finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;
 
     return finalColor;
 

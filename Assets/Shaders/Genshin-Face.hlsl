@@ -13,6 +13,7 @@ float _MaterialID;
 float _LightArea;
 float _DayOrNight;
 float _ToggleFaceFix;
+float _ToggleTonemapper;
 
 /* end of properties */
 
@@ -101,6 +102,9 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
 
     // apply global _LightColor0
     finalColor *= lerp(_LightColor0, 1, 0.8);
+
+    // apply enhancement tonemapper, i know this is wrong application shut up
+    finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;
 
     return finalColor;
 

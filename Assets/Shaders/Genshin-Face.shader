@@ -11,6 +11,7 @@
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
         [Toggle] _ToggleFaceFix ("Try to fix face shading? (only if it doesn't work)", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 1.0
 
         [Header(Outline Options)] _OutlineWidth ("Outline Width", Float) = 0.03
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
