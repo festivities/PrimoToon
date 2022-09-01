@@ -62,7 +62,7 @@
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-			#include "UnityLightingCommon.cginc"
+            #include "UnityLightingCommon.cginc"
 
             #include "Genshin-Main.hlsl"
 

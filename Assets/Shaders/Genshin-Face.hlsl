@@ -12,6 +12,7 @@ float _UseShadowRampTex;
 float _MaterialID;
 float _LightArea;
 float _DayOrNight;
+float _ToggleFaceFix;
 
 /* end of properties */
 
@@ -46,13 +47,16 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // get head directions
     vector<half, 3> headForward = normalize(unity_ObjectToWorld._12_22_32);
     vector<half, 3> headRight = normalize(unity_ObjectToWorld._13_23_33);
+    // janky ass band-aid fix I won't bother explaining
+    vector<half, 3> headUp = normalize(cross(headRight, headForward));
 
     // get dot products of each head direction and the lightDir
-    half FdotL = dot(normalize(lightDir.xz), headForward.xz);
+    half FdotL = (_ToggleFaceFix != 0) ? dot(normalize(lightDir.xz), headUp.xz) : 
+                                         dot(normalize(lightDir.xz), headForward.xz);
     half RdotL = dot(normalize(lightDir.xz), headRight.xz);
 
     // remap both dot products from { -1, 1 } to { 0, 1 } and invert
-    RdotL = 1 - (RdotL * 0.5 + 0.5);
+    RdotL = (_ToggleFaceFix != 0) ? (RdotL * 0.5 + 0.5) : (1 - (RdotL * 0.5 + 0.5));
     FdotL = 1 - (FdotL * 0.5 + 0.5);
 
     // get direction of lightmap based on RdotL being above 0.5 or below
