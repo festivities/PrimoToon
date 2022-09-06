@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Avatar_Lady_Pole_Candace_Mat_Body
+  m_Shader: {fileID: 4800000, guid: 8312fc5bebd84f34d8336cdf3739823f, type: 3}
+  m_ShaderKeywords: _TOGGLETONEMAPPER_ON _USEDIFFUSERAMPTEX_ON _USEMATERIAL2_ON _USEMATERIAL3_ON
+    _USEMATERIAL4_ON _USESHADOWRAMPTEX_ON _USESPECULARRAMPTEX_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: c270c023c487e0540bd08f96b76a93b1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DiffuseTex:
+        m_Texture: {fileID: 2800000, guid: d43a654034368c247a6b1bdbdb7c310d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _LightmapTex:
+        m_Texture: {fileID: 2800000, guid: 5feb82c0cb0c58742b4773d851cfc91a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: d43a654034368c247a6b1bdbdb7c310d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetalMapTex:
+        m_Texture: {fileID: 2800000, guid: a18e3c72b08991b4d9baf7f529f6fa9d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
+        m_Texture: {fileID: 2800000, guid: c270c023c487e0540bd08f96b76a93b1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ShadowRampTex:
+        m_Texture: {fileID: 2800000, guid: 04c990de57d42514a940ad7382db4634, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecularRampTex:
+        m_Texture: {fileID: 2800000, guid: c5d2d18595828c142829ece2f5d58ea3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DayOrNight: 0
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _EmissionStrength: 7
+    - _GlossMapScale: 1
+    - _Glossiness: 0
+    - _GlossyReflections: 1
+    - _LightArea: 0.55
+    - _MTMapBrightness: 3
+    - _MTMapTileScale: 1
+    - _MTShininess: 5
+    - _MTSpecularAttenInShadow: 0.2
+    - _MTSpecularScale: 1.2
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _OutlineWidth: 0.03
+    - _Parallax: 0.02
+    - _ShadowRampWidth: 1
+    - _Shininess: 10
+    - _Shininess2: 10
+    - _Shininess3: 8
+    - _Shininess4: 4
+    - _Shininess5: 10
+    - _SmoothnessTextureChannel: 0
+    - _SpecMulti: 0.1
+    - _SpecMulti2: 0.1
+    - _SpecMulti3: 0.1
+    - _SpecMulti4: 0.2
+    - _SpecMulti5: 0.1
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _ToggleEmission: 1
+    - _ToggleTonemapper: 1
+    - _UVSec: 0
+    - _UseMaterial2: 1
+    - _UseMaterial3: 1
+    - _UseMaterial4: 1
+    - _UseMaterial5: 0
+    - _UseShadowRampTex: 1
+    - _UseSpecularRampTex: 1
+    - _ZOffset: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MTMapDarkColor: {r: 0.59558815, g: 0.42343536, b: 0.34596664, a: 1}
+    - _MTMapLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MTShadowMultiColor: {r: 0.85294116, g: 0.8233564, b: 0.7964965, a: 1}
+    - _MTSpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0.37499997, g: 0.37499997, b: 0.37499997, a: 0}
+    - _OutlineColor2: {r: 0.44852924, g: 0.28865623, b: 0.27373484, a: 0}
+    - _OutlineColor3: {r: 0.050773345, g: 0.04282003, b: 0.08088235, a: 0}
+    - _OutlineColor4: {r: 0.28676456, g: 0.16653284, b: 0.12229667, a: 0}
+    - _OutlineColor5: {r: 0, g: 0, b: 0, a: 0}
+    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}

@@ -1,19 +1,20 @@
 ﻿Shader "festivity/Genshin-Face"{
     Properties{
-        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] _DiffuseTex ("Diffuse", 2D) = "white"{}
+        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _DiffuseTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}
         [NoScaleOffset] _FaceShadowTex ("Face Shadow", 2D) = "white"{}
         [NoScaleOffset] [HDR] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
 
-        [Header(Miscellaneous and Lighting Options)] [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
+        [Header(Miscellaneous and Lighting Options)] [Toggle] [Space(10)] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
         [Toggle] [HideInInspector] _ToggleFaceShader ("Use Face Shader?", Range(0.0, 1.0)) = 1.0
-        _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
+        _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
+        _headRightVector ("Right Vector, ignore the last element", Vector) = (0, 0, -1, 0)
+        [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ToggleFaceFix ("Try to fix face shading? (only if it doesn't work)", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 1.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 0.0
 
-        [Header(Outline Options)] _OutlineWidth ("Outline Width", Float) = 0.03
+        [Header(Outline Options)] [Space(10)] _OutlineWidth ("Outline Width", Float) = 0.03
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
         _ZOffset ("Z-Offset", Float) = 1
     }
