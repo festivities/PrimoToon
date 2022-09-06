@@ -9,6 +9,7 @@
         [Toggle] [HideInInspector] _ToggleFaceShader ("Use Face Shader?", Range(0.0, 1.0)) = 1.0
         _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
         _headRightVector ("Right Vector, ignore the last element", Vector) = (0, 0, -1, 0)
+        [Toggle] _flipFaceLighting ("Flip Face Lighting?", Range(0.0, 1.0)) = 0.0
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0

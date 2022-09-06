@@ -11,6 +11,7 @@ Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
 float _UseShadowRampTex;
 vector<float, 4> _headForwardVector;
 vector<float, 4> _headRightVector;
+float _flipFaceLighting;
 float _MaterialID;
 float _LightArea;
 float _DayOrNight;
@@ -50,14 +51,12 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     vector<half, 3> headForward = normalize(UnityObjectToWorldDir(_headForwardVector.xyz));
     vector<half, 3> headRight = normalize(UnityObjectToWorldDir(_headRightVector.xyz));
 
-    //return vector<fixed, 4>(headRight, 0);
-
     // get dot products of each head direction and the lightDir
     half FdotL = dot(normalize(lightDir.xz), headForward.xz);
     half RdotL = dot(normalize(lightDir.xz), headRight.xz);
 
     // remap both dot products from { -1, 1 } to { 0, 1 } and invert
-    RdotL = 1 - (RdotL * 0.5 + 0.5);
+    RdotL = (_flipFaceLighting != 0) ? RdotL * 0.5 + 0.5 : 1 - (RdotL * 0.5 + 0.5);
     FdotL = 1 - (FdotL * 0.5 + 0.5);
 
     // get direction of lightmap based on RdotL being above 0.5 or below
