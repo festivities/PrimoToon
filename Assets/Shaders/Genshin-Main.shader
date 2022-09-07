@@ -18,7 +18,7 @@
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
         [Toggle] _UseMaterial5 ("Toggle Material 5", Float) = 1.0
-        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 1.0
         [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0

@@ -13,7 +13,7 @@
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 1.0
         [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
