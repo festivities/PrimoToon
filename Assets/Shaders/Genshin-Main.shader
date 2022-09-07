@@ -7,7 +7,7 @@
         [NoScaleOffset] [HDR] _SpecularRampTex ("Specular Ramp", 2D) = "white"{}
         [NoScaleOffset] [HDR] _MetalMapTex ("Metallic Matcap", 2D) = "white"{}
 
-        [Header(Miscellaneous and Lighting Options)] [Toggle] [Space(10)] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
+        [Header(Miscellaneous and Lighting Options)] [Toggle] [Space(10)] [HideInInspector] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
         [Toggle] _UseSpecularRampTex ("Use Specular Ramp Texture?", Float) = 0.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
@@ -19,6 +19,9 @@
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
         [Toggle] _UseMaterial5 ("Toggle Material 5", Float) = 1.0
         [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 0.0
+        [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
+        _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
+        _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
 
         [Header(Specular Options)] [Space(10)] _Shininess ("Shininess 1", Float) = 10
         _Shininess2 ("Shininess 2", Float) = 10

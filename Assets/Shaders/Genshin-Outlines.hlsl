@@ -10,6 +10,7 @@ float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
+float _UseTangents;
 
 float _OutlineWidth;
 vector<float, 4> _OutlineColor;
@@ -34,7 +35,10 @@ vsOut vert(vsIn v){
     // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
     float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
     // multiply outline thickness by distOutline to have constant-width outlines
-    calcOutline = calcOutline * distOutline * v.normal;
+    calcOutline = calcOutline * distOutline;
+
+    // get direction of how the hull will expand - will eventually use tangents soon
+    calcOutline *= v.normal;
 
     // get camera view direction
     vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);

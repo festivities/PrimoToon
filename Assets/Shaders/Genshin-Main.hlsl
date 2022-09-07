@@ -10,6 +10,8 @@ Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
 Texture2D _SpecularRampTex; SamplerState sampler_SpecularRampTex;
 Texture2D _MetalMapTex;     SamplerState sampler_MetalMapTex;
 
+UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+
 float _UseShadowRampTex;
 float _UseSpecularRampTex;
 float _LightArea;
@@ -22,6 +24,8 @@ float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
 float _ToggleTonemapper;
+float _RimLightIntensity;
+float _RimLightThickness;
 
 float _Shininess;
 float _Shininess2;
@@ -56,6 +60,7 @@ vsOut vert(vsIn v){
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
     o.normal = v.normal;
+    o.screenPos = ComputeScreenPos(o.position);
     o.vertexcol = v.vertexcol;
 
     vector<float, 3> worldspaceTangent = UnityObjectToWorldDir(v.tangent.xyz);
@@ -260,6 +265,37 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* END OF SPECULAR */
 
 
+    /* RIM LIGHT CREATION */
+
+    // basically view-space normals, except we cannot use the normal map so get mesh's raw normals
+    vector<half, 3> rimNormals = UnityObjectToWorldNormal(i.normal);
+    rimNormals = mul(UNITY_MATRIX_V, rimNormals);
+
+    // https://github.com/TwoTailsGames/Unity-Built-in-Shaders/blob/master/CGIncludes/UnityDeferredLibrary.cginc#L152
+    vector<half, 2> screenPos = i.screenPos.xy / i.screenPos.w;
+
+    // sample depth texture and get it in linear form untouched
+    half linearDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenPos);
+    linearDepth = LinearEyeDepth(linearDepth);
+
+    // now we modify screenPos to offset another sampled depth texture
+    screenPos = screenPos + (rimNormals.xy * (0.0025 + ((_RimLightThickness - 1) * 0.001)));
+
+    // sample depth texture again to another object with modified screenPos
+    half rimDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenPos);
+    rimDepth = LinearEyeDepth(rimDepth);
+
+    // now compare the two
+    half depthDiff = rimDepth - linearDepth;
+
+    // finally, le rim light :)
+    half rimLight = saturate(smoothstep(0, 1, depthDiff));
+    // creative freedom from here on
+    rimLight = rimLight * max((1 - NdotL_sharpFactor) * 0.2, 0.1) * _RimLightIntensity;
+
+    /* END OF RIM LIGHT */
+
+
     /* EMISSION */
 
     // use diffuse tex alpha channel for emission mask
@@ -288,6 +324,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // apply global _LightColor0
     finalColor *= lerp(_LightColor0, 1, 0.8);
+
+    // apply rim light
+    finalColor += rimLight;
 
     // apply enhancement tonemapper, i know this is wrong application shut up
     finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;
