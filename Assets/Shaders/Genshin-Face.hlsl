@@ -10,12 +10,14 @@ Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
 
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
+float _LightArea;
+float _FaceBlushStrength;
 float _UseShadowRampTex;
+vector<float, 4> _FaceBlushColor;
 vector<float, 4> _headForwardVector;
 vector<float, 4> _headRightVector;
 float _flipFaceLighting;
 float _MaterialID;
-float _LightArea;
 float _DayOrNight;
 float _ToggleTonemapper;
 float _RimLightIntensity;
@@ -155,6 +157,9 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
 
     // apply diffuse ramp
     vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
+
+    // apply face blush
+    finalColor *= lerp(1, lerp(1, _FaceBlushColor, diffuse.w), _FaceBlushStrength);
 
     // apply global _LightColor0
     finalColor *= lerp(_LightColor0, 1, 0.8);

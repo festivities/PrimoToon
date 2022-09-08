@@ -12,17 +12,17 @@ Texture2D _MetalMapTex;     SamplerState sampler_MetalMapTex;
 
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
-float _UseShadowRampTex;
-float _UseSpecularRampTex;
 float _LightArea;
 float _ShadowRampWidth;
-float _DayOrNight;
-float _EmissionStrength;
-float _ToggleEmission;
 float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
+float _UseShadowRamp;
+float _ToggleEmission;
+vector<float, 4> _EmissionColor;
+float _EmissionStrength;
+float _DayOrNight;
 float _ToggleTonemapper;
 float _RimLightIntensity;
 float _RimLightThickness;
@@ -44,6 +44,7 @@ float _MTMapTileScale;
 float _MTShininess;
 float _MTSpecularAttenInShadow;
 float _MTSpecularScale;
+float _MTUseSpecularRamp;
 vector<float, 4> _MTMapDarkColor;
 vector<float, 4> _MTMapLightColor;
 vector<float, 4> _MTShadowMultiColor;
@@ -212,8 +213,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<half, 4> metalSpecular = NdotH;
     metalSpecular = pow(metalSpecular, _MTShininess) * _MTSpecularScale;
 
-    // if _UseSpecularRampTex is set to 1, shrimply use the specular ramp texture
-    if(_UseSpecularRampTex != 0){
+    // if _MTUseSpecularRamp is set to 1, shrimply use the specular ramp texture
+    if(_MTUseSpecularRamp != 0){
         metalSpecular = _SpecularRampTex.Sample(sampler_SpecularRampTex, vector<half, 2>(metalSpecular.x, 0.5));
     }
     else{
@@ -310,7 +311,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // toggle between emission being on or not
     emissionFactor = (_ToggleEmission != 0) ? emissionFactor : 0;
 
-    vector<fixed, 4> emission = _EmissionStrength * vector<fixed, 4>(diffuse.xyz, 1);
+    vector<fixed, 4> emission = _EmissionStrength * vector<fixed, 4>(diffuse.xyz, 1) * _EmissionColor;
 
     /* END OF EMISSION */
 
