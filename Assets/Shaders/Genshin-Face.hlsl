@@ -21,6 +21,13 @@ float _ToggleTonemapper;
 float _RimLightIntensity;
 float _RimLightThickness;
 
+float _ReturnVertexColors;
+float _ReturnVertexColorAlpha;
+float _ReturnRimLight;
+float _ReturnTangents;
+float _ReturnForwardVector;
+float _ReturnRightVector;
+
 /* end of properties */
 
 
@@ -29,6 +36,7 @@ vsOut vert(vsIn v){
     vsOut o;
     o.position = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, vector<float, 4>(v.vertex, 1.0)).xyz; // TransformObjectToWorld
+    o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.normal = v.normal;
     o.screenPos = ComputeScreenPos(o.position);
@@ -113,7 +121,8 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     linearDepth = LinearEyeDepth(linearDepth);
 
     // now we modify screenPos to offset another sampled depth texture
-    screenPos = screenPos + (rimNormals.xy * (0.0025 + ((_RimLightThickness - 1) * 0.001)));
+    screenPos = screenPos + (rimNormals.x * (0.0025 + ((_RimLightThickness - 1) * 0.001)));
+    screenPos = screenPos + rimNormals.y * 0.001;
 
     // sample depth texture again to another object with modified screenPos
     half rimDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenPos);
@@ -125,11 +134,23 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // finally, le rim light :)
     half rimLight = saturate(smoothstep(0, 1, depthDiff));
     // creative freedom from here on
-    rimLight = rimLight * max(faceFactor * 0.2, 0.1) * _RimLightIntensity;
+    rimLight = rimLight * max(faceFactor * 0.5, 0.25) * _RimLightIntensity;
 
     /* END OF RIM LIGHT */
 
-    
+
+    /* DEBUGGING */
+
+    if(_ReturnVertexColors != 0){ return vector<fixed, 4>(i.vertexcol.xyz, 1); }
+    if(_ReturnVertexColorAlpha != 0){ return (vector<fixed, 4>)i.vertexcol.a; }
+    if(_ReturnRimLight != 0){ return (vector<fixed, 4>)rimLight; }
+    if(_ReturnTangents != 0){ return i.tangent; }
+    if(_ReturnForwardVector != 0){ return vector<fixed, 4>(headForward.xyz, 1); }
+    if(_ReturnRightVector != 0){ return vector<fixed, 4>(headRight.xyz, 1); }
+
+    /* END OF DEBUGGING */
+
+
     /* COLOR CREATION */
 
     // apply diffuse ramp
@@ -139,7 +160,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     finalColor *= lerp(_LightColor0, 1, 0.8);
 
     // apply rim light
-    finalColor += rimLight;
+    finalColor = ColorDodge(rimLight, finalColor);
 
     // apply enhancement tonemapper, i know this is wrong application shut up
     finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;

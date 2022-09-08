@@ -13,7 +13,7 @@
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 1.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper?", Range(0.0, 1.0)) = 0.0
         [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
@@ -21,6 +21,13 @@
         [Header(Outline Options)] [Space(10)] _OutlineWidth ("Outline Width", Float) = 0.03
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
         _ZOffset ("Z-Offset", Float) = 1
+
+        [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnForwardVector ("Show Forward Vector (it should look blue)", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnRightVector ("Show Forward Vector (it should look red)", Range(0.0, 1.0)) = 0.0
     }
     SubShader{
         Tags{ "RenderType"="Opaque" }

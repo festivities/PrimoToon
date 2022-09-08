@@ -1,5 +1,7 @@
-// helper functions
-vector<half, 4> getlightDir(){ // light fallback
+/* helper functions */
+
+// light fallback
+vector<half, 4> getlightDir(){
     vector<half, 4> lightDir = (_WorldSpaceLightPos0 != 0) ? _WorldSpaceLightPos0 :
                                vector<half, 4>(0, 0, 0, 0) + vector<half, 4>(1, 1, 0, 0);
     return lightDir;
@@ -32,4 +34,15 @@ vector<float, 3> GTTonemap(vector<float, 3> x){
 
 vector<float, 4> GTTonemap(vector<float, 4> x){
 	return vector<float, 4>(GTTonemap(x.x), GTTonemap(x.y), GTTonemap(x.z), x.w);
+}
+
+/* https://github.com/penandlim/JL-s-Unity-Blend-Modes/blob/master/John%20Lim's%20Blend%20Modes/CGIncludes/PhotoshopBlendModes.cginc */
+
+// color dodge blend mode
+vector<fixed, 3> ColorDodge(vector<fixed, 3> s, vector<fixed, 3> d){
+    return d / (1.0 - min(s, 0.999));
+}
+
+vector<fixed, 4> ColorDodge(vector<fixed, 4> s, vector<fixed, 4> d){
+    return vector<fixed, 4>(d.xyz / (1.0 - min(s.xyz, 0.999)), d.w);
 }
