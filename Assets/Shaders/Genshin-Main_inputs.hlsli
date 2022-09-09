@@ -17,5 +17,6 @@ struct vsOut{
     vector<float, 3> TtoW2 : TEXCOORD3;
     vector<float, 3> vertexWS : TEXCOORD4;
     vector<float, 4> screenPos : TEXCOORD5;
+    UNITY_FOG_COORDS(6)
     vector<float, 4> vertexcol : COLOR0;
 };

@@ -7,21 +7,27 @@
         [NoScaleOffset] [HDR] _SpecularRampTex ("Specular Ramp", 2D) = "white"{}
         [NoScaleOffset] [HDR] _MetalMapTex ("Metallic Matcap", 2D) = "white"{}
 
-        [Header(Miscellaneous and Lighting Options)] [Space(10)] _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
+        [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper? *DISABLES BLOOM*", Range(0.0, 1.0)) = 0.0
+        [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
+        _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
+        _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
+
+        [Header(Emission Options)] [Space(10)] [Toggle] _ToggleEmission ("Toggle Emission?", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
+        [KeywordEnum(Default, Custom)] _EmissionType ("Emission Type", Float) = 0.0
+        [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture", 2D) = "black"{}
+        [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
+        _EyeGlowStrength ("Eye Glow Strength", Float) = 1.0
+        _EmissionStrength ("Emission Strength", Float) = 1.0
+
+        [Header(Diffuse or Lighting Options)] [Space(10)] _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
         [Toggle] _UseMaterial2 ("Toggle Material 2", Float) = 1.0
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
         [Toggle] _UseMaterial5 ("Toggle Material 5", Float) = 1.0
         [Toggle] _UseShadowRamp ("Use Shadow Ramp Texture?", Float) = 1.0
-        [Toggle] _ToggleEmission ("Toggle Emission?", Float) = 0.0
-        [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
-        _EmissionStrength ("Emission Strength", Float) = 1.0
-        _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper? *DISABLES BLOOM*", Range(0.0, 1.0)) = 0.0
-        [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
-        _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
-        _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
 
         [Header(Specular Options)] [Space(10)] _Shininess ("Shininess 1", Float) = 10
         _Shininess2 ("Shininess 2", Float) = 10
@@ -58,12 +64,49 @@
         [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnMetal ("Show Metal", Range(0.0, 1.0)) = 0.0
     }
     SubShader{
-        Tags{ "RenderType"="Opaque" }
+        Tags{ 
+            "RenderType"="Opaque"
+            "Queue"="Geometry"
+        }
+
+        Stencil{
+            Ref [_Stencil]
+            ReadMask [_StencilReadMask]
+            WriteMask [_StencilWriteMask]
+            Comp [_StencilComp]
+            Pass [_StencilPass]
+            Fail [_StencilFail]
+            ZFail [_StencilZFail]
+            CompBack [_StencilCompBack]
+            PassBack [_StencilPassBack]
+            FailBack [_StencilFailBack]
+            ZFailBack [_StencilZFailBack]
+            CompFront [_StencilCompFront]
+            PassFront [_StencilPassFront]
+            FailFront [_StencilFailFront]
+            ZFailFront [_StencilZFailFront]
+        }
+
+        HLSLINCLUDE
+
+        #include "UnityCG.cginc"
+        #include "UnityLightingCommon.cginc"
+
+        #pragma multi_compile _ UNITY_HDR_ON
+        #pragma multi_compile_fog
+
+        ENDHLSL
 
         Pass{
             Name "ForwardBase"
+
+            Tags{
+                "LightMode" = "ForwardBase"
+            }
+
             Cull Off
 
             HLSLPROGRAM
@@ -71,8 +114,7 @@
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "UnityCG.cginc"
-            #include "UnityLightingCommon.cginc"
+            #pragma multi_compile_fwdbase
 
             #include "Genshin-Main.hlsl"
 
@@ -80,14 +122,17 @@
         }
         Pass{
             Name "OutlinePass"
+            
+            Tags{
+                "LightMode" = "Always"
+            }
+
             Cull Front
 
             HLSLPROGRAM
 
             #pragma vertex vert
             #pragma fragment frag
-
-            #include "UnityCG.cginc"
 
             #include "Genshin-Outlines.hlsl"
 

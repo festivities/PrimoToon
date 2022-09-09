@@ -3,14 +3,28 @@
 
 /* Properties */
 
-Texture2D _DiffuseTex;      SamplerState sampler_DiffuseTex;
-Texture2D _LightmapTex;     SamplerState sampler_LightmapTex;
-Texture2D _NormalTex;       SamplerState sampler_NormalTex;
-Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
-Texture2D _SpecularRampTex; SamplerState sampler_SpecularRampTex;
-Texture2D _MetalMapTex;     SamplerState sampler_MetalMapTex;
+Texture2D _DiffuseTex;              SamplerState sampler_DiffuseTex;
+Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
+Texture2D _NormalTex;               SamplerState sampler_NormalTex;
+Texture2D _ShadowRampTex;           SamplerState sampler_ShadowRampTex;
+Texture2D _SpecularRampTex;         SamplerState sampler_SpecularRampTex;
+Texture2D _MetalMapTex;             SamplerState sampler_MetalMapTex;
+
+Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
 
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
+
+float _DayOrNight;
+float _ToggleTonemapper;
+float _RimLightIntensity;
+float _RimLightThickness;
+
+float _ToggleEmission;
+float _ToggleEyeGlow;
+float _EmissionType;
+vector<float, 4> _EmissionColor;
+float _EyeGlowStrength;
+float _EmissionStrength;
 
 float _LightArea;
 float _ShadowRampWidth;
@@ -19,13 +33,6 @@ float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
 float _UseShadowRamp;
-float _ToggleEmission;
-vector<float, 4> _EmissionColor;
-float _EmissionStrength;
-float _DayOrNight;
-float _ToggleTonemapper;
-float _RimLightIntensity;
-float _RimLightThickness;
 
 float _Shininess;
 float _Shininess2;
@@ -54,6 +61,7 @@ float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
 float _ReturnRimLight;
 float _ReturnTangents;
+float _ReturnMetal;
 
 /* end of properties */
 
@@ -77,6 +85,8 @@ vsOut vert(vsIn v){
     o.TtoW0 = vector<float, 3>(worldspaceTangent.x, worldspaceBinormals.x, worldspaceNormals.x);
     o.TtoW1 = vector<float, 3>(worldspaceTangent.y, worldspaceBinormals.y, worldspaceNormals.y);
     o.TtoW2 = vector<float, 3>(worldspaceTangent.z, worldspaceBinormals.z, worldspaceNormals.z);
+
+    UNITY_TRANSFER_FOG(o, o.position);
 
     return o;
 }
@@ -176,7 +186,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<fixed, 4> ShadowRampFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
 
     // switch between 1 and ramp edge like how the game does it, also make eyes always lit
-    ShadowRampFinal = (NdotL_sharpFactor && lightmap.g < 0.85) ? ShadowRampFinal : 1;
+    ShadowRampFinal = (NdotL_sharpFactor && lightmap.g < 0.95) ? ShadowRampFinal : 1;
 
     /* END OF SHADOW RAMP CREATION */
 
@@ -286,7 +296,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     linearDepth = LinearEyeDepth(linearDepth);
 
     // now we modify screenPos to offset another sampled depth texture
-    screenPos = screenPos + (rimNormals.x * (0.0025 + ((_RimLightThickness - 1) * 0.001)));
+    screenPos = screenPos + (rimNormals.x * (0.003 + ((_RimLightThickness - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
     // sample depth texture again to another object with modified screenPos
@@ -299,6 +309,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // finally, le rim light :)
     half rimLight = saturate(smoothstep(0, 1, depthDiff));
     // creative freedom from here on
+    rimLight *= saturate(lerp(1, 0, linearDepth - 8));
     rimLight = rimLight * max((1 - NdotL_sharpFactor) * 0.5, 0.25) * _RimLightIntensity;
 
     /* END OF RIM LIGHT */
@@ -307,11 +318,32 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* EMISSION */
 
     // use diffuse tex alpha channel for emission mask
-    fixed emissionFactor = (diffuse.w > 0.05) * diffuse.w;
-    // toggle between emission being on or not
-    emissionFactor = (_ToggleEmission != 0) ? emissionFactor : 0;
+    fixed emissionFactor = 0;
 
-    vector<fixed, 4> emission = _EmissionStrength * vector<fixed, 4>(diffuse.xyz, 1) * _EmissionColor;
+    vector<fixed, 4> emission = (0, 0, 0, 0);
+
+    // toggle between emission being on or not
+    if(_ToggleEmission != 0){
+        emissionFactor = (diffuse.w > 0.05) * diffuse.w;
+
+        // toggle between game-like emission or user's own custom emission texture, idk why i used a switch here btw
+        switch(_EmissionType){
+            case 0:
+                emission = _EmissionStrength * vector<fixed, 4>(diffuse.xyz, 1) * _EmissionColor;
+                break;
+            case 1:
+                emission = _EmissionStrength * _EmissionColor * 
+                        vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
+                break;
+            default:
+                break;
+        }
+    }
+    // eye glow stuff
+    if(_ToggleEyeGlow != 0 && lightmap.g > 0.95){
+        emissionFactor += 1;
+        emission = vector<fixed, 4>(diffuse.xyz, 1) * _EyeGlowStrength;
+    }
 
     /* END OF EMISSION */
 
@@ -322,6 +354,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnVertexColorAlpha != 0){ return (vector<fixed, 4>)i.vertexcol.a; }
     if(_ReturnRimLight != 0){ return (vector<fixed, 4>)rimLight; }
     if(_ReturnTangents != 0){ return i.tangent; }
+    if(_ReturnMetal != 0){ return metal; }
 
     /* END OF DEBUGGING */
 
@@ -331,23 +364,26 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // apply diffuse ramp
     vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
 
-    // apply emission
-    finalColor = lerp(finalColor, emission, emissionFactor);
-
     // apply metallic only to anything above 0.9 of lightmap.r
     finalColor = (lightmap.r > 0.9) ? finalColor * metal : finalColor;
 
     // add specular to finalColor if lightmap.r is less than 0.9, else add metallic specular
     finalColor = (lightmap.r > 0.9) ? finalColor + metalSpecular : finalColor + specular;
 
-    // apply global _LightColor0
-    finalColor *= lerp(_LightColor0, 1, 0.8);
+    // apply the color of whichever's greater between the light direction and the strongest nearby point light
+    finalColor *= max(_LightColor0, unity_LightColor[0]);
+
+    // apply emission
+    finalColor = (_EmissionType != 0) ? finalColor + emission : lerp(finalColor, emission, emissionFactor);
 
     // apply rim light
     finalColor = ColorDodge(rimLight, finalColor);
 
     // apply enhancement tonemapper, i know this is wrong application shut up
     finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;
+
+    // apply fog
+    UNITY_APPLY_FOG(i.fogCoord, finalColor);
 
     return finalColor;
 

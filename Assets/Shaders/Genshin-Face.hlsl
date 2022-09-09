@@ -3,17 +3,13 @@
 
 /* Properties */
 
-Texture2D _DiffuseTex;      SamplerState sampler_DiffuseTex;
-Texture2D _LightmapTex;     SamplerState sampler_LightmapTex;
-Texture2D _FaceShadowTex;   SamplerState sampler_FaceShadowTex;
-Texture2D _ShadowRampTex;   SamplerState sampler_ShadowRampTex;
+Texture2D _DiffuseTex;              SamplerState sampler_DiffuseTex;
+Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
+Texture2D _FaceShadowTex;           SamplerState sampler_FaceShadowTex;
+Texture2D _ShadowRampTex;           SamplerState sampler_ShadowRampTex;
 
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
-float _LightArea;
-float _FaceBlushStrength;
-float _UseShadowRampTex;
-vector<float, 4> _FaceBlushColor;
 vector<float, 4> _headForwardVector;
 vector<float, 4> _headRightVector;
 float _flipFaceLighting;
@@ -22,6 +18,12 @@ float _DayOrNight;
 float _ToggleTonemapper;
 float _RimLightIntensity;
 float _RimLightThickness;
+
+float _FaceBlushStrength;
+vector<float, 4> _FaceBlushColor;
+
+float _LightArea;
+float _UseShadowRampTex;
 
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
@@ -43,6 +45,8 @@ vsOut vert(vsIn v){
     o.normal = v.normal;
     o.screenPos = ComputeScreenPos(o.position);
     o.vertexcol = v.vertexcol;
+
+    UNITY_TRANSFER_FOG(o, o.position);
 
     return o;
 }
@@ -123,7 +127,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     linearDepth = LinearEyeDepth(linearDepth);
 
     // now we modify screenPos to offset another sampled depth texture
-    screenPos = screenPos + (rimNormals.x * (0.0025 + ((_RimLightThickness - 1) * 0.001)));
+    screenPos = screenPos + (rimNormals.x * (0.003 + ((_RimLightThickness - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
     // sample depth texture again to another object with modified screenPos
@@ -136,6 +140,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // finally, le rim light :)
     half rimLight = saturate(smoothstep(0, 1, depthDiff));
     // creative freedom from here on
+    rimLight *= saturate(lerp(1, 0, linearDepth - 8));
     rimLight = rimLight * max(faceFactor * 0.5, 0.25) * _RimLightIntensity;
 
     /* END OF RIM LIGHT */
@@ -161,14 +166,17 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // apply face blush
     finalColor *= lerp(1, lerp(1, _FaceBlushColor, diffuse.w), _FaceBlushStrength);
 
-    // apply global _LightColor0
-    finalColor *= lerp(_LightColor0, 1, 0.8);
+    // apply the color of whichever's greater between the light direction and the strongest nearby point light
+    finalColor *= max(_LightColor0, unity_LightColor[0]);
 
     // apply rim light
     finalColor = ColorDodge(rimLight, finalColor);
 
     // apply enhancement tonemapper, i know this is wrong application shut up
     finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;
+
+    // apply fog
+    UNITY_APPLY_FOG(i.fogCoord, finalColor);
 
     return finalColor;
 

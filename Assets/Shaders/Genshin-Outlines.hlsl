@@ -3,7 +3,7 @@
 
 /* Properties */
 
-Texture2D _LightmapTex;     SamplerState sampler_LightmapTex;
+Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
 
 float _ToggleFaceShader;
 float _UseMaterial2;
@@ -26,6 +26,7 @@ float _ZOffset;
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
+    o.position = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, vector<float, 4>(v.vertex, 1.0)).xyz; // TransformObjectToWorld
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
@@ -44,12 +45,14 @@ vsOut vert(vsIn v){
     vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
 
     // optimize outlines for exposed faces so they don't artifact by offsetting in the Z-axis
-    calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.01 * _ZOffset;
+    calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.0015 * _ZOffset;
     // offset vertices
     calcOutline += v.vertex;
 
     // finally, convert calcOutlines to clip space
     o.position = UnityObjectToClipPos(calcOutline);
+
+    UNITY_TRANSFER_FOG(o, o.position);
 
     o.TtoW0 = distOutline; // placeholder for debugging distance
 
@@ -102,6 +105,12 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
             globalOutlineColor = _OutlineColor5;
         }
     }
+
+    // apply whichever light is most nearby/greater to outline color, but make sure outline never gets brighter than 1
+    globalOutlineColor *= min(max(_LightColor0, unity_LightColor[0]), vector<fixed, 4>(1, 1, 1, 1));
+
+    // apply fog
+    UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);
 
     return globalOutlineColor;
 }
