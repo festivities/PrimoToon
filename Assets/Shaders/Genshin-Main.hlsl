@@ -353,7 +353,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // get the color of whichever's greater between the light direction and the strongest nearby point light
     vector<fixed, 4> environmentLighting = max(_LightColor0, unity_LightColor[0]);
     // now get whichever's greater than the result of the first and the nearest light probe
-    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(modifiedNormals, 1)), 1));
+    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(0, 0, 0, 1)), 1));
 
     /* END OF ENVIRONMENT LIGHTING */
 
