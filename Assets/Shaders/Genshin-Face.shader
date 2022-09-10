@@ -31,7 +31,7 @@
         [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnForwardVector ("Show Forward Vector (it should look blue)", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ReturnRightVector ("Show Forward Vector (it should look red)", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnRightVector ("Show Right Vector (it should look red)", Range(0.0, 1.0)) = 0.0
     }
     SubShader{
         Tags{ 

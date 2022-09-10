@@ -347,6 +347,16 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* END OF EMISSION */
 
+    
+    /* ENVIRONMENT LIGHTING */
+
+    // get the color of whichever's greater between the light direction and the strongest nearby point light
+    vector<fixed, 4> environmentLighting = max(_LightColor0, unity_LightColor[0]);
+    // now get whichever's greater than the result of the first and the nearest light probe
+    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(modifiedNormals, 1)), 1));
+
+    /* END OF ENVIRONMENT LIGHTING */
+
 
     /* DEBUGGING */
 
@@ -370,11 +380,12 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // add specular to finalColor if lightmap.r is less than 0.9, else add metallic specular
     finalColor = (lightmap.r > 0.9) ? finalColor + metalSpecular : finalColor + specular;
 
-    // apply the color of whichever's greater between the light direction and the strongest nearby point light
-    finalColor *= max(_LightColor0, unity_LightColor[0]);
+    // apply environment lighting
+    finalColor *= environmentLighting;
 
     // apply emission
-    finalColor = (_EmissionType != 0) ? finalColor + emission : lerp(finalColor, emission, emissionFactor);
+    finalColor = (_EmissionType != 0 && lightmap.g < 0.95) ? finalColor + emission : 
+                                                             lerp(finalColor, emission, emissionFactor);
 
     // apply rim light
     finalColor = ColorDodge(rimLight, finalColor);

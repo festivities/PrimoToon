@@ -35,6 +35,8 @@ vsOut vert(vsIn v){
     vector<float, 3> calcOutline = v.vertexcol.w * (_OutlineWidth * 0.1);
     // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
     float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
+    // clamp distOutline so it doesn't go wild at very far distances
+    distOutline = min(distOutline, 10);
     // multiply outline thickness by distOutline to have constant-width outlines
     calcOutline = calcOutline * distOutline;
 
@@ -89,6 +91,20 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* END OF MATERIAL IDS */
 
 
+    /* ENVIRONMENT LIGHTING */
+
+    // get the color of whichever's greater between the light direction and the strongest nearby point light
+    vector<fixed, 4> environmentLighting = max(_LightColor0, unity_LightColor[0]);
+    // now get whichever's greater than the result of the first and the nearest light probe
+    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(1, 1, 1, 1)), 1));
+    // ensure environmentLighting does not make outlines greater than 1
+    environmentLighting = min(1, environmentLighting);
+
+    /* END OF ENVIRONMENT LIGHTING */
+
+
+    /* COLOR CREATION */
+
     // form outline colors
     vector<fixed, 4> globalOutlineColor = _OutlineColor;
     if(_ToggleFaceShader == 0){
@@ -106,11 +122,13 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         }
     }
 
-    // apply whichever light is most nearby/greater to outline color, but make sure outline never gets brighter than 1
-    globalOutlineColor *= min(max(_LightColor0, unity_LightColor[0]), vector<fixed, 4>(1, 1, 1, 1));
+    // apply environment lighting
+    globalOutlineColor *= environmentLighting;
 
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);
 
     return globalOutlineColor;
+    
+    /* END OF COLOR CREATION */
 }

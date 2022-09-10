@@ -146,6 +146,17 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     /* END OF RIM LIGHT */
 
 
+    /* ENVIRONMENT LIGHTING */
+
+    // get the color of whichever's greater between the light direction and the strongest nearby point light
+    vector<fixed, 4> environmentLighting = max(_LightColor0, unity_LightColor[0]);
+    // now get whichever's greater than the result of the first and the nearest light probe
+    environmentLighting = max(environmentLighting, 
+                          vector<fixed, 4>(ShadeSH9(vector<half, 4>(UnityObjectToWorldNormal(i.normal), 1)), 1));
+
+    /* END OF ENVIRONMENT LIGHTING */
+
+
     /* DEBUGGING */
 
     if(_ReturnVertexColors != 0){ return vector<fixed, 4>(i.vertexcol.xyz, 1); }
@@ -166,8 +177,8 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     // apply face blush
     finalColor *= lerp(1, lerp(1, _FaceBlushColor, diffuse.w), _FaceBlushStrength);
 
-    // apply the color of whichever's greater between the light direction and the strongest nearby point light
-    finalColor *= max(_LightColor0, unity_LightColor[0]);
+    // apply environment lighting
+    finalColor *= environmentLighting;
 
     // apply rim light
     finalColor = ColorDodge(rimLight, finalColor);
