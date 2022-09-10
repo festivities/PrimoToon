@@ -132,6 +132,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);
 
     return globalOutlineColor;
-    
+
     /* END OF COLOR CREATION */
 }

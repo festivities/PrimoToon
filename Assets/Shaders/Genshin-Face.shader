@@ -91,8 +91,8 @@
             Name "OutlinePass"
 
             Tags{
-                "LightMode" = "Always"
-            }
+                "LightMode" = "ForwardBase" // i know, why two ForwardBase passes...
+            }                               // ForwardAdd just doesn't work for me... :()
 
             Cull Front
 
@@ -100,6 +100,8 @@
 
             #pragma vertex vert
             #pragma fragment frag
+
+            #pragma multi_compile_fwdbase
 
             #include "Genshin-Outlines.hlsl"
 
