@@ -277,7 +277,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // 1.03 may seem arbitrary, but it is shrimply an optimization due to Unity compression, it's supposed to be a 
     // inversion of lightmap.b, also compare specular to inverted lightmap.b
     specular = (1.03 - lightmap.b) < specular;
-    specular = saturate(specular * globalSpecMulti * _SpecularColor * lightmap.r * _SpecularColor);
+    specular = saturate(specular * globalSpecMulti * _SpecularColor * lightmap.r);
 
     /* END OF SPECULAR */
 
