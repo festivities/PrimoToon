@@ -7,8 +7,15 @@ vector<half, 4> getlightDir(){
     return lightDir;
 }
 
+// map range function
+float mapRange(const float min_in, const float max_in, const float min_out, const float max_out, const float value){
+    float slope = (max_out - min_out) / (max_in - min_in);
+    
+    return min_out + slope * (value - min_in);
+}
+
 // https://gist.github.com/shakesoda/1dcb3e159f586995ca076c8b21f05a67
-float GTTonemap(float x){
+float GTTonemap(const float x){
 	float m = 0.22; // linear section start
 	float a = 1.0;  // contrast
 	float c = 1.33; // black brightness
@@ -28,21 +35,21 @@ float GTTonemap(float x){
 }
 
 // this costs about 0.2-0.3ms more than aces, as-is
-vector<float, 3> GTTonemap(vector<float, 3> x){
+vector<float, 3> GTTonemap(const vector<float, 3> x){
 	return vector<float, 3>(GTTonemap(x.x), GTTonemap(x.y), GTTonemap(x.z));
 }
 
-vector<float, 4> GTTonemap(vector<float, 4> x){
+vector<float, 4> GTTonemap(const vector<float, 4> x){
 	return vector<float, 4>(GTTonemap(x.x), GTTonemap(x.y), GTTonemap(x.z), x.w);
 }
 
 /* https://github.com/penandlim/JL-s-Unity-Blend-Modes/blob/master/John%20Lim's%20Blend%20Modes/CGIncludes/PhotoshopBlendModes.cginc */
 
 // color dodge blend mode
-vector<fixed, 3> ColorDodge(vector<fixed, 3> s, vector<fixed, 3> d){
+vector<fixed, 3> ColorDodge(const vector<fixed, 3> s, const vector<fixed, 3> d){
     return d / (1.0 - min(s, 0.999));
 }
 
-vector<fixed, 4> ColorDodge(vector<fixed, 4> s, vector<fixed, 4> d){
+vector<fixed, 4> ColorDodge(const vector<fixed, 4> s, const vector<fixed, 4> d){
     return vector<fixed, 4>(d.xyz / (1.0 - min(s.xyz, 0.999)), d.w);
 }

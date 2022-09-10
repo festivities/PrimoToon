@@ -11,6 +11,7 @@ Texture2D _SpecularRampTex;         SamplerState sampler_SpecularRampTex;
 Texture2D _MetalMapTex;             SamplerState sampler_MetalMapTex;
 
 Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
+Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
 
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
@@ -25,6 +26,10 @@ float _EmissionType;
 vector<float, 4> _EmissionColor;
 float _EyeGlowStrength;
 float _EmissionStrength;
+float _TogglePulse;
+float _PulseSpeed;
+float _PulseMinStrength;
+float _PulseMaxStrength;
 
 float _LightArea;
 float _ShadowRampWidth;
@@ -315,6 +320,19 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* END OF RIM LIGHT */
 
 
+    /* ENVIRONMENT LIGHTING */
+
+    // get the color of whichever's greater between the light direction and the strongest nearby point light
+    vector<fixed, 4> environmentLighting = max(_LightColor0, unity_LightColor[0]);
+    // now get whichever's greater than the result of the first and the nearest light probe
+    vector<half, 3> ShadeSH9Alternative = vector<half, 3>(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w) + 
+                                          vector<half, 3>(unity_SHBr.z, unity_SHBg.z, unity_SHBb.z) / 3.0;
+    //environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(0, 0, 0, 1)), 1));
+    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9Alternative, 1));
+
+    /* END OF ENVIRONMENT LIGHTING */
+
+
     /* EMISSION */
 
     // use diffuse tex alpha channel for emission mask
@@ -333,10 +351,25 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
                 break;
             case 1:
                 emission = _EmissionStrength * _EmissionColor * 
-                        vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
+                           vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
+                // apply emission AO
+                //emission *= vector<fixed, 4>(_CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).xyz, 1);
                 break;
             default:
                 break;
+        }
+
+        // pulsing emission
+        if(_TogglePulse != 0){
+            // form the sine wave
+            half emissionPulse = sin(_PulseSpeed * _Time.y);
+            // remap from ranges { -1, 1 } to { 0, 1 }
+            emissionPulse = emissionPulse * 0.5 + 0.5;
+            // ensure emissionPulse never goes below or above the minimum and maximum values set by the user
+            emissionPulse = mapRange(0, 1, _PulseMinStrength, _PulseMaxStrength, emissionPulse);
+            // apply pulse
+            emission = lerp((_EmissionType != 0) ? 0 : vector<fixed, 4>(diffuse.xyz, 1) * _EmissionColor, 
+                            emission, emissionPulse);
         }
     }
     // eye glow stuff
@@ -346,19 +379,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     }
 
     /* END OF EMISSION */
-
-    
-    /* ENVIRONMENT LIGHTING */
-
-    // get the color of whichever's greater between the light direction and the strongest nearby point light
-    vector<fixed, 4> environmentLighting = max(_LightColor0, unity_LightColor[0]);
-    // now get whichever's greater than the result of the first and the nearest light probe
-    vector<half, 3> ShadeSH9Alternative = vector<half, 3>(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w) + 
-                                          vector<half, 3>(unity_SHBr.z, unity_SHBg.z, unity_SHBb.z) / 3.0;
-    //environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(0, 0, 0, 1)), 1));
-    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9Alternative, 1));
-
-    /* END OF ENVIRONMENT LIGHTING */
 
 
     /* DEBUGGING */

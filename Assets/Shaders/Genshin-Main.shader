@@ -17,9 +17,14 @@
         [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
         [KeywordEnum(Default, Custom)] _EmissionType ("Emission Type", Float) = 0.0
         [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture", 2D) = "black"{}
+        [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission AO", 2D) = "white"{}
         [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
         _EyeGlowStrength ("Eye Glow Strength", Float) = 1.0
         _EmissionStrength ("Emission Strength", Float) = 1.0
+        [Toggle] _TogglePulse ("Toggle Pulse?", Range(0.0, 1.0)) = 0.0
+        _PulseSpeed ("Pulse Speed", Float) = 1.0
+        _PulseMaxStrength ("Max Pulse Strength", Range(0.0, 1.0)) = 1.0
+        _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
 
         [Header(Diffuse or Lighting Options)] [Space(10)] _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
