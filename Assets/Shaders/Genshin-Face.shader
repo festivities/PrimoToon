@@ -5,8 +5,9 @@
         [NoScaleOffset] _FaceShadowTex ("Face Shadow", 2D) = "white"{}
         [NoScaleOffset] [HDR] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
 
-        [Header(Miscellaneous and Lighting Options)] [Space(10)] _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
+        [Header(Miscellaneous and Lighting Options)] [Space(10)] _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
         [Toggle] [HideInInspector] _ToggleFaceShader ("Use Face Shader?", Range(0.0, 1.0)) = 1.0
+        _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
         _headRightVector ("Right Vector, ignore the last element", Vector) = (0, 0, -1, 0)
         [Toggle] _flipFaceLighting ("Flip Face Lighting?", Range(0.0, 1.0)) = 0.0
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0

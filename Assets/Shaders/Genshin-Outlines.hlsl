@@ -6,6 +6,7 @@
 Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
 
 float _ToggleFaceShader;
+float _EnvironmentLightingStrength;
 float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
@@ -126,7 +127,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     }
 
     // apply environment lighting
-    globalOutlineColor *= environmentLighting;
+    globalOutlineColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);
 
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);

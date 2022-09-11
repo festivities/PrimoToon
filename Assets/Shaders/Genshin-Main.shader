@@ -8,6 +8,7 @@
         [NoScaleOffset] [HDR] _MetalMapTex ("Metallic Matcap", 2D) = "white"{}
 
         [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
+        _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
         [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper? *DISABLES BLOOM*", Range(0.0, 1.0)) = 0.0
         [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
         [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0

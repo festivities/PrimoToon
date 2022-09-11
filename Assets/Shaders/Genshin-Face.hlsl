@@ -10,6 +10,7 @@ Texture2D _ShadowRampTex;           SamplerState sampler_ShadowRampTex;
 
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
+float _EnvironmentLightingStrength;
 vector<float, 4> _headForwardVector;
 vector<float, 4> _headRightVector;
 float _flipFaceLighting;
@@ -181,7 +182,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     finalColor *= lerp(1, lerp(1, _FaceBlushColor, diffuse.w), _FaceBlushStrength);
 
     // apply environment lighting
-    finalColor *= environmentLighting;
+    finalColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);
 
     // apply rim light
     finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight;

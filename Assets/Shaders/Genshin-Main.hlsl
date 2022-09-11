@@ -16,6 +16,7 @@ Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
 UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
 float _DayOrNight;
+float _EnvironmentLightingStrength;
 float _ToggleTonemapper;
 float _RimLightType;
 float _RimLightIntensity;
@@ -405,7 +406,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     finalColor = (lightmap.r > 0.9) ? finalColor + metalSpecular : finalColor + specular;
 
     // apply environment lighting
-    finalColor *= environmentLighting;
+    finalColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);
 
     // apply emission
     finalColor = (_EmissionType != 0 && lightmap.g < 0.95) ? finalColor + emission : 
