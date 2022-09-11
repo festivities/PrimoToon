@@ -17,6 +17,7 @@ UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
 float _DayOrNight;
 float _ToggleTonemapper;
+float _RimLightType;
 float _RimLightIntensity;
 float _RimLightThickness;
 
@@ -301,7 +302,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     linearDepth = LinearEyeDepth(linearDepth);
 
     // now we modify screenPos to offset another sampled depth texture
-    screenPos = screenPos + (rimNormals.x * (0.003 + ((_RimLightThickness - 1) * 0.001)));
+    screenPos = screenPos + (rimNormals.x * (0.002 + ((_RimLightThickness - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
     // sample depth texture again to another object with modified screenPos
@@ -315,7 +316,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     half rimLight = saturate(smoothstep(0, 1, depthDiff));
     // creative freedom from here on
     rimLight *= saturate(lerp(1, 0, linearDepth - 8));
-    rimLight = rimLight * max((1 - NdotL_sharpFactor) * 0.5, 0.25) * _RimLightIntensity;
+    rimLight = rimLight * max((1 - NdotL_sharpFactor) * 0.2, 0.05) * _RimLightIntensity;
 
     /* END OF RIM LIGHT */
 
@@ -353,7 +354,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
                 emission = _EmissionStrength * _EmissionColor * 
                            vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
                 // apply emission AO
-                //emission *= vector<fixed, 4>(_CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).xyz, 1);
+                emission *= vector<fixed, 4>(_CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).xyz, 1);
                 break;
             default:
                 break;
@@ -411,7 +412,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
                                                              lerp(finalColor, emission, emissionFactor);
 
     // apply rim light
-    finalColor = ColorDodge(rimLight, finalColor);
+    finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight;
 
     // apply enhancement tonemapper, i know this is wrong application shut up
     finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;

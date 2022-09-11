@@ -16,6 +16,7 @@ float _flipFaceLighting;
 float _MaterialID;
 float _DayOrNight;
 float _ToggleTonemapper;
+float _RimLightType;
 float _RimLightIntensity;
 float _RimLightThickness;
 
@@ -127,7 +128,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     linearDepth = LinearEyeDepth(linearDepth);
 
     // now we modify screenPos to offset another sampled depth texture
-    screenPos = screenPos + (rimNormals.x * (0.003 + ((_RimLightThickness - 1) * 0.001)));
+    screenPos = screenPos + (rimNormals.x * (0.002 + ((_RimLightThickness - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
     // sample depth texture again to another object with modified screenPos
@@ -141,7 +142,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     half rimLight = saturate(smoothstep(0, 1, depthDiff));
     // creative freedom from here on
     rimLight *= saturate(lerp(1, 0, linearDepth - 8));
-    rimLight = rimLight * max(faceFactor * 0.5, 0.25) * _RimLightIntensity;
+    rimLight = rimLight * max(faceFactor * 0.2, 0.05) * _RimLightIntensity;
 
     /* END OF RIM LIGHT */
 
@@ -183,7 +184,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     finalColor *= environmentLighting;
 
     // apply rim light
-    finalColor = ColorDodge(rimLight, finalColor);
+    finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight;
 
     // apply enhancement tonemapper, i know this is wrong application shut up
     finalColor = (_ToggleTonemapper != 0) ? GTTonemap(finalColor) : finalColor;
