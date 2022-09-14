@@ -21,7 +21,8 @@
         [Header(Face Blush)] [Space(10)] _FaceBlushStrength ("Face Blush Strength", Range(0.0, 1.0)) = 0.0
         [Gamma] _FaceBlushColor ("Face Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
 
-        [Header(Diffuse or Lighting Options)] [Space(10)] _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
+        [Header(Diffuse or Lighting Options)] [Space(10)] _FaceMapSoftness ("Face Lighting Softness", Range(0.0, 1.0)) = 0.001
+        _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
 
         [Header(Outline Options)] [Space(10)] _OutlineWidth ("Outline Width", Float) = 0.03
