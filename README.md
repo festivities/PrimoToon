@@ -1,4 +1,4 @@
-# Cheddar
+# PrimoToon
 
 ## This README.md is WIP
 Make sure **ALL** your textures have *Texture Type* set to **Default**, *Compression* set to **None**, and *Generate Mip Maps* **unticked**. Some people have told me that for VRChat, compression and generating mip maps are recommended so that avatars are optimized. In that case, you may enable said options for most of the textures **except** the ramp textures so as to prevent artifacting and precision issues.

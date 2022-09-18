@@ -69,6 +69,7 @@ float _ReturnVertexColorAlpha;
 float _ReturnRimLight;
 float _ReturnTangents;
 float _ReturnMetal;
+float _ReturnEmissionFactor;
 
 /* end of properties */
 
@@ -421,6 +422,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnRimLight != 0){ return (vector<fixed, 4>)rimLight; }
     if(_ReturnTangents != 0){ return i.tangent; }
     if(_ReturnMetal != 0){ return metal; }
+    if(_ReturnEmissionFactor != 0){ return emissionFactor; }
 
     /* END OF DEBUGGING */
 

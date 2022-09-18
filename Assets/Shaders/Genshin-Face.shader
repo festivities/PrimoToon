@@ -1,4 +1,4 @@
-﻿Shader ".festivity/cheddar/genshin-face"{
+﻿Shader ".festivity/PrimoToon/genshin-face"{
     Properties{
         [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _DiffuseTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}

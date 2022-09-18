@@ -1,4 +1,4 @@
-﻿Shader ".festivity/cheddar/genshin-main"{
+﻿Shader ".festivity/PrimoToon/genshin-main"{
     Properties{
         [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _DiffuseTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}
@@ -72,6 +72,7 @@
         [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnMetal ("Show Metal", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnEmissionFactor ("Show Emission Factor", Range(0.0, 1.0)) = 0.0
     }
     SubShader{
         Tags{ 
