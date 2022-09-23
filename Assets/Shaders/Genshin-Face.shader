@@ -25,13 +25,15 @@
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
 
-        [Header(Outline Options)] [Space(10)] _OutlineWidth ("Outline Width", Float) = 0.03
+        [Header(Outline Options)] [Space(10)] [KeywordEnum(None, Normal, Tangent)] _OutlineType ("Outline Type", Float) = 1.0
+        _OutlineWidth ("Outline Width", Float) = 0.03
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
-        _ZOffset ("Z-Offset", Float) = 1
+        _MaxOutlineZOffset ("Z-Offset", Float) = 1.0
 
         [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnNormals ("Show Normals", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnForwardVector ("Show Forward Vector (it should look blue)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRightVector ("Show Right Vector (it should look red)", Range(0.0, 1.0)) = 0.0

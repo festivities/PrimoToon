@@ -67,6 +67,8 @@ vector<float, 4> _MTSpecularColor;
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
 float _ReturnRimLight;
+float _ReturnNormals;
+float _ReturnRawNormals;
 float _ReturnTangents;
 float _ReturnMetal;
 float _ReturnEmissionFactor;
@@ -133,7 +135,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // NdotL
     half NdotL = dot(modifiedNormals, normalize(getlightDir()));
     // remap from { -1, 1 } to { 0, 1 }
-    NdotL = NdotL / 2.0 + 0.5;
+    NdotL = NdotL * 0.5 + 0.5;
 
     // NdotV
     vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos.xyz - i.vertexWS);
@@ -376,7 +378,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // toggle between emission being on or not
     if(_ToggleEmission != 0){
-        emissionFactor = (diffuse.w > 0.05) * diffuse.w;
+        // again, this may seem arbitrary but it's an optimization because miHoYo likes their textures very crunchy!
+        emissionFactor = saturate(diffuse.w - 0.02);
 
         // toggle between game-like emission or user's own custom emission texture, idk why i used a switch here btw
         switch(_EmissionType){
@@ -420,6 +423,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnVertexColors != 0){ return vector<fixed, 4>(i.vertexcol.xyz, 1); }
     if(_ReturnVertexColorAlpha != 0){ return (vector<fixed, 4>)i.vertexcol.a; }
     if(_ReturnRimLight != 0){ return (vector<fixed, 4>)rimLight; }
+    if(_ReturnNormals != 0){ return vector<fixed, 4>(modifiedNormals, 1); }
+    if(_ReturnRawNormals != 0){ return vector<fixed, 4>(i.normal, 1); }
     if(_ReturnTangents != 0){ return i.tangent; }
     if(_ReturnMetal != 0){ return metal; }
     if(_ReturnEmissionFactor != 0){ return emissionFactor; }

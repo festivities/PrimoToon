@@ -13,13 +13,14 @@ float _UseMaterial4;
 float _UseMaterial5;
 float _UseTangents;
 
+float _OutlineType;
 float _OutlineWidth;
 vector<float, 4> _OutlineColor;
 vector<float, 4> _OutlineColor2;
 vector<float, 4> _OutlineColor3;
 vector<float, 4> _OutlineColor4;
 vector<float, 4> _OutlineColor5;
-float _ZOffset;
+float _MaxOutlineZOffset;
 
 /* end of properties */
 
@@ -41,14 +42,25 @@ vsOut vert(vsIn v){
     // multiply outline thickness by distOutline to have constant-width outlines
     calcOutline = calcOutline * distOutline;
 
-    // get direction of how the hull will expand - will eventually use tangents soon
-    calcOutline *= v.normal;
+    // switch between outline types
+    switch(_OutlineType){
+        case 0:
+            break;
+        case 1:
+            calcOutline *= v.normal;
+            break;
+        case 2:
+            calcOutline *= v.tangent.xyz;
+            break;
+        default:
+            break;
+    }
 
     // get camera view direction
     vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
 
     // optimize outlines for exposed faces so they don't artifact by offsetting in the Z-axis
-    calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.0015 * _ZOffset;
+    calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.0015 * _MaxOutlineZOffset;
     // offset vertices
     calcOutline += v.vertex;
 

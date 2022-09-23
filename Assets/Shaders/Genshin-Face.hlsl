@@ -31,6 +31,7 @@ float _UseShadowRampTex;
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
 float _ReturnRimLight;
+float _ReturnNormals;
 float _ReturnTangents;
 float _ReturnForwardVector;
 float _ReturnRightVector;
@@ -198,6 +199,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     if(_ReturnVertexColors != 0){ return vector<fixed, 4>(i.vertexcol.xyz, 1); }
     if(_ReturnVertexColorAlpha != 0){ return (vector<fixed, 4>)i.vertexcol.a; }
     if(_ReturnRimLight != 0){ return (vector<fixed, 4>)rimLight; }
+    if(_ReturnNormals != 0){ return vector<fixed, 4>(i.normal, 1); }
     if(_ReturnTangents != 0){ return i.tangent; }
     if(_ReturnForwardVector != 0){ return vector<fixed, 4>(headForward.xyz, 1); }
     if(_ReturnRightVector != 0){ return vector<fixed, 4>(headRight.xyz, 1); }
