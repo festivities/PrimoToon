@@ -33,43 +33,43 @@ vsOut vert(vsIn v){
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
 
-    // first, form the base outline thickness with vertexcol.w
-    vector<float, 3> calcOutline = v.vertexcol.w * (_OutlineWidth * 0.1);
-    // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
-    float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
-    // clamp distOutline so it doesn't go wild at very far distances
-    distOutline = min(distOutline, 10);
-    // multiply outline thickness by distOutline to have constant-width outlines
-    calcOutline = calcOutline * distOutline;
+    if(_OutlineType != 0){
+        // first, form the base outline thickness with vertexcol.w
+        vector<float, 3> calcOutline = v.vertexcol.w * (_OutlineWidth * 0.1);
+        // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
+        float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
+        // clamp distOutline so it doesn't go wild at very far distances
+        distOutline = min(distOutline, 10);
+        // multiply outline thickness by distOutline to have constant-width outlines
+        calcOutline = calcOutline * distOutline;
 
-    // switch between outline types
-    switch(_OutlineType){
-        case 0:
-            break;
-        case 1:
-            calcOutline *= v.normal;
-            break;
-        case 2:
-            calcOutline *= v.tangent.xyz;
-            break;
-        default:
-            break;
+        // switch between outline types
+        switch(_OutlineType){
+            case 1:
+                calcOutline *= v.normal;
+                break;
+            case 2:
+                calcOutline *= v.tangent.xyz;
+                break;
+            default:
+                break;
+        }
+
+        // get camera view direction
+        vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
+
+        // optimize outlines for exposed faces so they don't artifact by offsetting in the Z-axis
+        calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.0015 * _MaxOutlineZOffset;
+        // offset vertices
+        calcOutline += v.vertex;
+
+        // finally, convert calcOutlines to clip space
+        o.position = UnityObjectToClipPos(calcOutline);
+
+        o.TtoW0 = distOutline; // placeholder for debugging distance
     }
 
-    // get camera view direction
-    vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
-
-    // optimize outlines for exposed faces so they don't artifact by offsetting in the Z-axis
-    calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.0015 * _MaxOutlineZOffset;
-    // offset vertices
-    calcOutline += v.vertex;
-
-    // finally, convert calcOutlines to clip space
-    o.position = UnityObjectToClipPos(calcOutline);
-
     UNITY_TRANSFER_FOG(o, o.position);
-
-    o.TtoW0 = distOutline; // placeholder for debugging distance
 
     return o;
 }
