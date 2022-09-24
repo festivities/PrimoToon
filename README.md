@@ -12,7 +12,11 @@ https://user-images.githubusercontent.com/77230051/192085179-8b7fde87-57d5-4c5f-
     <a href="https://github.com/festivize/PrimoToon/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/festivize/PrimoToon?style=for-the-badge"></a>
 </p>
 
+---
+
 <h2 align="center">This README.md is WIP</h2>
+
+---
 
 ## Temporary guide
 Make sure **ALL** your textures have *Texture Type* set to **Default**, *Compression* set to **None**, and *Generate Mip Maps* **unticked**. Some people have told me that for VRChat, compression and generating mip maps are recommended so that avatars are optimized. In that case, you may enable said options for most of the textures **except** the ramp textures so as to prevent artifacting and precision issues.

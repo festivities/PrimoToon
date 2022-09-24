@@ -9,7 +9,7 @@ struct vsIn{
 
 struct vsOut{
     vector<float, 4> position : SV_POSITION;
-    vector<float, 3> normal : NORMAL;
+    vector<float, 3> normal : NORMAL; // object space
     vector<float, 4> tangent : TANGENT;
     vector<float, 4> uv : TEXCOORD0; // first 2 elements of vector for UV0, last 2 for UV1
     vector<float, 3> TtoW0 : TEXCOORD1;
