@@ -81,7 +81,7 @@ float _ReturnEmissionFactor;
 vsOut vert(vsIn v){
     vsOut o;
     o.position = UnityObjectToClipPos(v.vertex);
-    o.vertexWS = mul(UNITY_MATRIX_M, vector<float, 4>(v.vertex, 1.0)).xyz; // TransformObjectToWorld
+    o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
     o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
@@ -235,7 +235,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* METALLIC SPECULAR */
     
     vector<half, 4> metalSpecular = NdotH;
-    metalSpecular = pow(metalSpecular, _MTShininess) * _MTSpecularScale;
+    metalSpecular = saturate(pow(metalSpecular, _MTShininess) * _MTSpecularScale);
 
     // if _MTUseSpecularRamp is set to 1, shrimply use the specular ramp texture
     if(_MTUseSpecularRamp != 0){
@@ -244,7 +244,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     else{
         metalSpecular *= lightmap.b;
     }
-
+    
     // apply _MTSpecularColor
     metalSpecular *= _MTSpecularColor;
     // apply _MTSpecularAttenInShadow ONLY to shaded areas
@@ -306,7 +306,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // use diffuse tex alpha channel for emission mask
     fixed emissionFactor = 0;
 
-    vector<fixed, 4> emission = (0, 0, 0, 0);
+    vector<fixed, 4> emission = 0;
 
     // toggle between emission being on or not
     if(_ToggleEmission != 0){

@@ -43,7 +43,7 @@ float _ReturnRightVector;
 vsOut vert(vsIn v){
     vsOut o;
     o.position = UnityObjectToClipPos(v.vertex);
-    o.vertexWS = mul(UNITY_MATRIX_M, vector<float, 4>(v.vertex, 1.0)).xyz; // TransformObjectToWorld
+    o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
     o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.normal = v.normal;
