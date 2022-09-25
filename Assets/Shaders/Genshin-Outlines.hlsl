@@ -42,164 +42,143 @@ vsOut vert(vsIn v){
     o.uv.zw = v.uv1;
 
 
-    /* game-accurate 
-    const float OutlineCorrectionWidth = 2.25; // cb0[39].w or cb0[15].x
+    /* game-accurate
+    const float _OutlineCorrectionWidth = 2.25; // cb0[39].w or cb0[15].x
     const vector<float, 4> posInput = v.vertex;
-    const vector<float, 3> normalInput = v.normal;*/
+    const vector<float, 3> normalInput = v.normal;
 
-    /*cb3[0] unity_ObjectToWorld[0]
-    #define cb3[1] unity_ObjectToWorld[1]
-    #define cb3[2] unity_ObjectToWorld[2]
-    #define cb3[3] unity_ObjectToWorld[3]
-    
-    #define cb3[5] unity_WorldToObject[1]
-    #define cb3[4] unity_WorldToObject[0]
-    #define cb3[6] unity_WorldToObject[2]
-    #define cb3[7] unity_WorldToObject[3]
+    vector<float, 4> u_xlat0;
+    vector<bool, 2> u_xlatb0;
+    vector<float, 4> u_xlat1;
+    bool u_xlatb1;
+    vector<float, 4> u_xlat2;
+    bool u_xlatb2;
+    vector<float, 4> u_xlat3;
+    vector<float, 4> u_xlat4;
+    vector<float, 2> u_xlat5;
+    vector<float, 3> u_xlat6;
+    bool u_xlatb6;
+    float u_xlat10;
+    bool u_xlatb10;
+    float u_xlat15;
+    bool u_xlatb15;
+    float u_xlat16;
+    float u_xlat17;
 
-    #define cb4[9] UNITY_MATRIX_V[0]
-    #define cb4[10] UNITY_MATRIX_V[1]
-    #define cb4[11] UNITY_MATRIX_V[2]
-    #define cb4[12] UNITY_MATRIX_V[3]
-
-    #define cb0[26] _ClipPlane
-    #define cb0[17].x _MaxOutlineZOffset
-    #define cb0[13].x _OutlineType
-    #define cb0[39].w _OutlineWidth
-    #define cb0[15].x OutlineCorrectionWidth
-    #define cb0[20] _OutlineWidthAdjustScales
-    #define cb0[19] _OutlineWidthAdjustZs
-    #define cb0[17].z _Scale
-
-    #define cb1[5].xyz _WorldSpaceCameraPos.xyz)
-
-    #define v0 posInput
-    #define v1 v.vertexcol
-    #define v2 normalInput
-    #define v3 v.tangent*/
-
-    /*vector<float, 4> r0, r1, r2, r3, r4; 
-    r0.x = _OutlineType == 0.000000;
-    if (r0.x != 0) {
-        o.position = vector<float, 4>(0, 0, 0, 0);
-    }
-    if (r0.x == 0) {
-        r0.xy = vector<float, 2>(0,0) != vector<float, 2>(_UseClipPlane, _ClipPlaneWorld);
-        r0.z = abs(_ClipPlane.w) < 0.00100000005;
-        r1.xyz = _ClipPlane.xyz * _ClipPlane.www;
-        r1.xyz = r0.zzz ? vector<float, 3>(0, 0, 0) : r1.xyz; // line 71
-        r2.xyzw = unity_WorldToObject[1].xyzw * r1.yyyy;
-        r2.xyzw = unity_WorldToObject[0].xyzw * r1.xxxx + r2.xyzw;
-        r1.xyzw = unity_WorldToObject[2].xyzw * r1.zzzz + r2.xyzw; // line 74
-        r1.xyzw = unity_WorldToObject[3].xyzw + r1.xyzw;
-        r1.xyz = r1.xyz / r1.www;
-        r2.xyz = unity_WorldToObject[1].xyz * _ClipPlane.yyy;
-        r2.xyz = unity_WorldToObject[0].xyz * _ClipPlane.xxx + r2.xyz;
-        r2.xyz = unity_WorldToObject[2].xyz * _ClipPlane.zzz + r2.xyz; // line 79
-        r0.z = dot(r1.xyz, r2.xyz);
-        r0.w = dot(posInput.xyz, r2.xyz);
-        r1.x = r0.w < r0.z;
-        r0.z = r0.w + -r0.z;
-        r2.xyz = -r0.zzz * r2.xyz + posInput.xyz;
-        r2.w = 0;
-        r3.xyz = posInput.xyz;
-        r3.w = 1;
-        r1.xyzw = r1.xxxx ? r2.xyzw : r3.xyzw;
-        r0.z = dot(posInput.xyz, _ClipPlane.xyz); // line 89
-        r0.w = -0.00999999978 + _ClipPlane.w;
-        r0.w = r0.z < r0.w;
-        r0.z = -_ClipPlane.w + r0.z;
-        r2.xyz = -r0.zzz * _ClipPlane.xyz + posInput.xyz;
-        r2.w = 0;
-        r2.xyzw = r0.wwww ? r2.xyzw : r3.xyzw;
-        r1.xyzw = r0.yyyy ? r1.xyzw : r2.xyzw;
-        r0.xyzw = r0.xxxx ? r1.xyzw : r3.xyzw;
-        r1.xyw = unity_ObjectToWorld[3].xyz + -_WorldSpaceCameraPos.xyz; // line 98
-        r2.x = unity_ObjectToWorld[0].x;
-        r2.y = unity_ObjectToWorld[1].x; // line 100
-        r2.z = unity_ObjectToWorld[2].x;
-        r2.w = r1.x;
-        r3.xyz = r0.xyz;
-        r3.w = posInput.w;
-        r2.x = dot(r2.xyzw, r3.xyzw); // line 105
-        r4.x = unity_ObjectToWorld[0].y;
-        r4.y = unity_ObjectToWorld[1].y;
-        r4.z = unity_ObjectToWorld[2].y;
-        r4.w = r1.y;
-        r2.y = dot(r4.xyzw, r3.xyzw); // line 110
-        r1.x = unity_ObjectToWorld[0].z;
-        r1.y = unity_ObjectToWorld[1].z;
-        r1.z = unity_ObjectToWorld[2].z;
-        r2.z = dot(r1.xyzw, r3.xyzw);
-        r1.x = unity_ObjectToWorld[0].w; // line 115
-        r1.y = unity_ObjectToWorld[1].w;
-        r1.z = unity_ObjectToWorld[2].w;
-        r1.w = unity_ObjectToWorld[3].w;
-        r2.w = dot(r1.xyzw, r3.xyzw);
-        r0.x = UNITY_MATRIX_V[0].x; // line 120
-        r0.y = UNITY_MATRIX_V[1].x;
-        r0.z = UNITY_MATRIX_V[2].x;
-        r0.x = dot(r0.xyz, r2.xyz);
-        r1.x = UNITY_MATRIX_V[0].y;
-        r1.y = UNITY_MATRIX_V[1].y; // line 125
-        r1.z = UNITY_MATRIX_V[2].y;
-        r0.y = dot(r1.xyz, r2.xyz);
-        r1.x = UNITY_MATRIX_V[0].z;
-        r1.y = UNITY_MATRIX_V[1].z;
-        r1.z = UNITY_MATRIX_V[2].z;
-        r0.z = dot(r1.xyz, r2.xyz);
-        r1.x = UNITY_MATRIX_V[0].w;
-        r1.y = UNITY_MATRIX_V[1].w;
-        r1.z = UNITY_MATRIX_V[2].w;
-        r1.w = UNITY_MATRIX_V[3].w; // line 135
-        r1.x = dot(r1.xyzw, r2.xyzw);
-        r1.y = _OutlineType == 1.000000;
-        r1.yzw = r1.yyy ? normalInput : v.tangent.xyz;
-        r2.xyz = unity_ObjectToWorld[1].xyz * r1.zzz;
-        r2.xyz = unity_ObjectToWorld[0].xyz * r1.yyy + r2.xyz;
-        r1.yzw = unity_ObjectToWorld[2].xyz * r1.www + r2.xyz;
-        r2.xy = UNITY_MATRIX_V[1].xy * r1.zz; // line 142
-        r1.yz = UNITY_MATRIX_V[0].xy * r1.yy + r2.xy;
-        r2.xy = UNITY_MATRIX_V[2].xy * r1.ww + r1.yz;
-        r2.z = 0.00999999978; // line 145
-        r1.y = dot(r2.xyz, r2.xyz);
-        r1.y = rsqrt(r1.y);
-        r1.yz = r2.xy * r1.yy;
-        r1.w = 2.41400003 / glstate_matrix_projection[1].y;
-        r2.x = r1.w * -r0.z;
-        r2.x = r2.x < _OutlineWidthAdjustZs.y;
-        r3.xy = r2.xx ? _OutlineWidthAdjustZs.xy : _OutlineWidthAdjustZs.yz;
-        r3.zw = r2.xx ? _OutlineWidthAdjustScales.xy : _OutlineWidthAdjustScales.yz;
-        r1.w = -r0.z * r1.w + -r3.x;
-        r2.xy = r3.yw + -r3.xz;
-        r2.x = max(0.00100000005, r2.x);
-        r1.w = saturate(r1.w / r2.x);
-        r1.w = r1.w * r2.y + r3.z;
-        r2.x = _OutlineWidth * OutlineCorrectionWidth;
-        r1.w = r2.x * r1.w;
-        r1.w = 100 * r1.w;
-        r1.w = _Scale * r1.w;
-        r1.w = 0.414250195 * r1.w; // line 165
-        r1.w = v.vertexcol.w * r1.w;
-        r2.x = dot(r0.xyz, r0.xyz);
-        r2.x = rsqrt(r2.x);
-        r2.xyz = r2.xxx * r0.xyz;
-        r2.xyz = (vector<float, 3>)_MaxOutlineZOffset * r2.xyz; // line 170
-        r2.xyz = (vector<float, 3>)_Scale * r2.xyz;
-        r2.w = -0.5 + v.vertexcol.z;
-        r0.xyz = r2.xyz * r2.www + r0.xyz;
-        r0.xy = r1.yz * r1.ww + r0.xy;
-        r2.xyzw = UNITY_MATRIX_P[1].xyzw * r0.yyyy; // line 174
-        r2.xyzw = UNITY_MATRIX_P[0].xyzw * r0.xxxx + r2.xyzw;
-        r2.xyzw = UNITY_MATRIX_P[2].xyzw * r0.zzzz + r2.xyzw;
-        r1.xyzw = UNITY_MATRIX_P[3].xyzw * r1.xxxx + r2.xyzw;
-        r0.x = 0 != cb0[30].y;
-        r2.xz = float2(0.5,0.5) * r1.xw;
-        r0.y = cb1[6].x * r1.y;
-        r2.w = 0.5 * r0.y;
-        r0.yz = r2.xw + r2.zz;
-
-        o.position = UnityObjectToClipPos(r1);
+    u_xlatb0.x = _OutlineType == 0.0;
+    if(!u_xlatb0.x){
+        u_xlatb0.xy = vector<float, 2>(0.0, 0.0) != vector<float, 2>(_UseClipPlane, _ClipPlaneWorld);
+        u_xlatb10 = abs(_ClipPlane.w) < 0.00100000005;
+        u_xlat1.xyz = _ClipPlane.www * _ClipPlane.xyz;
+        u_xlat1.xyz = (bool(u_xlatb10)) ? vector<float, 3>(0.0, 0.0, 0.0) : u_xlat1.xyz;
+        u_xlat2 = u_xlat1.yyyy * unity_WorldToObject[1];
+        u_xlat2 = unity_WorldToObject[0] * u_xlat1.xxxx + u_xlat2;
+        u_xlat1 = unity_WorldToObject[2] * u_xlat1.zzzz + u_xlat2;
+        u_xlat1 = u_xlat1 + unity_WorldToObject[3];
+        u_xlat1.xyz = u_xlat1.xyz / u_xlat1.www;
+        u_xlat2.xyz = _ClipPlane.yyy * unity_WorldToObject[1].xyz;
+        u_xlat2.xyz = unity_WorldToObject[0].xyz * _ClipPlane.xxx + u_xlat2.xyz;
+        u_xlat2.xyz = unity_WorldToObject[2].xyz * _ClipPlane.zzz + u_xlat2.xyz;
+        u_xlat10 = dot(u_xlat1.xyz, u_xlat2.xyz);
+        u_xlat15 = dot(posInput.xyz, u_xlat2.xyz);
+        u_xlatb1 = u_xlat15<u_xlat10;
+        u_xlat10 = (-u_xlat10) + u_xlat15;
+        u_xlat2.xyz = (-vector<float, 3>(u_xlat10, u_xlat10, u_xlat10)) * u_xlat2.xyz + posInput.xyz;
+        u_xlat2.w = 0.0;
+        u_xlat3.xyz = posInput.xyz;
+        u_xlat3.w = 1.0;
+        u_xlat1 = (bool(u_xlatb1)) ? u_xlat2 : u_xlat3;
+        u_xlat10 = dot(posInput.xyz, _ClipPlane.xyz);
+        u_xlat15 = _ClipPlane.w + -0.00999999978;
+        u_xlatb15 = u_xlat10<u_xlat15;
+        u_xlat10 = u_xlat10 + (-_ClipPlane.w);
+        u_xlat2.xyz = (-vector<float, 3>(u_xlat10, u_xlat10, u_xlat10)) * _ClipPlane.xyz + posInput.xyz;
+        u_xlat2.w = 0.0;
+        u_xlat2 = (bool(u_xlatb15)) ? u_xlat2 : u_xlat3;
+        u_xlat1 = (u_xlatb0.y) ? u_xlat1 : u_xlat2;
+        u_xlat0 = (u_xlatb0.x) ? u_xlat1 : u_xlat3;
+        u_xlat1.xyw = (-_WorldSpaceCameraPos.xyz) + unity_ObjectToWorld[3].xyz;
+        u_xlat2.x = unity_ObjectToWorld[0].x;
+        u_xlat2.y = unity_ObjectToWorld[1].x;
+        u_xlat2.z = unity_ObjectToWorld[2].x;
+        u_xlat2.w = u_xlat1.x;
+        u_xlat3.xyz = u_xlat0.xyz;
+        u_xlat3.w = posInput.w;
+        u_xlat2.x = dot(u_xlat2, u_xlat3);
+        u_xlat4.x = unity_ObjectToWorld[0].y;
+        u_xlat4.y = unity_ObjectToWorld[1].y;
+        u_xlat4.z = unity_ObjectToWorld[2].y;
+        u_xlat4.w = u_xlat1.y;
+        u_xlat2.y = dot(u_xlat4, u_xlat3);
+        u_xlat1.x = unity_ObjectToWorld[0].z;
+        u_xlat1.y = unity_ObjectToWorld[1].z;
+        u_xlat1.z = unity_ObjectToWorld[2].z;
+        u_xlat2.z = dot(u_xlat1, u_xlat3);
+        u_xlat1.x = unity_ObjectToWorld[0].w;
+        u_xlat1.y = unity_ObjectToWorld[1].w;
+        u_xlat1.z = unity_ObjectToWorld[2].w;
+        u_xlat1.w = unity_ObjectToWorld[3].w;
+        u_xlat2.w = dot(u_xlat1, u_xlat3);
+        u_xlat0.x = UNITY_MATRIX_V[0].x;
+        u_xlat0.y = UNITY_MATRIX_V[1].x;
+        u_xlat0.z = UNITY_MATRIX_V[2].x;
+        u_xlat0.x = dot(u_xlat0.xyz, u_xlat2.xyz);
+        u_xlat1.x = UNITY_MATRIX_V[0].y;
+        u_xlat1.y = UNITY_MATRIX_V[1].y;
+        u_xlat1.z = UNITY_MATRIX_V[2].y;
+        u_xlat0.y = dot(u_xlat1.xyz, u_xlat2.xyz);
+        u_xlat1.x = UNITY_MATRIX_V[0].z;
+        u_xlat1.y = UNITY_MATRIX_V[1].z;
+        u_xlat1.z = UNITY_MATRIX_V[2].z;
+        u_xlat0.z = dot(u_xlat1.xyz, u_xlat2.xyz);
+        u_xlat1.x = UNITY_MATRIX_V[0].w;
+        u_xlat1.y = UNITY_MATRIX_V[1].w;
+        u_xlat1.z = UNITY_MATRIX_V[2].w;
+        u_xlat1.w = UNITY_MATRIX_V[3].w;
+        u_xlat1.x = dot(u_xlat1, u_xlat2);
+        u_xlatb6 = _OutlineType == 1.0;
+        u_xlat6.xyz = (bool(u_xlatb6)) ? normalInput : v.tangent.xyz;
+        u_xlat2.xyz = u_xlat6.yyy * unity_ObjectToWorld[1].xyz;
+        u_xlat2.xyz = unity_ObjectToWorld[0].xyz * u_xlat6.xxx + u_xlat2.xyz;
+        u_xlat6.xyz = unity_ObjectToWorld[2].xyz * u_xlat6.zzz + u_xlat2.xyz;
+        u_xlat2.xy = u_xlat6.yy * UNITY_MATRIX_V[1].xy;
+        u_xlat6.xy = UNITY_MATRIX_V[0].xy * u_xlat6.xx + u_xlat2.xy;
+        u_xlat2.xy = UNITY_MATRIX_V[2].xy * u_xlat6.zz + u_xlat6.xy;
+        u_xlat2.z = 0.00999999978;
+        u_xlat6.x = dot(u_xlat2.xyz, u_xlat2.xyz);
+        u_xlat6.x = rsqrt(u_xlat6.x);
+        u_xlat6.xy = u_xlat6.xx * u_xlat2.xy;
+        u_xlat16 = 2.41400003 / unity_CameraProjection[1].y;
+        u_xlat2.x = (-u_xlat0.z) * u_xlat16;
+        u_xlatb2 = u_xlat2.x < _OutlineWidthAdjustZs.y;
+        u_xlat3.xy = (bool(u_xlatb2)) ? _OutlineWidthAdjustZs.xy : _OutlineWidthAdjustZs.yz;
+        u_xlat3.zw = (bool(u_xlatb2)) ? _OutlineWidthAdjustScales.xy : _OutlineWidthAdjustScales.yz;
+        u_xlat16 = (-u_xlat0.z) * u_xlat16 + (-u_xlat3.x);
+        u_xlat2.xy = (-u_xlat3.xz) + u_xlat3.yw;
+        u_xlat2.x = max(u_xlat2.x, 0.00100000005);
+        u_xlat16 = u_xlat16 / u_xlat2.x;
+        u_xlat16 = clamp(u_xlat16, 0.0, 1.0);
+        u_xlat16 = u_xlat16 * u_xlat2.y + u_xlat3.z;
+        u_xlat2.x = _OutlineWidth * _OutlineCorrectionWidth;
+        u_xlat16 = u_xlat16 * u_xlat2.x;
+        u_xlat16 = u_xlat16 * 100.0;
+        u_xlat16 = u_xlat16 * _Scale;
+        u_xlat16 = u_xlat16 * 0.414250195;
+        u_xlat16 = u_xlat16 * v.vertexcol.w;
+        u_xlat2.x = dot(u_xlat0.xyz, u_xlat0.xyz);
+        u_xlat2.x = rsqrt(u_xlat2.x);
+        u_xlat2.xyz = u_xlat0.xyz * u_xlat2.xxx;
+        u_xlat2.xyz = u_xlat2.xyz * (vector<float, 3>)_MaxOutlineZOffset;
+        u_xlat2.xyz = u_xlat2.xyz * (vector<float, 3>)_Scale;
+        u_xlat17 = v.vertexcol.z + -0.5;
+        u_xlat0.xyz = u_xlat2.xyz * (vector<float, 3>)u_xlat17 + u_xlat0.xyz;
+        u_xlat0.xy = u_xlat6.xy * (vector<float, 2>)u_xlat16 + u_xlat0.xy;
+        u_xlat2 = u_xlat0.yyyy * UNITY_MATRIX_P[1];
+        u_xlat2 = UNITY_MATRIX_P[0] * u_xlat0.xxxx + u_xlat2;
+        u_xlat2 = UNITY_MATRIX_P[2] * u_xlat0.zzzz + u_xlat2;
+        u_xlat1 = UNITY_MATRIX_P[3] * u_xlat1.xxxx + u_xlat2;
+        
+        o.position = UnityObjectToClipPos(u_xlat1);
     }*/
 
 
@@ -315,6 +294,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);
 
+    //return vector<fixed, 4>(i.TtoW0, 1);
     return globalOutlineColor;
 
     /* END OF COLOR CREATION */

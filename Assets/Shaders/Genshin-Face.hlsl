@@ -16,7 +16,6 @@ vector<float, 4> _headRightVector;
 float _flipFaceLighting;
 float _MaterialID;
 float _DayOrNight;
-float _ToggleTonemapper;
 float _RimLightType;
 float _RimLightIntensity;
 float _RimLightThickness;

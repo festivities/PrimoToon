@@ -17,7 +17,6 @@ UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
 float _DayOrNight;
 float _EnvironmentLightingStrength;
-float _ToggleTonemapper;
 float _RimLightType;
 float _RimLightIntensity;
 float _RimLightThickness;
@@ -33,8 +32,10 @@ float _PulseSpeed;
 float _PulseMinStrength;
 float _PulseMaxStrength;
 
+float _BumpScale;
 float _LightArea;
 float _ShadowRampWidth;
+float _UseBackFaceUV2;
 float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
@@ -106,8 +107,8 @@ vsOut vert(vsIn v){
 
 // fragment
 vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
-    // if frontFacing == 1, use uv.xy, else uv.zw
-    vector<half, 2> newUVs = (frontFacing) ? i.uv.xy : i.uv.zw;
+    // if frontFacing == 1 or _UseBackFaceUV2 == 0, use uv.xy, else uv.zw
+    vector<half, 2> newUVs = (frontFacing || !_UseBackFaceUV2) ? i.uv.xy : i.uv.zw;
 
     // sample textures to objects
     vector<fixed, 4> lightmap = _LightmapTex.Sample(sampler_LightmapTex, newUVs);
@@ -121,6 +122,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // https://docs.cryengine.com/display/SDKDOC4/Tangent+Space+Normal+Mapping
     modifiedNormalMap.z = sqrt(1 - (modifiedNormalMap.x * modifiedNormalMap.x + modifiedNormalMap.y * 
                           modifiedNormalMap.y));
+    // option for controlling normal map strength
+    modifiedNormalMap = lerp(vector<half, 3>(0.5, 0.5, 1) * 2 - 1, modifiedNormalMap, _BumpScale);
 
     // convert to world space
     vector<half, 3> modifiedNormals;

@@ -9,7 +9,6 @@
 
         [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
         _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
-        [Toggle] _ToggleTonemapper ("Toggle Enhancement Tonemapper? *DISABLES BLOOM*", Range(0.0, 1.0)) = 0.0
         [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
@@ -27,8 +26,10 @@
         _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
         _PulseMaxStrength ("Maximum Pulse Strength", Range(0.0, 1.0)) = 1.0
 
-        [Header(Diffuse or Lighting Options)] [Space(10)] _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
+        [Header(Diffuse or Lighting Options)] [Space(10)] _BumpScale ("Bump Scale", Range(0.0, 1.0)) = 1.0
+        _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
+        [Toggle] _UseBackFaceUV2 ("Use second UV for backfaces?", Float) = 1.0
         [Toggle] _UseMaterial2 ("Toggle Material 2", Float) = 1.0
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
@@ -59,20 +60,20 @@
         [Gamma] _MTShadowMultiColor ("Metallic Matcap Shadow Multiply Color", Color) = (0.78, 0.77, 0.82, 1.0)
         [Gamma] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
-        [Header(Outline Options)] [Space(10)] [Toggle] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0
-        _MaxOutlineZOffset ("Z-Offset", Float) = 1.0
+        [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Z-Offset", Float) = 1.0
+        [Toggle] [HideInInspector] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0
         [KeywordEnum(None, Normal, Tangent)] _OutlineType ("Outline Type", Float) = 1.0
         _OutlineWidth ("Outline Width", Float) = 0.03
-        _Scale ("Outline Scale", Float) = 0.001
-        [Toggle] _UseClipPlane ("Use Clip Plane?", Range(0.0, 1.0)) = 0.0
-        _ClipPlane ("Clip Plane", Vector) = (0.0, 0.0, 0.0, 0.0)
+        [HideInInspector] _Scale ("Outline Scale", Float) = 0.001
+        [Toggle] [HideInInspector] _UseClipPlane ("Use Clip Plane?", Range(0.0, 1.0)) = 0.0
+        [HideInInspector] _ClipPlane ("Clip Plane", Vector) = (0.0, 0.0, 0.0, 0.0)
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor2 ("Outline Color 2", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor3 ("Outline Color 3", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor4 ("Outline Color 4", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor5 ("Outline Color 5", Color) = (0.0, 0.0, 0.0, 1.0)
-        _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
-        _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
+        [HideInInspector] _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
+        [HideInInspector] _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
 
         [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
