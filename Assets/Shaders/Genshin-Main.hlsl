@@ -59,6 +59,7 @@ float _MTShininess;
 float _MTSpecularAttenInShadow;
 float _MTSpecularScale;
 float _MTUseSpecularRamp;
+float _MetalMaterial;
 vector<float, 4> _MTMapDarkColor;
 vector<float, 4> _MTMapLightColor;
 vector<float, 4> _MTShadowMultiColor;
@@ -202,6 +203,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
 
     /* METALLIC */
+
+    // create metal factor to be used later
+    half metalFactor = (lightmap.r > 0.9) * _MetalMaterial;
 
     // multiply world space normals with view matrix
     vector<half, 3> viewNormal = mul(UNITY_MATRIX_V, modifiedNormals);
@@ -365,11 +369,11 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // apply diffuse ramp
     vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
 
-    // apply metallic only to anything above 0.9 of lightmap.r
-    finalColor = (lightmap.r > 0.9) ? finalColor * metal : finalColor;
+    // apply metallic only to anything metalFactor encompasses
+    finalColor = (metalFactor) ? finalColor * metal : finalColor;
 
-    // add specular to finalColor if lightmap.r is less than 0.9, else add metallic specular
-    finalColor = (lightmap.r > 0.9) ? finalColor + metalSpecular : finalColor + specular;
+    // add specular to finalColor if metalFactor is evaluated as true, else add metallic specular
+    finalColor = (metalFactor) ? finalColor + metalSpecular : finalColor + specular;
 
     // apply environment lighting
     finalColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);

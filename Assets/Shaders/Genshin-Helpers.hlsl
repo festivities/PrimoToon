@@ -55,14 +55,14 @@ vector<fixed, 4> calculateEnvLighting(vector<float, 3> vertexWSInput){
     //environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(0, 0, 0, 1)), 1));
     environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9Alternative, 1));
 
-	return environmentLighting;
+    return environmentLighting;
 }
 
 // rim light function
 vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vector<float, 4> screenPosInput, 
-								  const float RimLightIntensityInput, const float RimLightThicknessInput, 
-								  const float factor){
-	// basically view-space normals, except we cannot use the normal map so get mesh's raw normals
+                                  const float RimLightIntensityInput, const float RimLightThicknessInput, 
+                                  const float factor){
+    // basically view-space normals, except we cannot use the normal map so get mesh's raw normals
     vector<half, 3> rimNormals = UnityObjectToWorldNormal(normalInput);
     rimNormals = mul(UNITY_MATRIX_V, rimNormals);
 
@@ -90,7 +90,7 @@ vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vect
     rimLight *= saturate(lerp(1, 0, linearDepth - 8));
     rimLight = rimLight * max(factor * 0.2, 0.05) * RimLightIntensityInput;
 
-	return rimLight;
+    return rimLight;
 }
 
 /* https://github.com/penandlim/JL-s-Unity-Blend-Modes/blob/master/John%20Lim's%20Blend%20Modes/CGIncludes/PhotoshopBlendModes.cginc */
