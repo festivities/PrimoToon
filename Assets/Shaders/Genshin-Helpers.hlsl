@@ -74,7 +74,8 @@ vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vect
     linearDepth = LinearEyeDepth(linearDepth);
 
     // now we modify screenPos to offset another sampled depth texture
-    screenPos = screenPos + (rimNormals.x * (0.002 + ((RimLightThicknessInput - 1) * 0.001)));
+    screenPos = screenPos + (rimNormals.x * (0.00125 * max(_ScreenParams.x * 
+                0.00025, 1) + ((RimLightThicknessInput - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
     // sample depth texture again to another object with modified screenPos
@@ -88,7 +89,7 @@ vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vect
     half rimLight = saturate(smoothstep(0, 1, depthDiff));
     // creative freedom from here on
     rimLight *= saturate(lerp(1, 0, linearDepth - 8));
-    rimLight = rimLight * max(factor * 0.2, 0.05) * RimLightIntensityInput;
+    rimLight = rimLight * max(factor * 0.2, 0.1) * RimLightIntensityInput;
 
     return rimLight;
 }

@@ -35,12 +35,33 @@ float _PulseMaxStrength;
 float _BumpScale;
 float _LightArea;
 float _ShadowRampWidth;
+float _ShadowTransitionRange;
+float _ShadowTransitionRange2;
+float _ShadowTransitionRange3;
+float _ShadowTransitionRange4;
+float _ShadowTransitionRange5;
+float _ShadowTransitionSoftness;
+float _ShadowTransitionSoftness2;
+float _ShadowTransitionSoftness3;
+float _ShadowTransitionSoftness4;
+float _ShadowTransitionSoftness5;
 float _UseBackFaceUV2;
+float _UseBumpMap;
 float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
 float _UseShadowRamp;
+vector<float, 4> _CoolShadowMultColor;
+vector<float, 4> _CoolShadowMultColor2;
+vector<float, 4> _CoolShadowMultColor3;
+vector<float, 4> _CoolShadowMultColor4;
+vector<float, 4> _CoolShadowMultColor5;
+vector<float, 4> _FirstShadowMultColor;
+vector<float, 4> _FirstShadowMultColor2;
+vector<float, 4> _FirstShadowMultColor3;
+vector<float, 4> _FirstShadowMultColor4;
+vector<float, 4> _FirstShadowMultColor5;
 
 float _Shininess;
 float _Shininess2;
@@ -90,14 +111,6 @@ vsOut vert(vsIn v){
     o.screenPos = ComputeScreenPos(o.position);
     o.vertexcol = v.vertexcol;
 
-    vector<float, 3> worldspaceTangent = UnityObjectToWorldDir(v.tangent.xyz);
-    vector<float, 3> worldspaceNormals = UnityObjectToWorldNormal(v.normal);
-    vector<float, 3> worldspaceBinormals = cross(worldspaceNormals, worldspaceTangent) * v.tangent.w;
-
-    o.TtoW0 = vector<float, 3>(worldspaceTangent.x, worldspaceBinormals.x, worldspaceNormals.x);
-    o.TtoW1 = vector<float, 3>(worldspaceTangent.y, worldspaceBinormals.y, worldspaceNormals.y);
-    o.TtoW2 = vector<float, 3>(worldspaceTangent.z, worldspaceBinormals.z, worldspaceNormals.z);
-
     UNITY_TRANSFER_FOG(o, o.position);
 
     return o;
@@ -117,19 +130,47 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* NORMAL CREATION */
 
-    vector<fixed, 3> modifiedNormalMap;
-    modifiedNormalMap.xy = _NormalTex.Sample(sampler_NormalTex, newUVs).xy * 2 - 1;
-    // https://docs.cryengine.com/display/SDKDOC4/Tangent+Space+Normal+Mapping
-    modifiedNormalMap.z = sqrt(1 - (modifiedNormalMap.x * modifiedNormalMap.x + modifiedNormalMap.y * 
-                          modifiedNormalMap.y));
-    // option for controlling normal map strength
-    modifiedNormalMap = lerp(vector<half, 3>(0.5, 0.5, 1) * 2 - 1, modifiedNormalMap, _BumpScale);
+    vector<half, 3> normalCreationBuffer;
 
-    // convert to world space
-    vector<half, 3> modifiedNormals;
-    modifiedNormals.x = dot(i.TtoW0, modifiedNormalMap);
-    modifiedNormals.y = dot(i.TtoW1, modifiedNormalMap);
-    modifiedNormals.z = dot(i.TtoW2, modifiedNormalMap);
+    vector<fixed, 4> modifiedNormalMap;
+    modifiedNormalMap.xyz = _NormalTex.Sample(sampler_NormalTex, newUVs).xyz;
+    normalCreationBuffer.xy = modifiedNormalMap.xy * 2 - 1;
+    normalCreationBuffer.z = max((-_BumpScale + 1), 0.001);
+    modifiedNormalMap.xyw = normalCreationBuffer * rsqrt(dot(normalCreationBuffer, normalCreationBuffer));
+
+    /* because miHoYo stores outline directions in the tangents of the mesh,
+    // they cannot be used for normal and bump mapping. because of this, we can just recalculate
+    // for them with ddx() and ddy(), don't ask me how they work - I don't know as well kekw */ 
+    vector<half, 3> dpdx = ddx(i.vertexWS);
+    vector<half, 3> dpdy = ddy(i.vertexWS);
+    vector<half, 3> dhdx; dhdx.xy = ddx(newUVs);
+    vector<half, 3> dhdy; dhdy.xy = ddy(newUVs);
+
+    // modify normals
+    dhdy.z = -dhdx.y; dhdx.z = dhdy.x;
+    normalCreationBuffer = dot(dhdx.xz, dhdy.yz);
+    vector<half, 3> recalcTangent = -(0 < normalCreationBuffer) + (normalCreationBuffer < 0);
+    dhdx.xy = vector<half, 2>(recalcTangent.xy) * dhdy.yz;
+    dpdy *= dhdx.y;
+    dpdx = dpdx * dhdx.x + dpdy;
+    normalCreationBuffer = rsqrt(dot(dpdx, dpdx));
+    dpdx *= normalCreationBuffer;
+    normalCreationBuffer = (frontFacing != 0) ? UnityObjectToWorldNormal(i.normal) : 
+                                                -UnityObjectToWorldNormal(i.normal);
+    dpdy = normalCreationBuffer.zxy * dpdx.yzx;
+    dpdy = normalCreationBuffer.yzx * dpdx.zxy - dpdy.xyz;
+    dpdy *= -recalcTangent;
+    dpdy *= modifiedNormalMap.y;
+    dpdx = modifiedNormalMap.x * dpdx + dpdy;
+    modifiedNormalMap.xyw = modifiedNormalMap.www * normalCreationBuffer + dpdx;
+    recalcTangent = rsqrt(dot(modifiedNormalMap.xyw, modifiedNormalMap.xyw));
+    modifiedNormalMap.xyw *= recalcTangent;
+    normalCreationBuffer = (0.99 >= modifiedNormalMap.w) ? modifiedNormalMap.xyw : normalCreationBuffer;
+
+    // hope you understood any of that KEKW, finally switch between normal map and raw normals
+    vector<half, 3> rawNormals = (frontFacing != 0) ? UnityObjectToWorldNormal(i.normal) : 
+                                                      -UnityObjectToWorldNormal(i.normal);
+    vector<half, 3> modifiedNormals = (_UseBumpMap != 0) ? normalCreationBuffer : rawNormals;
 
     /* END OF NORMAL CREATION */
 
@@ -144,26 +185,12 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // NdotV
     vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos.xyz - i.vertexWS);
     half NdotV = dot(modifiedNormals, viewDir);
+    NdotV = NdotV * 0.5 + 0.5;
 
     // NdotH
     vector<half, 3> halfVector = normalize(viewDir + _WorldSpaceLightPos0);
     half NdotH = dot(modifiedNormals, halfVector);
-
-    // calculate shadow ramp width from _ShadowRampWidth and i.vertexcol.g
-    half ShadowRampWidthCalc = i.vertexcol.g * 2.0 * _ShadowRampWidth;
-
-    // create ambient occlusion from lightmap.g
-    half occlusion = lightmap.g * i.vertexcol.r;
-    occlusion = smoothstep(0.01, 0.4, occlusion);
-
-    // apply occlusion
-    NdotL = lerp(0, NdotL, saturate(occlusion));
-    // NdotL_buf will be used as a sharp factor
-    half NdotL_buf = NdotL;
-    half NdotL_sharpFactor = NdotL_buf < _LightArea;
-
-    // add options for controlling shadow ramp width and shadow push
-    NdotL = 1 - ((((_LightArea - NdotL) / _LightArea) / ShadowRampWidthCalc));
+    NdotH = NdotH * 0.5 + 0.5;
 
     /* END OF DOT CREATION */
 
@@ -191,16 +218,107 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* SHADOW RAMP CREATION */
 
-    vector<half, 2> ShadowRampDayUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05);
-    vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
+    vector<fixed, 4> ShadowFinal;
+    half NdotL_Factor;
 
-    vector<half, 2> ShadowRampNightUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05 + 0.5);
-    vector<fixed, 4> ShadowRampNight = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampNightUVs);
+    // create ambient occlusion from lightmap.g
+    half occlusion = lightmap.g * i.vertexcol.r;
 
-    vector<fixed, 4> ShadowRampFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
+    // switch between the shadow ramp and custom shadow colors
+    if(_UseShadowRamp != 0){
 
-    // switch between 1 and ramp edge like how the game does it, also make eyes always lit
-    ShadowRampFinal = (NdotL_sharpFactor && lightmap.g < 0.95) ? ShadowRampFinal : 1;
+        // calculate shadow ramp width from _ShadowRampWidth and i.vertexcol.g
+        half ShadowRampWidthCalc = i.vertexcol.g * 2.0 * _ShadowRampWidth;
+
+        // apply occlusion
+        occlusion = smoothstep(0.01, 0.4, occlusion);
+        NdotL = lerp(0, NdotL, saturate(occlusion));
+        // NdotL_buf will be used as a sharp factor
+        half NdotL_buf = NdotL;
+        NdotL_Factor = NdotL_buf < _LightArea;
+
+        // add options for controlling shadow ramp width and shadow push
+        NdotL = 1 - ((((_LightArea - NdotL) / _LightArea) / ShadowRampWidthCalc));
+
+        vector<half, 2> ShadowRampDayUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05);
+        vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
+
+        vector<half, 2> ShadowRampNightUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05 + 0.5);
+        vector<fixed, 4> ShadowRampNight = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampNightUVs);
+
+        ShadowFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
+
+        // switch between 1 and ramp edge like how the game does it, also make eyes always lit
+        ShadowFinal = (NdotL_Factor && lightmap.g < 0.95) ? ShadowFinal : 1;
+    }
+    else{
+        // apply occlusion
+        NdotL = (NdotL + occlusion) * 0.5;
+        NdotL = (occlusion > 0.95) ? 1.0 : NdotL;
+        NdotL = (occlusion < 0.05) ? 0.0 : NdotL;
+
+        // combine all the _ShadowTransitionRange, _ShadowTransitionSoftness, _CoolShadowMultColor and
+        // _FirstShadowMultColor parameters into one object
+        half globalShadowTransitionRange = _ShadowTransitionRange;
+        half globalShadowTransitionSoftness = _ShadowTransitionSoftness;
+        vector<fixed, 4> globalCoolShadowMultColor = _CoolShadowMultColor;
+        vector<fixed, 4> globalFirstShadowMultColor = _FirstShadowMultColor;
+
+        if(NdotL < _LightArea){
+            if(materialID == 2){
+                globalShadowTransitionRange = _ShadowTransitionRange2;
+                globalShadowTransitionSoftness = _ShadowTransitionSoftness2;
+                globalCoolShadowMultColor = _CoolShadowMultColor2;
+                globalFirstShadowMultColor = _FirstShadowMultColor2;
+            }
+            else if(materialID == 3){
+                globalShadowTransitionRange = _ShadowTransitionRange3;
+                globalShadowTransitionSoftness = _ShadowTransitionSoftness3;
+                globalCoolShadowMultColor = _CoolShadowMultColor3;
+                globalFirstShadowMultColor = _FirstShadowMultColor3;
+            }
+            else if(materialID == 4){
+                globalShadowTransitionRange = _ShadowTransitionRange4;
+                globalShadowTransitionSoftness = _ShadowTransitionSoftness4;
+                globalCoolShadowMultColor = _CoolShadowMultColor4;
+                globalFirstShadowMultColor = _FirstShadowMultColor4;
+            }
+            else if(materialID == 5){
+                globalShadowTransitionRange = _ShadowTransitionRange5;
+                globalShadowTransitionSoftness = _ShadowTransitionSoftness5;
+                globalCoolShadowMultColor = _CoolShadowMultColor5;
+                globalFirstShadowMultColor = _FirstShadowMultColor5;
+            }
+
+            // apply params, form the final light direction
+            half buffer1 = NdotL < _LightArea;
+            NdotL = -NdotL + _LightArea;
+            NdotL /= globalShadowTransitionRange;
+            half buffer2 = NdotL >= 1.0;
+            NdotL += 0.01;
+            NdotL = log2(NdotL);
+            NdotL *= globalShadowTransitionSoftness;
+            NdotL = exp2(NdotL);
+            NdotL = min(NdotL, 1.0);
+            NdotL = (buffer2) ? 1.0 : NdotL;
+            NdotL = (buffer1) ? NdotL : 1.0;
+        }
+        else{
+            NdotL = 0.0;
+        }
+
+        // final NdotL will also be NdotL_Factor
+        NdotL_Factor = NdotL;
+
+        // apply color
+        vector<fixed, 4> ShadowDay = NdotL * globalFirstShadowMultColor;
+        vector<fixed, 4> ShadowNight = NdotL * globalCoolShadowMultColor;
+
+        ShadowFinal = lerp(ShadowDay, ShadowNight, _DayOrNight);
+
+        // switch between 1 and ramp edge like how the game does it, also make eyes always lit
+        ShadowFinal = lerp(1, ShadowFinal, NdotL_Factor);
+    }
 
     /* END OF SHADOW RAMP CREATION */
 
@@ -230,7 +348,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     metal = lerp(_MTMapDarkColor, _MTMapLightColor, metal);
 
     // apply _MTShadowMultiColor ONLY to shaded areas
-    metal = (NdotL_sharpFactor) ? metal * _MTShadowMultiColor : metal;
+    metal = (NdotL_Factor) ? metal * _MTShadowMultiColor : metal;
 
     /* END OF METALLIC */
 
@@ -251,7 +369,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // apply _MTSpecularColor
     metalSpecular *= _MTSpecularColor;
     // apply _MTSpecularAttenInShadow ONLY to shaded areas
-    metalSpecular = saturate((NdotL_sharpFactor) ? metalSpecular * _MTSpecularAttenInShadow : metalSpecular);
+    metalSpecular = saturate((NdotL_Factor) ? metalSpecular * _MTSpecularAttenInShadow : metalSpecular);
 
     /* END OF METALLIC SPECULAR */
 
@@ -292,7 +410,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* RIM LIGHT CREATION */
 
     half rimLight = calculateRimLight(i.normal, i.screenPos, _RimLightIntensity, 
-                                      _RimLightThickness, 1 - NdotL_sharpFactor);
+                                      _RimLightThickness, 1 - NdotL_Factor);
 
     /* END OF RIM LIGHT */
 
@@ -370,7 +488,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
+    vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowFinal;
 
     // apply metallic only to anything metalFactor encompasses
     finalColor = (metalFactor) ? finalColor * metal : finalColor;

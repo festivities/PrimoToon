@@ -22,7 +22,9 @@
 
         [Header(Diffuse or Lighting Options)] [Space(10)] _FaceMapSoftness ("Face Lighting Softness", Range(0.0, 1.0)) = 0.001
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
-        [Toggle] _UseShadowRampTex ("Use Shadow Ramp Texture?", Float) = 1.0
+        [Toggle] _UseShadowRamp ("Use Shadow Ramp Texture?", Float) = 1.0
+        [Gamma] _CoolShadowMultColor ("Nighttime Shadow Color", Color) = (0.9, 0.7, 0.75, 1)
+        [Gamma] _FirstShadowMultColor ("Daytime Shadow Color", Color) = (0.9, 0.7, 0.75, 1)
 
         [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Z-Offset", Float) = 1.0
         [Toggle] [HideInInspector] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0

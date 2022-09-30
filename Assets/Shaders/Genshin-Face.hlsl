@@ -25,7 +25,9 @@ vector<float, 4> _FaceBlushColor;
 
 float _FaceMapSoftness;
 float _LightArea;
-float _UseShadowRampTex;
+float _UseShadowRamp;
+vector<float, 4> _CoolShadowMultColor;
+vector<float, 4> _FirstShadowMultColor;
 
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
@@ -102,16 +104,26 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
 
     /* SHADOW RAMP CREATION */
 
-    vector<half, 2> ShadowRampDayUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05);
-    vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
+    vector<fixed, 4> ShadowFinal;
 
-    vector<half, 2> ShadowRampNightUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05 + 0.5);
-    vector<fixed, 4> ShadowRampNight = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampNightUVs);
+    if(_UseShadowRamp != 0){
+        vector<half, 2> ShadowRampDayUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05);
+        vector<fixed, 4> ShadowRampDay = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampDayUVs);
 
-    vector<fixed, 4> ShadowRampFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
+        vector<half, 2> ShadowRampNightUVs = vector<float, 2>(faceFactor, (((6 - _MaterialID) - 1) * 0.1) + 0.05 + 0.5);
+        vector<fixed, 4> ShadowRampNight = _ShadowRampTex.Sample(sampler_ShadowRampTex, ShadowRampNightUVs);
+
+        ShadowFinal = lerp(ShadowRampNight, ShadowRampDay, _DayOrNight);
+    }
+    else{
+        vector<fixed, 4> ShadowDay = _FirstShadowMultColor;
+        vector<fixed, 4> ShadowNight = _CoolShadowMultColor;
+
+        ShadowFinal = lerp(ShadowDay, ShadowNight, _DayOrNight);
+    }
 
     // make lit areas 1
-    ShadowRampFinal = lerp(ShadowRampFinal, 1, faceFactor);
+    ShadowFinal = lerp(ShadowFinal, 1, faceFactor);
 
     /* END OF SHADOW RAMP CREATION */
 
@@ -147,7 +159,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     /* COLOR CREATION */
 
     // apply diffuse ramp
-    vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowRampFinal;
+    vector<fixed, 4> finalColor = vector<fixed, 4>(diffuse.xyz, 1) * ShadowFinal;
 
     // apply face blush
     finalColor *= lerp(1, lerp(1, _FaceBlushColor, diffuse.w), _FaceBlushStrength);

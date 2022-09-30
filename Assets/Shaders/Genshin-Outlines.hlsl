@@ -215,8 +215,6 @@ vsOut vert(vsIn v){
 
         // finally, convert calcOutlines to clip space
         o.position = UnityObjectToClipPos(calcOutline);
-
-        o.TtoW0 = distOutline; // placeholder for debugging distance
     }
     else{
         o.position = vector<float, 4>(0, 0, 0, 0);
