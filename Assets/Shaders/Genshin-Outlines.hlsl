@@ -36,7 +36,7 @@ vector<float, 4> _OutlineWidthAdjustZs; // cb0[19]
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
-    o.position = UnityObjectToClipPos(v.vertex);
+    o.pos = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld, v0
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
@@ -178,7 +178,7 @@ vsOut vert(vsIn v){
         u_xlat2 = UNITY_MATRIX_P[2] * u_xlat0.zzzz + u_xlat2;
         u_xlat1 = UNITY_MATRIX_P[3] * u_xlat1.xxxx + u_xlat2;
         
-        o.position = UnityObjectToClipPos(u_xlat1);
+        o.pos = UnityObjectToClipPos(u_xlat1);
     }*/
 
 
@@ -214,13 +214,13 @@ vsOut vert(vsIn v){
         calcOutline += v.vertex;
 
         // finally, convert calcOutlines to clip space
-        o.position = UnityObjectToClipPos(calcOutline);
+        o.pos = UnityObjectToClipPos(calcOutline);
     }
     else{
-        o.position = vector<float, 4>(0, 0, 0, 0);
+        o.pos = vector<float, 4>(0, 0, 0, 0);
     }
     
-    UNITY_TRANSFER_FOG(o, o.position);
+    UNITY_TRANSFER_FOG(o, o.pos);
 
     return o;
 }

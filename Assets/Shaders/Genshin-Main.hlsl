@@ -102,16 +102,16 @@ float _ReturnEmissionFactor;
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
-    o.position = UnityObjectToClipPos(v.vertex);
+    o.pos = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
     o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
     o.normal = v.normal;
-    o.screenPos = ComputeScreenPos(o.position);
+    o.screenPos = ComputeScreenPos(o.pos);
     o.vertexcol = v.vertexcol;
 
-    UNITY_TRANSFER_FOG(o, o.position);
+    UNITY_TRANSFER_FOG(o, o.pos)
 
     return o;
 }
@@ -343,7 +343,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // sample matcap texture with newly created UVs
     vector<fixed, 4> metal = _MetalMapTex.Sample(sampler_MetalMapTex, matcapUVs);
-    metal *= _MTMapBrightness;
+    // prevent metallic matcap from glowing
+    metal = saturate(metal * _MTMapBrightness);
     metal = lerp(_MTMapDarkColor, _MTMapLightColor, metal);
 
     // apply _MTShadowMultiColor ONLY to shaded areas

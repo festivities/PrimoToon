@@ -43,15 +43,15 @@ float _ReturnRightVector;
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
-    o.position = UnityObjectToClipPos(v.vertex);
+    o.pos = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
     o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.normal = v.normal;
-    o.screenPos = ComputeScreenPos(o.position);
+    o.screenPos = ComputeScreenPos(o.pos);
     o.vertexcol = v.vertexcol;
 
-    UNITY_TRANSFER_FOG(o, o.position);
+    UNITY_TRANSFER_FOG(o, o.pos);
 
     return o;
 }
