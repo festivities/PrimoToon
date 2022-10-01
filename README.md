@@ -25,9 +25,9 @@ All ramp textures should have *Wrap Mode* changed from Repeat to **Clamp**. The 
 
 All lightmaps, normal maps, and the face shadow texture should have their *sRGB (Color Texture)* property **unticked**. Keep in mind with what I've said earlier, the normal map should have the *Texture Type* set to **Default**. **IGNORE THE NORMAL MAP TEXTURE TYPE!**
 
-Unity projects in the Built-in Rendering Pipeline default to the Gamma option for color management. This is **not** what Genshin Impact uses. To avoid color inaccuracy, make sure that the *Color Space* to set to **Linear** in the [*Project Settings*](https://docs.unity3d.com/Manual/LinearRendering-LinearOrGammaWorkflow.html).
+Unity projects in the Built-in Rendering Pipeline default to the Gamma option for color management. This is **not** what Genshin Impact uses. To avoid color inaccuracy, make sure that the *Color Space* is set to **Linear** in the [*Project Settings*](https://docs.unity3d.com/Manual/LinearRendering-LinearOrGammaWorkflow.html).
 
-Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace.
+Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure that the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace.
 
 ## Contact / Issues
 - [Discord server](https://discord.gg/85rP9SpAkF)

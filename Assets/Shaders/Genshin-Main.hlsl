@@ -187,10 +187,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     half NdotV = dot(modifiedNormals, viewDir);
     NdotV = NdotV * 0.5 + 0.5;
 
-    // NdotH
+    // NdotH, for some reason they don't remap ranges for the specular
     vector<half, 3> halfVector = normalize(viewDir + _WorldSpaceLightPos0);
     half NdotH = dot(modifiedNormals, halfVector);
-    NdotH = NdotH * 0.5 + 0.5;
 
     /* END OF DOT CREATION */
 
