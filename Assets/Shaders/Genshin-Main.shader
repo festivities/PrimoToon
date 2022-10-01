@@ -26,7 +26,7 @@
         _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
         _PulseMaxStrength ("Maximum Pulse Strength", Range(0.0, 1.0)) = 1.0
 
-        [Header(Diffuse or Lighting Options)] [Space(10)] _BumpScale ("Bump Scale", Range(0.0, 0.8)) = 0.4
+        [Header(Diffuse or Lighting Options)] [Space(10)] _BumpScale ("Bump Scale", Range(0.0, 1.0)) = 0.2
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
         _ShadowTransitionRange ("Shadow Transition Range 1", Range(0.0, 1.0)) = 0.01

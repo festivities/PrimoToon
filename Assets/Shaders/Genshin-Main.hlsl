@@ -135,7 +135,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<fixed, 4> modifiedNormalMap;
     modifiedNormalMap.xyz = _NormalTex.Sample(sampler_NormalTex, newUVs).xyz;
     normalCreationBuffer.xy = modifiedNormalMap.xy * 2 - 1;
-    normalCreationBuffer.z = max((-_BumpScale + 1), 0.001);
+    normalCreationBuffer.z = max(1 - min(_BumpScale, 0.95), 0.001);
     modifiedNormalMap.xyw = normalCreationBuffer * rsqrt(dot(normalCreationBuffer, normalCreationBuffer));
 
     /* because miHoYo stores outline directions in the tangents of the mesh,
