@@ -81,11 +81,11 @@
         [Gamma] _MTShadowMultiColor ("Metallic Matcap Shadow Multiply Color", Color) = (0.78, 0.77, 0.82, 1.0)
         [Gamma] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
-        [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Z-Offset", Float) = 1.0
+        [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Max Z-Offset", Float) = 1.0
         [Toggle] [HideInInspector] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0
         [KeywordEnum(None, Normal, Tangent)] _OutlineType ("Outline Type", Float) = 1.0
         _OutlineWidth ("Outline Width", Float) = 0.03
-        [HideInInspector] _Scale ("Outline Scale", Float) = 0.001
+        _Scale ("Outline Scale", Float) = 0.01
         [Toggle] [HideInInspector] _UseClipPlane ("Use Clip Plane?", Range(0.0, 1.0)) = 0.0
         [HideInInspector] _ClipPlane ("Clip Plane", Vector) = (0.0, 0.0, 0.0, 0.0)
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
@@ -93,8 +93,15 @@
         [Gamma] _OutlineColor3 ("Outline Color 3", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor4 ("Outline Color 4", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor5 ("Outline Color 5", Color) = (0.0, 0.0, 0.0, 1.0)
-        [HideInInspector] _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
-        [HideInInspector] _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
+        _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
+        _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
+
+        [Header(Dither Options)] [Space(10)] [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
+        [HideInInspector] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
+        [HideInInspector] _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
+        [Toggle][HideInInspector] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
+        [HideInInspector] _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
+        [HideInInspector] _TextureLineMultiplier ("Texture Line Multiplier", Vector) = (0.6, 0.6, 0.6, 1.0)
 
         [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0

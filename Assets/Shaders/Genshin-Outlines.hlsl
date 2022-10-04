@@ -30,20 +30,30 @@ vector<float, 4> _OutlineColor5;
 vector<float, 4> _OutlineWidthAdjustScales; // cb0[20]
 vector<float, 4> _OutlineWidthAdjustZs; // cb0[19]
 
+float _TextureBiasWhenDithering;
+float _TextureLineSmoothness;
+float _TextureLineThickness;
+float _TextureLineUse;
+vector<float, 4> _TextureLineDistanceControl;
+vector<float, 4> _TextureLineMultiplier;
+
 /* end of properties */
 
+
+#include "Genshin-Helpers.hlsl"
 
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
-    o.pos = UnityObjectToClipPos(v.vertex);
+    //o.pos = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld, v0
+    o.vertexOS = v.vertex;
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
 
-
-    /* game-accurate
     const float _OutlineCorrectionWidth = 2.25; // cb0[39].w or cb0[15].x
+
+    /*// game-accurate
     const vector<float, 4> posInput = v.vertex;
     const vector<float, 3> normalInput = v.normal;
 
@@ -182,9 +192,82 @@ vsOut vert(vsIn v){
     }*/
 
 
-    // easier to understand version
+    // easier to understand version, still messy though!
     if(_OutlineType != 0){
-        // first, form the base outline thickness with vertexcol.w
+        // calculations that help the outlines scale consistently even with vastly different FOVs
+        vector<half, 4> vViewPosition = mul(UNITY_MATRIX_MV, o.vertexOS); // vViewPosition is u_xlat0\
+        // 2.414 is a constant used in-game, I don't know why
+        half fovScale = (2.41400003 / unity_CameraProjection[1][1]) * -vViewPosition.z; // (2.41400003 / fovScale) is 
+                                                                                        // u_xlat16
+        vector<half, 2> zRange, scales;
+        if (fovScale < _OutlineWidthAdjustZs.y){
+            zRange = _OutlineWidthAdjustZs.xy;
+            scales = _OutlineWidthAdjustScales.xy;
+        }
+        else{
+            zRange = _OutlineWidthAdjustZs.yz;
+            scales = _OutlineWidthAdjustScales.yz;
+        }
+        fovScale = lerpByZ(scales.x, scales.y, zRange.x, zRange.y, fovScale); // just before _OutlineWidth * _OutlineCorrectionWidth
+        vector<half, 4> scale;
+        //scale.x = _OutlineWidth * _OutlineCorrectionWidth;
+        scale = _OutlineWidth * _OutlineCorrectionWidth;
+        fovScale *= scale.x;
+        //fovScale *= 100.0;
+        fovScale *= 150000.0; // workaround
+        fovScale *= _Scale;
+        // another constant used by the game
+        fovScale *= 0.414250195;
+        // base outline thickness
+        fovScale *= v.vertexcol.w;
+        
+        /*scale.x = rsqrt(dot(vViewPosition.xyz, vViewPosition.xyz)); // original calculations don't work with improperly ripped models
+        scale = vViewPosition * scale.x;*/
+        scale *= _MaxOutlineZOffset;
+        scale *= _Scale;
+
+        // v.vertexcol.z contains Z-offset values, though I don't know why they subtract it by 0.5
+        half zOffset = v.vertexcol.z - 0.5;
+
+        // get outline direction, can be either the raw normals (HORRIBLE) or the custom tangents
+        vector<half, 3> outlineDirection;
+        switch(_OutlineType){
+            case 1:
+                outlineDirection = v.normal;
+                break;
+            case 2:
+                outlineDirection = v.tangent.xyz;
+                break;
+            default:
+                break;
+        }
+        /*outlineDirection = normalize(mul(outlineDirection, UNITY_MATRIX_IT_MV)); // invert transpose model * view matrix
+        outlineDirection = normalize(outlineDirection); // workaround optimization
+
+        vViewPosition.xyz += (zOffset * scale);
+        vViewPosition.xy += (outlineDirection.xy * fovScale);*/
+        
+        // original calculations don't work with improperly ripped models
+        // had to improvise at this part below
+
+        // get camera view direction
+        vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
+
+        vViewPosition = vector<half, 4>(scale.xyz, 0);
+        vViewPosition.xyz = vViewPosition.xyz * outlineDirection.xyz * fovScale;
+        vViewPosition = vViewPosition - mul(unity_WorldToObject, viewDir) * zOffset;
+        vViewPosition += o.vertexOS;
+        // convert to clip space
+        vViewPosition = mul(UNITY_MATRIX_MVP, vViewPosition);
+
+
+
+
+
+
+
+
+        /*// first, form the base outline thickness with vertexcol.w
         vector<float, 3> calcOutline = v.vertexcol.w * (_OutlineWidth * 0.1);
         // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
         float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
@@ -214,18 +297,19 @@ vsOut vert(vsIn v){
         calcOutline += v.vertex;
 
         // finally, convert calcOutlines to clip space
-        o.pos = UnityObjectToClipPos(calcOutline);
+        o.pos = UnityObjectToClipPos(calcOutline);*/
+
+        // output into clip space
+        o.pos = vViewPosition;
     }
     else{
         o.pos = vector<float, 4>(0, 0, 0, 0);
     }
-    
+
     UNITY_TRANSFER_FOG(o, o.pos);
 
     return o;
 }
-
-#include "Genshin-Helpers.hlsl"
 
 // fragment
 vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{

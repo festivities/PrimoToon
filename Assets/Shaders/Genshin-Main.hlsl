@@ -87,6 +87,13 @@ vector<float, 4> _MTMapLightColor;
 vector<float, 4> _MTShadowMultiColor;
 vector<float, 4> _MTSpecularColor;
 
+float _TextureBiasWhenDithering;
+float _TextureLineSmoothness;
+float _TextureLineThickness;
+float _TextureLineUse;
+vector<float, 4> _TextureLineDistanceControl;
+vector<float, 4> _TextureLineMultiplier;
+
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
 float _ReturnRimLight;
@@ -99,11 +106,14 @@ float _ReturnEmissionFactor;
 /* end of properties */
 
 
+#include "Genshin-Helpers.hlsl"
+
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
     o.pos = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
+    o.vertexOS = v.vertex;
     o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
@@ -115,8 +125,6 @@ vsOut vert(vsIn v){
 
     return o;
 }
-
-#include "Genshin-Helpers.hlsl"
 
 // fragment
 vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
@@ -225,7 +233,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // switch between the shadow ramp and custom shadow colors
     if(_UseShadowRamp != 0){
-
         // calculate shadow ramp width from _ShadowRampWidth and i.vertexcol.g
         half ShadowRampWidthCalc = i.vertexcol.g * 2.0 * _ShadowRampWidth;
 

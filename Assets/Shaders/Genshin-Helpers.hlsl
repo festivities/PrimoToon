@@ -14,6 +14,12 @@ float mapRange(const float min_in, const float max_in, const float min_out, cons
     return min_out + slope * (value - min_in);
 }
 
+float lerpByZ(const float startScale, const float endScale, const float startZ, const float endZ, const float z){
+   float t = (z - startZ) / max(endZ - startZ, 0.001);
+   t = saturate(t);
+   return lerp(startScale, endScale, t);
+}
+
 // environment lighting function
 vector<fixed, 4> calculateEnvLighting(vector<float, 3> vertexWSInput){
     // get all the point light positions

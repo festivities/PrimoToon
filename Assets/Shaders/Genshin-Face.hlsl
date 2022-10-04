@@ -29,6 +29,13 @@ float _UseShadowRamp;
 vector<float, 4> _CoolShadowMultColor;
 vector<float, 4> _FirstShadowMultColor;
 
+float _TextureBiasWhenDithering;
+float _TextureLineSmoothness;
+float _TextureLineThickness;
+float _TextureLineUse;
+vector<float, 4> _TextureLineDistanceControl;
+vector<float, 4> _TextureLineMultiplier;
+
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
 float _ReturnRimLight;
@@ -40,11 +47,14 @@ float _ReturnRightVector;
 /* end of properties */
 
 
+#include "Genshin-Helpers.hlsl"
+
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
     o.pos = UnityObjectToClipPos(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
+    o.vertexOS = v.vertex;
     o.tangent = v.tangent;
     o.uv.xy = v.uv0;
     o.normal = v.normal;
@@ -55,8 +65,6 @@ vsOut vert(vsIn v){
 
     return o;
 }
-
-#include "Genshin-Helpers.hlsl"
 
 // fragment
 vector<fixed, 4> frag(vsOut i) : SV_Target{
@@ -168,7 +176,7 @@ vector<fixed, 4> frag(vsOut i) : SV_Target{
     finalColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);
 
     // apply rim light
-    finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight;
+    finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight * finalColor;
 
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, finalColor);
