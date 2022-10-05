@@ -29,13 +29,6 @@ float _UseShadowRamp;
 vector<float, 4> _CoolShadowMultColor;
 vector<float, 4> _FirstShadowMultColor;
 
-float _TextureBiasWhenDithering;
-float _TextureLineSmoothness;
-float _TextureLineThickness;
-float _TextureLineUse;
-vector<float, 4> _TextureLineDistanceControl;
-vector<float, 4> _TextureLineMultiplier;
-
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
 float _ReturnRimLight;

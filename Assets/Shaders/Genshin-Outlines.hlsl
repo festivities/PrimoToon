@@ -30,13 +30,6 @@ vector<float, 4> _OutlineColor5;
 vector<float, 4> _OutlineWidthAdjustScales; // cb0[20]
 vector<float, 4> _OutlineWidthAdjustZs; // cb0[19]
 
-float _TextureBiasWhenDithering;
-float _TextureLineSmoothness;
-float _TextureLineThickness;
-float _TextureLineUse;
-vector<float, 4> _TextureLineDistanceControl;
-vector<float, 4> _TextureLineMultiplier;
-
 /* end of properties */
 
 

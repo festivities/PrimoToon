@@ -45,13 +45,19 @@ float _ShadowTransitionSoftness2;
 float _ShadowTransitionSoftness3;
 float _ShadowTransitionSoftness4;
 float _ShadowTransitionSoftness5;
+float _TextureBiasWhenDithering;
+float _TextureLineSmoothness;
+float _TextureLineThickness;
+float _TextureLineUse;
 float _UseBackFaceUV2;
 float _UseBumpMap;
+float _UseLightMapColorAO;
 float _UseMaterial2;
 float _UseMaterial3;
 float _UseMaterial4;
 float _UseMaterial5;
 float _UseShadowRamp;
+float _UseVertexColorAO;
 vector<float, 4> _CoolShadowMultColor;
 vector<float, 4> _CoolShadowMultColor2;
 vector<float, 4> _CoolShadowMultColor3;
@@ -62,6 +68,8 @@ vector<float, 4> _FirstShadowMultColor2;
 vector<float, 4> _FirstShadowMultColor3;
 vector<float, 4> _FirstShadowMultColor4;
 vector<float, 4> _FirstShadowMultColor5;
+vector<float, 4> _TextureLineDistanceControl;
+vector<float, 4> _TextureLineMultiplier;
 
 float _Shininess;
 float _Shininess2;
@@ -86,13 +94,6 @@ vector<float, 4> _MTMapDarkColor;
 vector<float, 4> _MTMapLightColor;
 vector<float, 4> _MTShadowMultiColor;
 vector<float, 4> _MTSpecularColor;
-
-float _TextureBiasWhenDithering;
-float _TextureLineSmoothness;
-float _TextureLineThickness;
-float _TextureLineUse;
-vector<float, 4> _TextureLineDistanceControl;
-vector<float, 4> _TextureLineMultiplier;
 
 float _ReturnVertexColors;
 float _ReturnVertexColorAlpha;
@@ -121,7 +122,7 @@ vsOut vert(vsIn v){
     o.screenPos = ComputeScreenPos(o.pos);
     o.vertexcol = v.vertexcol;
 
-    UNITY_TRANSFER_FOG(o, o.pos)
+    UNITY_TRANSFER_FOG(o, o.pos);
 
     return o;
 }
@@ -155,11 +156,11 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<half, 3> dhdy; dhdy.xy = ddy(newUVs);
 
     // modify normals
-    dhdy.z = -dhdx.y; dhdx.z = dhdy.x;
+    dhdy.z = dhdx.y; dhdx.z = dhdy.x;
     normalCreationBuffer = dot(dhdx.xz, dhdy.yz);
     vector<half, 3> recalcTangent = -(0 < normalCreationBuffer) + (normalCreationBuffer < 0);
     dhdx.xy = vector<half, 2>(recalcTangent.xy) * dhdy.yz;
-    dpdy *= dhdx.y;
+    dpdy *= -dhdx.y;
     dpdx = dpdx * dhdx.x + dpdy;
     normalCreationBuffer = rsqrt(dot(dpdx, dpdx));
     dpdx *= normalCreationBuffer;
@@ -229,7 +230,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     half NdotL_Factor;
 
     // create ambient occlusion from lightmap.g
-    half occlusion = lightmap.g * i.vertexcol.r;
+    half occlusion = ((_UseLightMapColorAO != 0) ? lightmap.g : 0.5) * ((_UseVertexColorAO != 0) ? i.vertexcol.r : 1.0);
 
     // switch between the shadow ramp and custom shadow colors
     if(_UseShadowRamp != 0){

@@ -39,13 +39,19 @@
         _ShadowTransitionSoftness3 ("Shadow Transition Softness 3", Range(0.0, 1.0)) = 0.5
         _ShadowTransitionSoftness4 ("Shadow Transition Softness 4", Range(0.0, 1.0)) = 0.5
         _ShadowTransitionSoftness5 ("Shadow Transition Softness 5", Range(0.0, 1.0)) = 0.5
+        [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
+        [HideInInspector] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
+        [HideInInspector] _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
+        [Toggle] [HideInInspector] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
         [Toggle] _UseBackFaceUV2 ("Use second UV for backfaces?", Float) = 1.0
         [Toggle] _UseBumpMap ("Use Normal Map?", Float) = 1.0
+        [Toggle] _UseLightMapColorAO ("Use Lightmap Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
         [Toggle] _UseMaterial2 ("Toggle Material 2", Float) = 1.0
         [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
         [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
         [Toggle] _UseMaterial5 ("Toggle Material 5", Float) = 1.0
         [Toggle] _UseShadowRamp ("Use Shadow Ramp Texture?", Float) = 1.0
+        [Toggle] _UseVertexColorAO ("Use Vertex Color Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
         [Gamma] _CoolShadowMultColor ("Nighttime Shadow Color 1", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _CoolShadowMultColor2 ("Nighttime Shadow Color 2", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _CoolShadowMultColor3 ("Nighttime Shadow Color 3", Color) = (0.9, 0.7, 0.75, 1)
@@ -56,6 +62,8 @@
         [Gamma] _FirstShadowMultColor3 ("Daytime Shadow Color 3", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor4 ("Daytime Shadow Color 4", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor5 ("Daytime Shadow Color 5", Color) = (0.9, 0.7, 0.75, 1)
+        [HideInInspector] _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
+        [HideInInspector] _TextureLineMultiplier ("Texture Line Multiplier", Vector) = (0.6, 0.6, 0.6, 1.0)
 
         [Header(Specular Options)] [Space(10)] _Shininess ("Shininess 1", Float) = 10
         _Shininess2 ("Shininess 2", Float) = 10
@@ -95,13 +103,6 @@
         [Gamma] _OutlineColor5 ("Outline Color 5", Color) = (0.0, 0.0, 0.0, 1.0)
         _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
         _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
-
-        [Header(Dither Options)] [Space(10)] [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
-        [HideInInspector] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
-        [HideInInspector] _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
-        [Toggle][HideInInspector] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
-        [HideInInspector] _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
-        [HideInInspector] _TextureLineMultiplier ("Texture Line Multiplier", Vector) = (0.6, 0.6, 0.6, 1.0)
 
         [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0

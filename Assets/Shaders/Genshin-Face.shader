@@ -37,13 +37,6 @@
         _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
         _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
 
-        [Header(Dither Options)] [Space(10)] [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
-        [HideInInspector] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
-        [HideInInspector] _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
-        [Toggle][HideInInspector] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
-        [HideInInspector] _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
-        [HideInInspector] _TextureLineMultiplier ("Texture Line Multiplier", Vector) = (0.6, 0.6, 0.6, 1.0)
-
         [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
