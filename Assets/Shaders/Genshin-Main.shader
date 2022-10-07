@@ -9,6 +9,7 @@
 
         [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
         _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
+        [Toggle] _FallbackOutlines ("Fallback Outlines?", Range(0.0, 1.0)) = 0.0
         [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0

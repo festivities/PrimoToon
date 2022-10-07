@@ -12,7 +12,7 @@
         [Toggle] _flipFaceLighting ("Flip Face Lighting?", Range(0.0, 1.0)) = 0.0
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
-        [Toggle] [HideInInspector] _UseTangents ("Use Tangents for Outlines (placeholder)", Range(0.0, 1.0)) = 0.0
+        [Toggle] _FallbackOutlines ("Fallback Outlines?", Range(0.0, 1.0)) = 0.0
         [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
