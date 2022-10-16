@@ -1,39 +1,5 @@
 #include "Genshin-Main_inputs.hlsli"
 
-
-/* Properties */
-
-Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
-
-UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
-
-float _ToggleFaceShader;
-float _EnvironmentLightingStrength;
-float _FallbackOutlines;
-
-float _UseMaterial2;
-float _UseMaterial3;
-float _UseMaterial4;
-float _UseMaterial5;
-
-float _ClipPlaneWorld;
-float _MaxOutlineZOffset;
-float _OutlineType; // cb0[13]
-float _OutlineWidth; // cb0[39].w or cb0[15].x
-float _Scale; // cb0[17].z
-float _UseClipPlane;
-vector<float, 4> _ClipPlane; // cb0[26]
-vector<float, 4> _OutlineColor;
-vector<float, 4> _OutlineColor2;
-vector<float, 4> _OutlineColor3;
-vector<float, 4> _OutlineColor4;
-vector<float, 4> _OutlineColor5;
-vector<float, 4> _OutlineWidthAdjustScales; // cb0[20]
-vector<float, 4> _OutlineWidthAdjustZs; // cb0[19]
-
-/* end of properties */
-
-
 #include "Genshin-Helpers.hlsl"
 
 // vertex
@@ -255,7 +221,7 @@ vsOut vert(vsIn v){
             scale *= _Scale;
 
             // v.vertexcol.z contains Z-offset values, though I don't know why they subtract it by 0.5
-            half zOffset = v.vertexcol.z - 0.5;
+            half zOffset = saturate(v.vertexcol.z - 0.5);
 
             // get outline direction, can be either the raw normals (HORRIBLE) or the custom tangents
             vector<half, 3> outlineDirection;

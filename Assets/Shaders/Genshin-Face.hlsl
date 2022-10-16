@@ -1,45 +1,5 @@
 #include "Genshin-Main_inputs.hlsli"
 
-
-/* Properties */
-
-Texture2D _DiffuseTex;              SamplerState sampler_DiffuseTex;
-Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
-Texture2D _FaceShadowTex;           SamplerState sampler_FaceShadowTex;
-Texture2D _ShadowRampTex;           SamplerState sampler_ShadowRampTex;
-
-UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
-
-float _EnvironmentLightingStrength;
-vector<float, 4> _headForwardVector;
-vector<float, 4> _headRightVector;
-float _flipFaceLighting;
-float _MaterialID;
-float _DayOrNight;
-float _RimLightType;
-float _RimLightIntensity;
-float _RimLightThickness;
-
-float _FaceBlushStrength;
-vector<float, 4> _FaceBlushColor;
-
-float _FaceMapSoftness;
-float _LightArea;
-float _UseShadowRamp;
-vector<float, 4> _CoolShadowMultColor;
-vector<float, 4> _FirstShadowMultColor;
-
-float _ReturnVertexColors;
-float _ReturnVertexColorAlpha;
-float _ReturnRimLight;
-float _ReturnNormals;
-float _ReturnTangents;
-float _ReturnForwardVector;
-float _ReturnRightVector;
-
-/* end of properties */
-
-
 #include "Genshin-Helpers.hlsl"
 
 // vertex
