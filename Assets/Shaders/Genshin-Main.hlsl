@@ -1,7 +1,3 @@
-#include "Genshin-Main_inputs.hlsli"
-
-#include "Genshin-Helpers.hlsl"
-
 // vertex
 vsOut vert(vsIn v){
     vsOut o;

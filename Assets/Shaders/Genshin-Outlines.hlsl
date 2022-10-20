@@ -1,7 +1,3 @@
-#include "Genshin-Main_inputs.hlsli"
-
-#include "Genshin-Helpers.hlsl"
-
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
@@ -214,6 +210,9 @@ vsOut vert(vsIn v){
             fovScale *= 0.414250195;
             // base outline thickness
             fovScale *= v.vertexcol.w;
+
+            // if in VR, reduce thickness by arbitrary amount because bruh
+            if(isVR() != 0){ fovScale *= 0.65; }
             
             /*scale.x = rsqrt(dot(vViewPosition.xyz, vViewPosition.xyz)); // original calculations don't work with improperly ripped models
             scale = vViewPosition * scale.x;*/

@@ -110,3 +110,12 @@ vector<fixed, 3> ColorDodge(const vector<fixed, 3> s, const vector<fixed, 3> d){
 vector<fixed, 4> ColorDodge(const vector<fixed, 4> s, const vector<fixed, 4> d){
     return vector<fixed, 4>(d.xyz / (1.0 - min(s.xyz, 0.999)), d.w);
 }
+
+bool isVR() {
+    // USING_STEREO_MATRICES
+    #if UNITY_SINGLE_PASS_STEREO
+        return true;
+    #else
+        return false;
+    #endif
+}

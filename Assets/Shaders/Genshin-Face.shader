@@ -63,6 +63,8 @@
         #include "UnityLightingCommon.cginc"
         #include "UnityShaderVariables.cginc"
 
+        #include "Genshin-Main_inputs.hlsli"
+
 
         /* properties */
 
@@ -197,6 +199,8 @@
 
         /* end of properties */
 
+
+        #include "Genshin-Helpers.hlsl"
 
         ENDHLSL
 
