@@ -186,8 +186,10 @@ vsOut vert(vsIn v){
         else{
             // calculations that help the outlines scale consistently even with vastly different FOVs
             vector<half, 4> vViewPosition = mul(UNITY_MATRIX_MV, o.vertexOS); // vViewPosition is u_xlat0\
+            // get current FOV
+            half fov = (isVR() != 0) ? unity_CameraProjection[1][1] + 0.785398 : unity_CameraProjection[1][1];
             // 2.414 is a constant used in-game, I don't know why
-            half fovScale = (2.41400003 / unity_CameraProjection[1][1]) * -vViewPosition.z; // (2.41400003 / fovScale) is 
+            half fovScale = (2.41400003 / fov) * -vViewPosition.z; // (2.41400003 / fovScale) is 
                                                                                             // u_xlat16
             vector<half, 2> zRange, scales;
             if (fovScale < _OutlineWidthAdjustZs.y){
@@ -210,17 +212,14 @@ vsOut vert(vsIn v){
             fovScale *= 0.414250195;
             // base outline thickness
             fovScale *= v.vertexcol.w;
-
-            // if in VR, reduce thickness by arbitrary amount because bruh
-            if(isVR() != 0){ fovScale *= 0.65; }
             
             /*scale.x = rsqrt(dot(vViewPosition.xyz, vViewPosition.xyz)); // original calculations don't work with improperly ripped models
             scale = vViewPosition * scale.x;*/
-            scale *= _MaxOutlineZOffset;
+            //scale *= _MaxOutlineZOffset;
             scale *= _Scale;
 
             // v.vertexcol.z contains Z-offset values, though I don't know why they subtract it by 0.5
-            half zOffset = saturate(v.vertexcol.z - 0.5);
+            half zOffset = saturate(v.vertexcol.z - 0.48);
 
             // get outline direction, can be either the raw normals (HORRIBLE) or the custom tangents
             vector<half, 3> outlineDirection;
@@ -248,7 +247,7 @@ vsOut vert(vsIn v){
 
             vViewPosition = vector<half, 4>(scale.xyz, 0);
             vViewPosition.xyz = vViewPosition.xyz * outlineDirection.xyz * fovScale;
-            vViewPosition = vViewPosition - mul(unity_WorldToObject, viewDir) * zOffset;
+            vViewPosition = vViewPosition - mul(unity_WorldToObject, viewDir) * zOffset * _MaxOutlineZOffset;
             vViewPosition += o.vertexOS;
             // convert to clip space
             vViewPosition = mul(UNITY_MATRIX_MVP, vViewPosition);
@@ -272,12 +271,12 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<half, 2> newUVs = (frontFacing) ? i.uv.xy : i.uv.zw;
 
     // sample textures to objects
-    vector<fixed, 4> lightmap = _LightmapTex.Sample(sampler_LightmapTex, vector<half, 2>(i.uv.xy));
+    vector<fixed, 4> lightmapTex = _LightMapTex.Sample(sampler_LightMapTex, vector<half, 2>(i.uv.xy));
 
 
     /* MATERIAL IDS */
 
-    fixed idMasks = lightmap.w;
+    fixed idMasks = lightmapTex.w;
 
     half materialID = 1;
     if(idMasks >= 0.2 && idMasks <= 0.4 && _UseMaterial4 != 0){
@@ -310,7 +309,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // form outline colors
     vector<fixed, 4> globalOutlineColor = _OutlineColor;
-    if(_ToggleFaceShader == 0){
+    if(_UseFaceMapNew == 0){
         if(materialID == 2){
             globalOutlineColor = _OutlineColor2;
         }

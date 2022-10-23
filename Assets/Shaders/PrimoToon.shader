@@ -1,18 +1,27 @@
-﻿Shader ".festivity/PrimoToon/genshin-main"{
+﻿Shader ".festivity/PrimoToon/PrimoToon"{
     Properties{
-        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _DiffuseTex ("Diffuse", 2D) = "white"{}
-        [NoScaleOffset] _LightmapTex ("Lightmap", 2D) = "white"{}
-        [NoScaleOffset] _NormalTex ("Normal Map", 2D) = "bump"{}
-        [NoScaleOffset] [HDR] _ShadowRampTex ("Shadow Ramp", 2D) = "white"{}
-        [NoScaleOffset] [HDR] _SpecularRampTex ("Specular Ramp", 2D) = "white"{}
-        [NoScaleOffset] [HDR] _MetalMapTex ("Metallic Matcap", 2D) = "white"{}
+        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _MainTex ("Diffuse", 2D) = "white"{}
+        [NoScaleOffset] _LightMapTex ("Lightmap", 2D) = "white"{}
+        [NoScaleOffset] _FaceMap ("Face Shadow (only if face shader is used)", 2D) = "white"{}
+        [NoScaleOffset] _BumpMap ("Bump Map", 2D) = "bump"{}
+        [NoScaleOffset] [HDR] _PackedShadowRampTex ("Shadow Ramp", 2D) = "white"{}
+        [NoScaleOffset] _MTSpecularRamp ("Specular Ramp", 2D) = "white"{}
+        [NoScaleOffset] [HDR] _MTMap ("Metallic Matcap", 2D) = "white"{}
 
         [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
         _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
-        [Toggle] _FallbackOutlines ("Fallback Outlines?", Range(0.0, 1.0)) = 0.0
         [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
+
+        [Header(Face Shader Specific Settings)] [Space(10)] [Toggle] _UseFaceMapNew ("Use Face Shader?", Range(0.0, 1.0)) = 0.0
+        _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
+        _headRightVector ("Right Vector, ignore the last element", Vector) = (0, 0, -1, 0)
+        _FaceMapSoftness ("Face Lighting Softness", Range(0.0, 1.0)) = 0.001
+        [Toggle] _flipFaceLighting ("Flip Face Lighting?", Range(0.0, 1.0)) = 0.0
+        [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
+        _FaceBlushStrength ("Face Blush Strength", Range(0.0, 1.0)) = 0.0
+        [Gamma] _FaceBlushColor ("Face Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
 
         [Header(Emission Options)] [Space(10)] [Toggle] _ToggleEmission ("Toggle Emission?", Range(0.0, 1.0)) = 0.0
         [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
@@ -40,10 +49,6 @@
         _ShadowTransitionSoftness3 ("Shadow Transition Softness 3", Range(0.0, 1.0)) = 0.5
         _ShadowTransitionSoftness4 ("Shadow Transition Softness 4", Range(0.0, 1.0)) = 0.5
         _ShadowTransitionSoftness5 ("Shadow Transition Softness 5", Range(0.0, 1.0)) = 0.5
-        [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
-        [HideInInspector] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
-        [HideInInspector] _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
-        [Toggle] [HideInInspector] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
         [Toggle] _UseBackFaceUV2 ("Use second UV for backfaces?", Float) = 1.0
         [Toggle] _UseBumpMap ("Use Normal Map?", Float) = 1.0
         [Toggle] _UseLightMapColorAO ("Use Lightmap Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
@@ -63,8 +68,6 @@
         [Gamma] _FirstShadowMultColor3 ("Daytime Shadow Color 3", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor4 ("Daytime Shadow Color 4", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor5 ("Daytime Shadow Color 5", Color) = (0.9, 0.7, 0.75, 1)
-        [HideInInspector] _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
-        [HideInInspector] _TextureLineMultiplier ("Texture Line Multiplier", Vector) = (0.6, 0.6, 0.6, 1.0)
 
         [Header(Specular Options)] [Space(10)] _Shininess ("Shininess 1", Float) = 10
         _Shininess2 ("Shininess 2", Float) = 10
@@ -90,9 +93,17 @@
         [Gamma] _MTShadowMultiColor ("Metallic Matcap Shadow Multiply Color", Color) = (0.78, 0.77, 0.82, 1.0)
         [Gamma] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
+        [Header(Texture Line Options)] [Space(10)] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
+        _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
+        [Toggle] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
+        _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
+        [Gamma] _TextureLineMultiplier ("Texture Line Multiplier", Color) = (0.6, 0.6, 0.6, 1.0)
+        [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
+
         [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Max Z-Offset", Float) = 1.0
         [Toggle] [HideInInspector] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0
         [KeywordEnum(None, Normal, Tangent)] _OutlineType ("Outline Type", Float) = 1.0
+        [Toggle] _FallbackOutlines ("Fallback Outlines?", Range(0.0, 1.0)) = 0.0
         _OutlineWidth ("Outline Width", Float) = 0.03
         _Scale ("Outline Scale", Float) = 0.01
         [Toggle] [HideInInspector] _UseClipPlane ("Use Clip Plane?", Range(0.0, 1.0)) = 0.0
@@ -105,20 +116,53 @@
         _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
         _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
 
-        [Header(Debugging)] [Space(10)] [Toggle] _ReturnVertexColors ("Show Vertex Colors (RGB only)", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ReturnVertexColorAlpha ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
+        [Header(Debugging)] [Space(10)] [Toggle] _ReturnDiffuseRGB ("Show Diffuse", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnDiffuseA ("Show Diffuse Alpha", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnLightmapR ("Show Lightmap Red", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnLightmapG ("Show Lightmap Green", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnLightmapB ("Show Lightmap Blue", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnLightmapA ("Show Lightmap Alpha", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnFaceMap ("Show Face Shadow", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnNormalMap ("Show Normal Map", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnTextureLineMap ("Show Texture Line Map", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnVertexColorR ("Show Vertex Color Red", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnVertexColorG ("Show Vertex Color Green", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnVertexColorB ("Show Vertex Color Blue", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnVertexColorA ("Show Vertex Color Alpha", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRimLight ("Show Rim Light", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnNormals ("Show Normals", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRawNormals ("Show Raw Normals", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnMetal ("Show Metal", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnEmissionFactor ("Show Emission Factor", Range(0.0, 1.0)) = 0.0
+
+		[Header(Rendering Options)] [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
+		//[Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
+		[Enum(Off, 0, On, 1)] _ZWrite ("ZWrite", Int) = 1
+		//[Enum(Thry.ColorMask)] _ColorMask ("Color Mask", Int) = 15
+		//_OffsetFactor ("Offset Factor", Float) = 0.0
+		//_OffsetUnits ("Offset Units", Float) = 0.0
+		//[ToggleUI]_RenderingReduceClipDistance ("Reduce Clip Distance", Float) = 0
+		//[ToggleUI]_IgnoreFog ("Ignore Fog", Float) = 0
+		//[HideInInspector] Instancing ("Instancing", Float) = 0 //add this property for instancing variants settings to be shown
+		
+		[Header(Blending Options)] //[Enum(Thry.BlendOp)]_BlendOp ("RGB Blend Op", Int) = 0
+		//[Enum(Thry.BlendOp)]_BlendOpAlpha ("Alpha Blend Op", Int) = 0
+		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source Blend", Int) = 1
+		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination Blend", Int) = 0
+		//[Space][ThryHeaderLabel(Additive Blending, 13)]
+		//[Enum(Thry.BlendOp)]_AddBlendOp ("RGB Blend Op", Int) = 0
+		//[Enum(Thry.BlendOp)]_AddBlendOpAlpha ("Alpha Blend Op", Int) = 0
+		//[Enum(UnityEngine.Rendering.BlendMode)] _AddSrcBlend ("Source Blend", Int) = 1
+		//[Enum(UnityEngine.Rendering.BlendMode)] _AddDstBlend ("Destination Blend", Int) = 1
     }
     SubShader{
         Tags{ 
             "RenderType"="Opaque"
             "Queue"="Geometry"
         }
+
+        ZWrite [_ZWrite]
 
         HLSLINCLUDE
 
@@ -132,18 +176,18 @@
         #include "UnityLightingCommon.cginc"
         #include "UnityShaderVariables.cginc"
 
-        #include "Genshin-Main_inputs.hlsli"
+        #include "PrimoToon-inputs.hlsli"
 
 
         /* properties */
 
-        Texture2D _DiffuseTex;              SamplerState sampler_DiffuseTex;
-        Texture2D _LightmapTex;             SamplerState sampler_LightmapTex;
-        Texture2D _FaceShadowTex;           SamplerState sampler_FaceShadowTex;
-        Texture2D _NormalTex;               SamplerState sampler_NormalTex;
-        Texture2D _ShadowRampTex;           SamplerState sampler_ShadowRampTex;
-        Texture2D _SpecularRampTex;         SamplerState sampler_SpecularRampTex;
-        Texture2D _MetalMapTex;             SamplerState sampler_MetalMapTex;
+        Texture2D _MainTex;                 SamplerState sampler_MainTex;
+        Texture2D _LightMapTex;             SamplerState sampler_LightMapTex;
+        Texture2D _FaceMap;                 SamplerState sampler_FaceMap;
+        Texture2D _BumpMap;                 SamplerState sampler_BumpMap;
+        Texture2D _PackedShadowRampTex;     SamplerState sampler_PackedShadowRampTex;
+        Texture2D _MTSpecularRamp;          SamplerState sampler_MTSpecularRamp;
+        Texture2D _MTMap;                   SamplerState sampler_MTMap;
 
         Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
         Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
@@ -151,16 +195,19 @@
         UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
         float _DayOrNight;
-        float _ToggleFaceShader;
         float _EnvironmentLightingStrength;
-        float _FallbackOutlines;
-        vector<float, 4> _headForwardVector;
-        vector<float, 4> _headRightVector;
-        float _flipFaceLighting;
-        float _MaterialID;
         float _RimLightType;
         float _RimLightIntensity;
         float _RimLightThickness;
+
+        float _UseFaceMapNew;
+        vector<float, 4> _headForwardVector;
+        vector<float, 4> _headRightVector;
+        float _FaceMapSoftness;
+        float _flipFaceLighting;
+        float _MaterialID;
+        float _FaceBlushStrength;
+        vector<float, 4> _FaceBlushColor;
 
         float _ToggleEmission;
         float _ToggleEyeGlow;
@@ -173,11 +220,7 @@
         float _PulseMinStrength;
         float _PulseMaxStrength;
 
-        float _FaceBlushStrength;
-        vector<float, 4> _FaceBlushColor;
-
         float _BumpScale;
-        float _FaceMapSoftness;
         float _LightArea;
         float _ShadowRampWidth;
         float _ShadowTransitionRange;
@@ -190,10 +233,6 @@
         float _ShadowTransitionSoftness3;
         float _ShadowTransitionSoftness4;
         float _ShadowTransitionSoftness5;
-        float _TextureBiasWhenDithering;
-        float _TextureLineSmoothness;
-        float _TextureLineThickness;
-        float _TextureLineUse;
         float _UseBackFaceUV2;
         float _UseBumpMap;
         float _UseLightMapColorAO;
@@ -213,8 +252,6 @@
         vector<float, 4> _FirstShadowMultColor3;
         vector<float, 4> _FirstShadowMultColor4;
         vector<float, 4> _FirstShadowMultColor5;
-        vector<float, 4> _TextureLineDistanceControl;
-        vector<float, 4> _TextureLineMultiplier;
 
         float _Shininess;
         float _Shininess2;
@@ -240,9 +277,17 @@
         vector<float, 4> _MTShadowMultiColor;
         vector<float, 4> _MTSpecularColor;
 
+        float _TextureBiasWhenDithering;
+        float _TextureLineSmoothness;
+        float _TextureLineThickness;
+        float _TextureLineUse;
+        vector<float, 4> _TextureLineDistanceControl;
+        vector<float, 4> _TextureLineMultiplier;
+
         float _ClipPlaneWorld;
         float _MaxOutlineZOffset;
         float _OutlineType; // cb0[13]
+        float _FallbackOutlines;
         float _OutlineWidth; // cb0[39].w or cb0[15].x
         float _Scale; // cb0[17].z
         float _UseClipPlane;
@@ -255,8 +300,19 @@
         vector<float, 4> _OutlineWidthAdjustScales; // cb0[20]
         vector<float, 4> _OutlineWidthAdjustZs; // cb0[19]
 
-        float _ReturnVertexColors;
-        float _ReturnVertexColorAlpha;
+        float _ReturnDiffuseRGB;
+        float _ReturnDiffuseA;
+        float _ReturnLightmapR;
+        float _ReturnLightmapG;
+        float _ReturnLightmapB;
+        float _ReturnLightmapA;
+        float _ReturnFaceMap;
+        float _ReturnNormalMap;
+        float _ReturnTextureLineMap;
+        float _ReturnVertexColorR;
+        float _ReturnVertexColorG;
+        float _ReturnVertexColorB;
+        float _ReturnVertexColorA;
         float _ReturnRimLight;
         float _ReturnNormals;
         float _ReturnRawNormals;
@@ -269,7 +325,7 @@
         /* end of properties */
 
 
-        #include "Genshin-Helpers.hlsl"
+        #include "PrimoToon-helpers.hlsl"
 
         ENDHLSL
 
@@ -278,22 +334,22 @@
 
             Tags{ "LightMode" = "ForwardBase" }
 
-            Cull Off
+            Cull [_Cull]
+
+            Blend [_SrcBlend] [_DstBlend]
 
             HLSLPROGRAM
 
             #pragma multi_compile_fwdbase
 
-            #include "Genshin-Main.hlsl"
+            #include "PrimoToon-main.hlsl"
 
             ENDHLSL
         }
         Pass{
             Name "OutlinePass"
             
-            Tags{
-                "LightMode" = "ForwardBase" // i know, why two ForwardBase passes...
-            }                               // ForwardAdd just doesn't work for me... :(
+            Tags{ "LightMode" = "ForwardBase" }
 
             Cull Front
 
@@ -301,7 +357,7 @@
 
             #pragma multi_compile_fwdbase
 
-            #include "Genshin-Outlines.hlsl"
+            #include "PrimoToon-outlines.hlsl"
 
             ENDHLSL
         }

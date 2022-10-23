@@ -111,7 +111,8 @@ vector<fixed, 4> ColorDodge(const vector<fixed, 4> s, const vector<fixed, 4> d){
     return vector<fixed, 4>(d.xyz / (1.0 - min(s.xyz, 0.999)), d.w);
 }
 
-bool isVR() {
+// https://github.com/cnlohr/shadertrixx/blob/main/README.md#detecting-if-you-are-on-desktop-vr-camera-etc
+bool isVR(){
     // USING_STEREO_MATRICES
     #if UNITY_SINGLE_PASS_STEREO
         return true;
