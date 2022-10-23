@@ -571,5 +571,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* END OF DEBUGGING */
 
+
     return finalColor;
 }

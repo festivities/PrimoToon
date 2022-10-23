@@ -331,7 +331,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);
 
     //return vector<fixed, 4>(i.TtoW0, 1);
-    return globalOutlineColor;
 
     /* END OF COLOR CREATION */
+
+
+    return globalOutlineColor;
 }

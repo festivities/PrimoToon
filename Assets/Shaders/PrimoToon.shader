@@ -95,7 +95,7 @@
 
         [Header(Texture Line Options)] [Space(10)] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
         _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
-        [Toggle] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 1.0
+        [Toggle] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 0.0
         _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
         [Gamma] _TextureLineMultiplier ("Texture Line Multiplier", Color) = (0.6, 0.6, 0.6, 1.0)
         [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
