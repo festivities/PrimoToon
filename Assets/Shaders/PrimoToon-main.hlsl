@@ -55,6 +55,13 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* END OF BUFFER */
 
 
+    /* ENVIRONMENT LIGHTING */
+
+    vector<fixed, 4> environmentLighting = calculateEnvLighting(i.vertexWS);
+
+    /* END OF ENVIRONMENT LIGHTING */
+
+
     if(_UseFaceMapNew != 0){
         /* TEXTURE CREATION */
 
@@ -128,6 +135,11 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
         // apply face blush
         finalColor.xyz *= lerp(1, lerp(1, _FaceBlushColor, mainTex.w), _FaceBlushStrength);
+
+        // apply environment lighting
+        finalColor.xyz *= lerp(1.0, environmentLighting, _EnvironmentLightingStrength).xyz;
+
+        /* END OF COLOR CREATION */
     }
     else{
         /* NORMAL CREATION */
@@ -170,7 +182,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         normalCreationBuffer = (0.99 >= modifiedNormalMap.w) ? modifiedNormalMap.xyw : normalCreationBuffer;
 
         // hope you understood any of that KEKW, finally switch between normal map and raw normals
-        vector<half, 3> modifiedNormalsWS = normalCreationBuffer;
+        modifiedNormalsWS = normalCreationBuffer;
         vector<half, 3> finalNormalsWS = (_UseBumpMap != 0) ? modifiedNormalsWS : rawNormalsWS;
 
         /* END OF NORMAL CREATION */
@@ -459,7 +471,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         // toggle between emission being on or not
         if(_ToggleEmission != 0){
             // again, this may seem arbitrary but it's an optimization because miHoYo likes their textures very crunchy!
-            emissionFactor = saturate(mainTex.w - 0.02);
+            emissionFactor = saturate(mainTex.w - 0.03);
 
             // toggle between game-like emission or user's own custom emission texture, idk why i used a switch here btw
             switch(_EmissionType){
@@ -504,14 +516,17 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         finalColor.xyz = ((_TextureLineUse != 0 && _UseBumpMap != 0) ? newDiffuse.xyz : mainTex.xyz) * ShadowFinal.xyz;
 
         // apply metallic only to anything metalFactor encompasses
-        finalColor = (metalFactor) ? finalColor * metal : finalColor;
+        finalColor.xyz = (metalFactor) ? finalColor.xyz * metal.xyz : finalColor.xyz;
 
         // add specular to finalColor if metalFactor is evaluated as true, else add metallic specular
-        finalColor = (metalFactor) ? finalColor + metalSpecular : finalColor + specular;
+        finalColor.xyz = (metalFactor) ? finalColor + metalSpecular.xyz : finalColor.xyz + specular.xyz;
+
+        // apply environment lighting
+        finalColor.xyz *= lerp(1, environmentLighting, _EnvironmentLightingStrength).xyz;
 
         // apply emission
-        finalColor = (_EmissionType != 0 && lightmapTex.g < 0.95) ? finalColor + emission : 
-                                                                    lerp(finalColor, emission, emissionFactor);
+        finalColor.xyz = (_EmissionType != 0 && lightmapTex.g < 0.95) ? finalColor.xyz + emission.xyz : 
+                                                                        lerp(finalColor, emission, emissionFactor).xyz;
 
         /* END OF COLOR CREATION */
     }
@@ -521,23 +536,14 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     half rimLight = calculateRimLight(i.normal, i.screenPos, _RimLightIntensity, 
                                       _RimLightThickness, 1.0 - litFactor);
+
     // rim light musn't appear in backfaces
     rimLight *= frontFacing;
 
     /* END OF RIM LIGHT */
 
-
-    /* ENVIRONMENT LIGHTING */
-
-    vector<fixed, 4> environmentLighting = calculateEnvLighting(i.vertexWS);
-
-    /* END OF ENVIRONMENT LIGHTING */
-
     
     /* COLOR CREATION */
-
-    // apply environment lighting
-    finalColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);
 
     // apply rim light
     finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight;
