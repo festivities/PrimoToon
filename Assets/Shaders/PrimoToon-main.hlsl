@@ -73,8 +73,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         /* FACE CALCULATION */
 
         // get head directions
-        vector<half, 3> headForward = normalize(UnityObjectToWorldDir(_headForwardVector.xyz));
-        vector<half, 3> headRight = normalize(UnityObjectToWorldDir(_headRightVector.xyz));
+        headForward = normalize(UnityObjectToWorldDir(_headForwardVector.xyz));
+        headRight = normalize(UnityObjectToWorldDir(_headRightVector.xyz));
 
         // get dot products of each head direction and the lightDir
         half FdotL = dot(normalize(lightDir.xz), headForward.xz);
@@ -574,6 +574,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnTangents != 0){ return i.tangent; }
     if(_ReturnMetal != 0){ return metal; }
     if(_ReturnEmissionFactor != 0){ return emissionFactor; }
+    if(_ReturnForwardVector != 0){ return vector<fixed, 4>(headForward, 1.0); }
+    if(_ReturnRightVector != 0){ return vector<fixed, 4>(headRight, 1.0); }
 
     /* END OF DEBUGGING */
 

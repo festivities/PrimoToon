@@ -135,6 +135,8 @@
         [Toggle] _ReturnTangents ("Show Tangents", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnMetal ("Show Metal", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnEmissionFactor ("Show Emission Factor", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnForwardVector ("Show Forward Vector (it should look blue)", Range(0.0, 1.0)) = 0.0
+        [Toggle] _ReturnRightVector ("Show Right Vector (it should look red)", Range(0.0, 1.0)) = 0.0
 
 		[Header(Rendering Options)] [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
 		//[Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
