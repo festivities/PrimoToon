@@ -274,6 +274,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         /* SHADOW RAMP CREATION */
 
         vector<fixed, 4> ShadowFinal;
+        half NdotL_buf;
 
         // create ambient occlusion from lightmap.g
         half occlusion = ((_UseLightMapColorAO != 0) ? lightmapTex.g : 0.5) * ((_UseVertexColorAO != 0) ? i.vertexcol.r : 1.0);
@@ -287,11 +288,12 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
             occlusion = smoothstep(0.01, 0.4, occlusion);
             NdotL = lerp(0, NdotL, saturate(occlusion));
             // NdotL_buf will be used as a sharp factor
-            half NdotL_buf = NdotL;
+            NdotL_buf = NdotL;
             litFactor = NdotL_buf < _LightArea;
 
             // add options for controlling shadow ramp width and shadow push
             NdotL = 1 - ((((_LightArea - NdotL) / _LightArea) / ShadowRampWidthCalc));
+            NdotL_buf = NdotL;
 
             vector<half, 2> ShadowRampDayUVs = vector<float, 2>(NdotL, (((6 - materialID) - 1) * 0.1) + 0.05);
             vector<fixed, 4> ShadowRampDay = _PackedShadowRampTex.Sample(sampler_PackedShadowRampTex, ShadowRampDayUVs);
@@ -362,6 +364,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
             // final NdotL will also be litFactor
             litFactor = NdotL;
+            NdotL_buf = 1.0 - NdotL;
 
             // apply color
             vector<fixed, 4> ShadowDay = NdotL * globalFirstShadowMultColor;
@@ -402,7 +405,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         metal = lerp(_MTMapDarkColor, _MTMapLightColor, metal);
 
         // apply _MTShadowMultiColor ONLY to shaded areas
-        metal = (litFactor) ? metal * _MTShadowMultiColor : metal;
+        metal = lerp(metal * _MTShadowMultiColor, metal, saturate(NdotL_buf));
 
         /* END OF METALLIC */
 
@@ -512,8 +515,10 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
         /* COLOR CREATION */
 
+        vector<fixed, 3> finalDiffuse = ((_TextureLineUse != 0 && _UseBumpMap != 0) ? newDiffuse.xyz : mainTex.xyz);
+
         // apply diffuse ramp
-        finalColor.xyz = ((_TextureLineUse != 0 && _UseBumpMap != 0) ? newDiffuse.xyz : mainTex.xyz) * ShadowFinal.xyz;
+        finalColor.xyz = (metalFactor) ? finalDiffuse : finalDiffuse * ShadowFinal.xyz;
 
         // apply metallic only to anything metalFactor encompasses
         finalColor.xyz = (metalFactor) ? finalColor.xyz * metal.xyz : finalColor.xyz;
