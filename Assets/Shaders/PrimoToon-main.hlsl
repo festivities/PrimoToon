@@ -426,7 +426,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         // apply _MTSpecularColor
         metalSpecular *= _MTSpecularColor;
         // apply _MTSpecularAttenInShadow ONLY to shaded areas
-        metalSpecular = saturate((litFactor) ? metalSpecular * _MTSpecularAttenInShadow : metalSpecular);
+        metalSpecular = lerp(metalSpecular * _MTSpecularAttenInShadow, metalSpecular, saturate(NdotL_buf));
 
         /* END OF METALLIC SPECULAR */
 
@@ -517,7 +517,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
         vector<fixed, 3> finalDiffuse = ((_TextureLineUse != 0 && _UseBumpMap != 0) ? newDiffuse.xyz : mainTex.xyz);
 
-        // apply diffuse ramp
+        // apply diffuse ramp, apply ramp to metallic part only if metallics is disabled bc metal has its own shadow color
         finalColor.xyz = (metalFactor) ? finalDiffuse : finalDiffuse * ShadowFinal.xyz;
 
         // apply metallic only to anything metalFactor encompasses
@@ -542,7 +542,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     half rimLight = calculateRimLight(i.normal, i.screenPos, _RimLightIntensity, 
                                       _RimLightThickness, 1.0 - litFactor);
 
-    // rim light musn't appear in backfaces
+    // rim light mustn't appear in backfaces
     rimLight *= frontFacing;
 
     /* END OF RIM LIGHT */
