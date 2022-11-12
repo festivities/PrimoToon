@@ -9,7 +9,7 @@ vsOut vert(vsIn v){
     o.uv.zw = v.uv1;
     o.normal = v.normal;
     o.screenPos = ComputeScreenPos(o.pos);
-    o.vertexcol = v.vertexcol;
+    o.vertexcol = (_VertexColorLinear != 0.0) ? VertexColorConvertToLinear(v.vertexcol) : v.vertexcol;
 
     UNITY_TRANSFER_FOG(o, o.pos);
 
@@ -45,6 +45,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<half, 3> headRight;
 
     vector<half, 3> modifiedNormalsWS = 0.0;
+    vector<half, 3> finalNormalsWS = rawNormalsWS;
 
     half litFactor;
     fixed emissionFactor;
@@ -169,8 +170,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         dpdx = dpdx * dhdx.x + dpdy;
         normalCreationBuffer = rsqrt(dot(dpdx, dpdx));
         dpdx *= normalCreationBuffer;
-        normalCreationBuffer = (frontFacing != 0) ? UnityObjectToWorldNormal(i.normal) : 
-                                                    -UnityObjectToWorldNormal(i.normal);
+        normalCreationBuffer = rawNormalsWS;
         dpdy = normalCreationBuffer.zxy * dpdx.yzx;
         dpdy = normalCreationBuffer.yzx * dpdx.zxy - dpdy.xyz;
         dpdy *= -recalcTangent;
@@ -183,7 +183,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
         // hope you understood any of that KEKW, finally switch between normal map and raw normals
         modifiedNormalsWS = normalCreationBuffer;
-        vector<half, 3> finalNormalsWS = (_UseBumpMap != 0) ? modifiedNormalsWS : rawNormalsWS;
+        finalNormalsWS = (_UseBumpMap != 0) ? modifiedNormalsWS : finalNormalsWS;
 
         /* END OF NORMAL CREATION */
 
@@ -238,10 +238,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         half NdotL = dot(finalNormalsWS, normalize(lightDir));
         // remap from { -1, 1 } to { 0, 1 }
         NdotL = NdotL * 0.5 + 0.5;
-
-        // NdotV
-        half NdotV = dot(finalNormalsWS, viewDir);
-        NdotV = NdotV * 0.5 + 0.5;
 
         // NdotH, for some reason they don't remap ranges for the specular
         vector<half, 3> halfVector = normalize(viewDir + _WorldSpaceLightPos0);
@@ -537,6 +533,40 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     }
 
 
+    /* FRESNEL CREATION */
+
+    /*----------------------------------------------------/
+    u_xlat42 = dot(u_xlat1.xyz, u_xlat1.xyz);
+    u_xlat42 = inversesqrt(u_xlat42);
+    u_xlat2.xzw = vec3(u_xlat42) * u_xlat1.xyz;  
+    u_xlat42 = dot(u_xlat5.xyz, u_xlat2.xzw);
+    u_xlat42 = clamp(u_xlat42, 0.0, 1.0);
+    u_xlat42 = (-u_xlat42) + 1.0;
+    u_xlat42 = max(u_xlat42, 9.99999975e-05);
+    u_xlat42 = log2(u_xlat42);
+    u_xlat42 = u_xlat42 * _HitColorFresnelPower;
+    u_xlat42 = exp2(u_xlat42);
+    /----------------------------------------------------*/
+    vector<half, 3> fresnel = rsqrt(dot(finalNormalsWS, finalNormalsWS));
+    fresnel *= finalNormalsWS;
+
+    // NdotV
+    half NdotV = 1.0 - saturate(dot(fresnel, viewDir));
+    NdotV = max(NdotV, 9.99999975e-05);
+    NdotV = pow(NdotV, _HitColorFresnelPower);
+
+    /*----------------------------------------------------/
+    u_xlat2.xzw = max(_ElementRimColor.xyz, _HitColor.xyz);
+    u_xlat2.xzw = vec3(u_xlat42) * u_xlat2.xzw;
+    u_xlat0.xyz = u_xlat2.xzw * vec3(vec3(_HitColorScaler, _HitColorScaler, _HitColorScaler)) + u_xlat0.xyz;
+    
+    for now, idk what u_xlat0 could be
+    /----------------------------------------------------*/
+    fresnel = max(_ElementRimColor.xyz, _HitColor.xyz) * NdotV.xxx * _HitColorScaler;
+
+    /* END OF FRESNEL */
+
+
     /* RIM LIGHT CREATION */
 
     half rimLight = calculateRimLight(i.normal, i.screenPos, _RimLightIntensity, 
@@ -550,8 +580,11 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     
     /* COLOR CREATION */
 
+    // apply fresnel
+    finalColor.xyz += fresnel;
+
     // apply rim light
-    finalColor = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor) : finalColor + rimLight;
+    finalColor.xyz = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor.xyz) : finalColor.xyz + rimLight;
 
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, finalColor);

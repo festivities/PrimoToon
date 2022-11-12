@@ -13,6 +13,12 @@
         [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
         _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
+        [Toggle] _VertexColorLinear ("Linear Vertex Colors?", Range(0.0, 1.0)) = 0.0
+
+        [Header(Fresnel Options)] [Space(10)] [Gamma] _HitColor ("Hit Color", Color) = (0.0, 0.0, 0.0, 1.0)
+		[Gamma] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
+		_HitColorScaler ("Hit Color Scaler", Float) = 6
+		_HitColorFresnelPower ("Hit Color Fresnel Power", Float) = 1.5
 
         [Header(Face Shader Specific Settings)] [Space(10)] [Toggle] _UseFaceMapNew ("Use Face Shader?", Range(0.0, 1.0)) = 0.0
         _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
@@ -201,6 +207,12 @@
         float _RimLightType;
         float _RimLightIntensity;
         float _RimLightThickness;
+        float _VertexColorLinear;
+
+        vector<float, 4> _HitColor;
+        vector<float, 4> _ElementRimColor;
+        float _HitColorScaler;
+        float _HitColorFresnelPower;
 
         float _UseFaceMapNew;
         vector<float, 4> _headForwardVector;

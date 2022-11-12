@@ -120,3 +120,26 @@ bool isVR(){
         return false;
     #endif
 }
+
+// https://gist.github.com/Reedbeta/e8d3817e3f64bba7104b8fafd62906df
+// THIS IS NOT SUPPOSED TO BE USED NORMALLY, THE ONLY REASON AS TO WHY THIS IS HERE IS BECAUSE
+// MODEL RIPS CAN OCCASIONALLY BE IN .GLTF/.GLB FORMAT WHICH ENFORCES LINEAR VERTEX COLORS, WE
+// CAN WORK AROUND THAT IN-SHADER THROUGH THESE FUNCTIONS
+vector<float, 3> sRGBToLinear(const vector<float, 3> rgb){
+  // See https://gamedev.stackexchange.com/questions/92015/optimized-linear-to-srgb-glsl
+  return lerp(pow((rgb + 0.055) * (1.0 / 1.055), (vector<float, 3>)2.4),
+              rgb * (1.0/12.92),
+              rgb <= (vector<float, 3>)0.04045);
+}
+
+vector<float, 3> LinearToSRGB(const vector<float, 3> rgb){
+  // See https://gamedev.stackexchange.com/questions/92015/optimized-linear-to-srgb-glsl
+  return lerp(1.055 * pow(rgb, (vector<float, 3>)(1.0 / 2.4)) - 0.055,
+              rgb * 12.92,
+              rgb <= (vector<float, 3>)0.0031308);
+}
+
+vector<float, 4> VertexColorConvertToLinear(const vector<float, 4> input){
+    return vector<float, 4>(sRGBToLinear(input.xyz),
+                            input.w); // retain alpha
+}

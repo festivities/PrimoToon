@@ -6,6 +6,7 @@ vsOut vert(vsIn v){
     o.vertexOS = v.vertex;
     o.uv.xy = v.uv0;
     o.uv.zw = v.uv1;
+    o.vertexcol = (_VertexColorLinear != 0.0) ? VertexColorConvertToLinear(v.vertexcol) : v.vertexcol;
 
     const float _OutlineCorrectionWidth = 2.25; // cb0[39].w or cb0[15].x
 
@@ -130,13 +131,13 @@ vsOut vert(vsIn v){
         u_xlat16 = u_xlat16 * 100.0;
         u_xlat16 = u_xlat16 * _Scale;
         u_xlat16 = u_xlat16 * 0.414250195;
-        u_xlat16 = u_xlat16 * v.vertexcol.w;
+        u_xlat16 = u_xlat16 * o.vertexcol.w;
         u_xlat2.x = dot(u_xlat0.xyz, u_xlat0.xyz);
         u_xlat2.x = rsqrt(u_xlat2.x);
         u_xlat2.xyz = u_xlat0.xyz * u_xlat2.xxx;
         u_xlat2.xyz = u_xlat2.xyz * (vector<float, 3>)_MaxOutlineZOffset;
         u_xlat2.xyz = u_xlat2.xyz * (vector<float, 3>)_Scale;
-        u_xlat17 = v.vertexcol.z + -0.5;
+        u_xlat17 = o.vertexcol.z + -0.5;
         u_xlat0.xyz = u_xlat2.xyz * (vector<float, 3>)u_xlat17 + u_xlat0.xyz;
         u_xlat0.xy = u_xlat6.xy * (vector<float, 2>)u_xlat16 + u_xlat0.xy;
         u_xlat2 = u_xlat0.yyyy * UNITY_MATRIX_P[1];
@@ -152,7 +153,7 @@ vsOut vert(vsIn v){
     if(_OutlineType != 0){
         if(_FallbackOutlines != 0){
             // first, form the base outline thickness with vertexcol.w
-            vector<float, 3> calcOutline = v.vertexcol.w * (_OutlineWidth * 0.075);
+            vector<float, 3> calcOutline = o.vertexcol.w * (_OutlineWidth * 0.075);
             // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
             float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
             // clamp distOutline so it doesn't go wild at very far distances
@@ -176,7 +177,7 @@ vsOut vert(vsIn v){
             vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
 
             // optimize outlines for exposed faces so they don't artifact by offsetting in the Z-axis
-            calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * v.vertexcol.z * 0.0015 * _MaxOutlineZOffset;
+            calcOutline = calcOutline - mul(unity_WorldToObject, viewDir) * o.vertexcol.z * 0.0015 * _MaxOutlineZOffset;
             // offset vertices
             calcOutline += v.vertex;
 
@@ -211,15 +212,15 @@ vsOut vert(vsIn v){
             // another constant used by the game
             fovScale *= 0.414250195;
             // base outline thickness
-            fovScale *= v.vertexcol.w;
+            fovScale *= o.vertexcol.w;
             
             /*scale.x = rsqrt(dot(vViewPosition.xyz, vViewPosition.xyz)); // original calculations don't work with improperly ripped models
             scale = vViewPosition * scale.x;*/
             //scale *= _MaxOutlineZOffset;
             scale *= _Scale;
 
-            // v.vertexcol.z contains Z-offset values, though I don't know why they subtract it by 0.5
-            half zOffset = saturate(v.vertexcol.z - 0.48);
+            // o.vertexcol.z contains Z-offset values, though I don't know why they subtract it by 0.5
+            half zOffset = saturate(o.vertexcol.z - 0.48);
 
             // get outline direction, can be either the raw normals (HORRIBLE) or the custom tangents
             vector<half, 3> outlineDirection;
