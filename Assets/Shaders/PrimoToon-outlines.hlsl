@@ -305,7 +305,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* END OF ENVIRONMENT LIGHTING */
 
-
     /* COLOR CREATION */
 
     // form outline colors
@@ -324,9 +323,39 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
             globalOutlineColor = _OutlineColor5;
         }
     }
+    globalOutlineColor.w = 1.0;
 
     // apply environment lighting
-    globalOutlineColor *= lerp(1, environmentLighting, _EnvironmentLightingStrength);
+    globalOutlineColor.xyz *= lerp(1, environmentLighting, _EnvironmentLightingStrength).xyz;
+
+
+    /* WEAPON */
+
+    if(_UseWeapon != 0.0){
+        vector<half, 2> weaponUVs = (_ProceduralUVs != 0.0) ? (i.vertexOS.zx + 0.25) * 1.5 : i.uv.zw;
+
+        vector<fixed, 3> dissolve = 0.0;
+
+        /* DISSOLVE */
+
+        calculateDissolve(dissolve, weaponUVs.xy, 1.0);
+
+        /*buf = dissolveTex < 0.99;
+
+        dissolveTex.x -= 0.001;
+        dissolveTex.x = dissolveTex.x < 0.0;
+        dissolveTex.x = (buf) ? dissolveTex.x : 0.0;*/
+
+        /* END OF DISSOLVE */
+
+        // apply pattern
+        globalOutlineColor.xyz += pow(dissolve.y, 2.0) * _WeaponPatternColor.xyz * 2;
+    
+        // apply dissolve
+        clip(dissolve.x - _ClipAlphaThreshold);
+    }
+
+    /* END OF WEAPON */
 
     // apply fog
     UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);

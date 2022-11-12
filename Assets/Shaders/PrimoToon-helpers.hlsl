@@ -143,3 +143,16 @@ vector<float, 4> VertexColorConvertToLinear(const vector<float, 4> input){
     return vector<float, 4>(sRGBToLinear(input.xyz),
                             input.w); // retain alpha
 }
+
+void calculateDissolve(out vector<float, 3> input, vector<float, 2> uvs, float factor){
+    float buf2 = 1.0 - uvs.y;
+    float buf = (_DissolveDirection_Toggle != 0.0) ? buf2 : uvs.y;
+    buf = _WeaponDissolveValue * 2.1 + buf;
+    vector<float, 2> dissolveUVs = vector<float, 2>(uvs.x, buf - 1.0); // tmp1.xy
+
+    vector<fixed, 4> dissolveTex = _WeaponDissolveTex.Sample(sampler_WeaponDissolveTex, dissolveUVs);
+    buf = dissolveTex * 3.0 * factor;
+    buf = buf * 0.5 + dissolveTex.x;
+
+    input = saturate(vector<float, 3>(buf.x, dissolveTex.y, 0.0));
+}

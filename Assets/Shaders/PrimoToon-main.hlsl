@@ -509,6 +509,60 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         /* END OF EMISSION */
 
 
+        /* WEAPON */
+
+        vector<fixed, 3> dissolve = 0.0;
+        vector<fixed, 3> weaponPattern = 0.0;
+        vector<fixed, 3> scanLine = 0.0;
+        if(_UseWeapon != 0.0){
+            vector<half, 2> weaponUVs = (_ProceduralUVs != 0.0) ? (i.vertexOS.zx + 0.25) * 1.5 : i.uv.zw;
+
+            /* PATTERN */
+
+            vector<half, 2> weaponPatternUVs = _Time * _Pattern_Speed + weaponUVs; // tmp1.xy
+            vector<fixed, 4> weaponPatternTex = _WeaponPatternTex.Sample(sampler_WeaponPatternTex, weaponPatternUVs);
+            half buf = weaponPatternTex;
+            weaponPatternTex = sin(((_WeaponDissolveValue - 0.25) * 6.28));
+            weaponPatternTex += 1.0;
+            buf *= weaponPatternTex.x;
+
+            weaponPattern = buf * _WeaponPatternColor;
+
+            //return vector<fixed, 4>(buf.xxx, 1.0);
+
+            /* END OF PATTERN */
+
+
+            /* SCAN LINE */
+
+            half buf2 = 1.0 - weaponUVs.y;
+            buf = (_ScanDirection_Switch != 0.0) ? buf2 : weaponUVs.y;
+            half buf4 = _ScanSpeed * _Time.y;
+            half buf3 = buf * 0.5 + buf4;
+            vector<fixed, 4> scanTex = _ScanPatternTex.Sample(sampler_ScanPatternTex, vector<half, 2>(weaponUVs.x, buf3));
+
+            scanLine = scanTex.xyz * _ScanColorScaler * _ScanColor.xyz;
+
+
+            /* END OF SCAN LINE */
+
+
+            /* DISSOLVE */
+
+            calculateDissolve(dissolve, weaponUVs, weaponPatternTex.x);
+
+            /*buf = dissolveTex < 0.99;
+
+            dissolveTex.x -= 0.001;
+            dissolveTex.x = dissolveTex.x < 0.0;
+            dissolveTex.x = (buf) ? dissolveTex.x : 0.0;*/
+
+            /* END OF DISSOLVE */
+        }
+
+        /* END OF WEAPON */
+
+
         /* COLOR CREATION */
 
         vector<fixed, 3> finalDiffuse = ((_TextureLineUse != 0 && _UseBumpMap != 0) ? newDiffuse.xyz : mainTex.xyz);
@@ -528,6 +582,17 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         // apply emission
         finalColor.xyz = (_EmissionType != 0 && lightmapTex.g < 0.95) ? finalColor.xyz + emission.xyz : 
                                                                         lerp(finalColor, emission, emissionFactor).xyz;
+
+        if(_UseWeapon != 0.0){
+            // apply pattern
+            finalColor.xyz += max((_UsePattern != 0.0) ? weaponPattern : 0.0, pow(dissolve.y, 2.0) * _WeaponPatternColor * 2);
+
+            // apply scan line
+            finalColor.xyz += scanLine;
+
+            // apply dissolve
+            clip(dissolve.x - _ClipAlphaThreshold);
+        }
 
         /* END OF COLOR CREATION */
     }
@@ -562,7 +627,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     
     for now, idk what u_xlat0 could be
     /----------------------------------------------------*/
-    fresnel = max(_ElementRimColor.xyz, _HitColor.xyz) * NdotV.xxx * _HitColorScaler;
+    //fresnel = max(_ElementRimColor.xyz, _HitColor.xyz) * NdotV.xxx * _HitColorScaler;
+    fresnel = _HitColor.xyz * NdotV.xxx * _HitColorScaler;
 
     /* END OF FRESNEL */
 
@@ -616,7 +682,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnRightVector != 0){ return vector<fixed, 4>(headRight, 1.0); }
 
     /* END OF DEBUGGING */
-
 
     return finalColor;
 }

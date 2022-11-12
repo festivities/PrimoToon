@@ -7,6 +7,9 @@
         [NoScaleOffset] [HDR] _PackedShadowRampTex ("Shadow Ramp", 2D) = "white"{}
         [NoScaleOffset] _MTSpecularRamp ("Specular Ramp", 2D) = "white"{}
         [NoScaleOffset] [HDR] _MTMap ("Metallic Matcap", 2D) = "white"{}
+        [NoScaleOffset] _WeaponDissolveTex ("Weapon Dissolve", 2D) = "white"{}
+        [NoScaleOffset] _WeaponPatternTex ("Weapon Pattern", 2D) = "white"{}
+        [NoScaleOffset] _ScanPatternTex ("Scan Pattern", 2D) = "black"{}
 
         [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
         _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
@@ -15,10 +18,10 @@
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
         [Toggle] _VertexColorLinear ("Linear Vertex Colors?", Range(0.0, 1.0)) = 0.0
 
-        [Header(Fresnel Options)] [Space(10)] [Gamma] _HitColor ("Hit Color", Color) = (0.0, 0.0, 0.0, 1.0)
-		[Gamma] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
-		_HitColorScaler ("Hit Color Scaler", Float) = 6
-		_HitColorFresnelPower ("Hit Color Fresnel Power", Float) = 1.5
+        [Header(Fresnel Options)] [Space(10)] [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
+        [Gamma] [HideInInspector] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
+        _HitColorScaler ("Fresnel Color Scaler", Float) = 6
+        _HitColorFresnelPower ("Fresnel Power", Float) = 1.5
 
         [Header(Face Shader Specific Settings)] [Space(10)] [Toggle] _UseFaceMapNew ("Use Face Shader?", Range(0.0, 1.0)) = 0.0
         _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
@@ -28,6 +31,22 @@
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
         _FaceBlushStrength ("Face Blush Strength", Range(0.0, 1.0)) = 0.0
         [Gamma] _FaceBlushColor ("Face Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
+
+        [Header(Weapon Specific Settings)] [Space(10)] [Toggle] _UseWeapon ("Use Weapon Shader?", Range(0.0, 1.0)) = 0.0
+        [Toggle] _UsePattern ("Use Weapon Pattern?", Range(0.0, 1.0)) = 1.0
+        [Toggle] _ProceduralUVs ("No UV1?", Range(0.0, 1.0)) = 0.0
+        _ClipAlphaThreshold ("Dissolve Clipping Threshold", Range(0, 1)) = 1.0
+        _WeaponDissolveValue ("Weapon Dissolve Value", Range(-1.0, 2.0)) = 1.0
+        [Toggle] _DissolveDirection_Toggle ("Dissolve Direction Toggle", Range(0.0, 1.0)) = 0.0
+        [Gamma] [HDR] _WeaponPatternColor ("Weapon Pattern Color", Color) = (1.682, 1.568729, 0.6554853, 1.0)
+        _Pattern_Speed ("Pattern Speed", Float) = -0.033
+        [HideInInspector] _SkillEmisssionPower ("Skill Emisssion Power", Float) = 0.6
+        [Gamma] [HideInInspector] _SkillEmisssionColor ("Skill Emisssion Color", Vector) = (0.0, 0.0, 0.0, 0.0)
+        [HideInInspector] _SkillEmissionScaler ("Skill Emission Scaler", Float) = 3.2
+        _ScanColorScaler ("Scan Color Scaler", Float) = 0.0
+        [Gamma] _ScanColor ("Scan Color", Color) = (0.8970588, 0.8970588, 0.8970588, 1.0)
+        [Toggle] _ScanDirection_Switch ("Scan Direction Switch", Range(0.0, 1.0)) = 0.0
+        _ScanSpeed ("Scan Speed", Float) = 0.8
 
         [Header(Emission Options)] [Space(10)] [Toggle] _ToggleEmission ("Toggle Emission?", Range(0.0, 1.0)) = 0.0
         [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
@@ -94,16 +113,16 @@
         _MTSpecularScale ("Metallic Specular Scale", Float) = 15.0
         [Toggle] _MTUseSpecularRamp ("Use Specular Ramp Texture?", Float) = 0.0
         [Toggle] _MetalMaterial ("Enable Metallic?", Range(0.0, 1.0)) = 1.0
-        [Gamma] _MTMapDarkColor ("Metallic Matcap Dark Color", Color) = (0.51, 0.3, 0.19, 1.0)
-        [Gamma] _MTMapLightColor ("Metallic Matcap Light Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        [Gamma] [HDR] _MTMapDarkColor ("Metallic Matcap Dark Color", Color) = (0.51, 0.3, 0.19, 1.0)
+        [Gamma] [HDR] _MTMapLightColor ("Metallic Matcap Light Color", Color) = (1.0, 1.0, 1.0, 1.0)
         [Gamma] _MTShadowMultiColor ("Metallic Matcap Shadow Multiply Color", Color) = (0.78, 0.77, 0.82, 1.0)
-        [Gamma] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        [Gamma] [HDR] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
         [Header(Texture Line Options)] [Space(10)] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
         _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
         [Toggle] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 0.0
         _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
-        [Gamma] _TextureLineMultiplier ("Texture Line Multiplier", Color) = (0.6, 0.6, 0.6, 1.0)
+        [Gamma] [HDR] _TextureLineMultiplier ("Texture Line Multiplier", Color) = (0.6, 0.6, 0.6, 1.0)
         [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
 
         [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Max Z-Offset", Float) = 1.0
@@ -144,31 +163,28 @@
         [Toggle] _ReturnForwardVector ("Show Forward Vector (it should look blue)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRightVector ("Show Right Vector (it should look red)", Range(0.0, 1.0)) = 0.0
 
-		[Header(Rendering Options)] [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
-		//[Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
-		[Enum(Off, 0, On, 1)] _ZWrite ("ZWrite", Int) = 1
-		//[Enum(Thry.ColorMask)] _ColorMask ("Color Mask", Int) = 15
-		//_OffsetFactor ("Offset Factor", Float) = 0.0
-		//_OffsetUnits ("Offset Units", Float) = 0.0
-		//[ToggleUI]_RenderingReduceClipDistance ("Reduce Clip Distance", Float) = 0
-		//[ToggleUI]_IgnoreFog ("Ignore Fog", Float) = 0
-		//[HideInInspector] Instancing ("Instancing", Float) = 0 //add this property for instancing variants settings to be shown
-		
-		[Header(Blending Options)] //[Enum(Thry.BlendOp)]_BlendOp ("RGB Blend Op", Int) = 0
-		//[Enum(Thry.BlendOp)]_BlendOpAlpha ("Alpha Blend Op", Int) = 0
-		[Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source Blend", Int) = 1
-		[Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination Blend", Int) = 0
-		//[Space][ThryHeaderLabel(Additive Blending, 13)]
-		//[Enum(Thry.BlendOp)]_AddBlendOp ("RGB Blend Op", Int) = 0
-		//[Enum(Thry.BlendOp)]_AddBlendOpAlpha ("Alpha Blend Op", Int) = 0
-		//[Enum(UnityEngine.Rendering.BlendMode)] _AddSrcBlend ("Source Blend", Int) = 1
-		//[Enum(UnityEngine.Rendering.BlendMode)] _AddDstBlend ("Destination Blend", Int) = 1
+        [Header(Rendering Options)] [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
+        //[Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
+        [Enum(Off, 0, On, 1)] _ZWrite ("ZWrite", Int) = 1
+        //[Enum(Thry.ColorMask)] _ColorMask ("Color Mask", Int) = 15
+        //_OffsetFactor ("Offset Factor", Float) = 0.0
+        //_OffsetUnits ("Offset Units", Float) = 0.0
+        //[ToggleUI]_RenderingReduceClipDistance ("Reduce Clip Distance", Float) = 0
+        //[ToggleUI]_IgnoreFog ("Ignore Fog", Float) = 0
+        //[HideInInspector] Instancing ("Instancing", Float) = 0 //add this property for instancing variants settings to be shown
+
+        [Header(Blending Options)] //[Enum(Thry.BlendOp)]_BlendOp ("RGB Blend Op", Int) = 0
+        //[Enum(Thry.BlendOp)]_BlendOpAlpha ("Alpha Blend Op", Int) = 0
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source Blend", Int) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination Blend", Int) = 0
+        //[Space][ThryHeaderLabel(Additive Blending, 13)]
+        //[Enum(Thry.BlendOp)]_AddBlendOp ("RGB Blend Op", Int) = 0
+        //[Enum(Thry.BlendOp)]_AddBlendOpAlpha ("Alpha Blend Op", Int) = 0
+        //[Enum(UnityEngine.Rendering.BlendMode)] _AddSrcBlend ("Source Blend", Int) = 1
+        //[Enum(UnityEngine.Rendering.BlendMode)] _AddDstBlend ("Destination Blend", Int) = 1
     }
     SubShader{
-        Tags{ 
-            "RenderType"="Opaque"
-            "Queue"="Geometry"
-        }
+        Tags{ "RenderType"="Opaque" "Queue"="Geometry" }
 
         ZWrite [_ZWrite]
 
@@ -196,6 +212,9 @@
         Texture2D _PackedShadowRampTex;     SamplerState sampler_PackedShadowRampTex;
         Texture2D _MTSpecularRamp;          SamplerState sampler_MTSpecularRamp;
         Texture2D _MTMap;                   SamplerState sampler_MTMap;
+        Texture2D _WeaponDissolveTex;       SamplerState sampler_WeaponDissolveTex;
+        Texture2D _WeaponPatternTex;        SamplerState sampler_WeaponPatternTex;
+        Texture2D _ScanPatternTex;          SamplerState sampler_ScanPatternTex;
 
         Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
         Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
@@ -222,6 +241,22 @@
         float _MaterialID;
         float _FaceBlushStrength;
         vector<float, 4> _FaceBlushColor;
+
+        float _UseWeapon;
+        float _UsePattern;
+        float _ProceduralUVs;
+        float _ClipAlphaThreshold;
+        float _WeaponDissolveValue;
+        float _DissolveDirection_Toggle;
+        vector<float, 4> _WeaponPatternColor;
+        float _Pattern_Speed;
+        float _SkillEmisssionPower;
+        float4 _SkillEmisssionColor;
+        float _SkillEmissionScaler;
+        float _ScanColorScaler;
+        vector<float, 4> _ScanColor;
+        float _ScanDirection_Switch;
+        float _ScanSpeed;
 
         float _ToggleEmission;
         float _ToggleEyeGlow;
@@ -367,6 +402,8 @@
 
             Cull Front
 
+            Blend [_SrcBlend] [_DstBlend]
+
             HLSLPROGRAM
 
             #pragma multi_compile_fwdbase
@@ -375,6 +412,20 @@
 
             ENDHLSL
         }
-        UsePass "Standard/SHADOWCASTER"
+        Pass{
+            Name "ShadowCaster"
+
+            Tags{ "LightMode" = "ShadowCaster" }
+            
+            HLSLPROGRAM
+
+            #pragma multi_compile_instancing
+		    #pragma multi_compile_shadowcaster
+
+            // template by mochie bestie: https://github.com/cnlohr/shadertrixx/blob/main/README.md#shadowcasting
+            #include "PrimoToon-shadows.hlsl"
+
+            ENDHLSL
+        }
     }
 }

@@ -6,6 +6,7 @@ Assets/Scenes/
 Assets/Scripts/
 Assets/test/
 Assets/XR/
+Assets/XShaders/
 Library/
 Logs/
 Packages/
@@ -13,3 +14,4 @@ ProjectSettings/
 Temp/
 Thry/
 *.meta
+*.rsp
