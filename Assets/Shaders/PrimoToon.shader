@@ -18,7 +18,8 @@
         _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
         [Toggle] _VertexColorLinear ("Linear Vertex Colors?", Range(0.0, 1.0)) = 0.0
 
-        [Header(Fresnel Options)] [Space(10)] [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
+        [Header(Fresnel Options)] [Space(10)] [Toggle] _UseFresnel ("Use Fresnel?", Range(0.0, 1.0)) = 1.0
+        [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] [HideInInspector] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
         _HitColorScaler ("Fresnel Color Scaler", Float) = 6
         _HitColorFresnelPower ("Fresnel Power", Float) = 1.5
@@ -228,6 +229,7 @@
         float _RimLightThickness;
         float _VertexColorLinear;
 
+        float _UseFresnel;
         vector<float, 4> _HitColor;
         vector<float, 4> _ElementRimColor;
         float _HitColorScaler;

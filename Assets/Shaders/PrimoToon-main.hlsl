@@ -647,7 +647,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     /* COLOR CREATION */
 
     // apply fresnel
-    finalColor.xyz += fresnel;
+    finalColor.xyz += (_UseFresnel != 0.0) ? fresnel : 0.0;
 
     // apply rim light
     finalColor.xyz = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor.xyz) : finalColor.xyz + rimLight;
