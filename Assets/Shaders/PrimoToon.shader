@@ -112,12 +112,14 @@
         _MTShininess ("Metallic Specular Shininess", Float) = 90.0
         _MTSpecularAttenInShadow ("Metallic Specular Attenuation in Shadow", Range(0.0, 1.0)) = 0.2
         _MTSpecularScale ("Metallic Specular Scale", Float) = 15.0
+        _MTSharpLayerOffset ("Metallic Sharp Layer Offset", Range(0.001, 1.0)) = 1.0
         [Toggle] _MTUseSpecularRamp ("Use Specular Ramp Texture?", Float) = 0.0
         [Toggle] _MetalMaterial ("Enable Metallic?", Range(0.0, 1.0)) = 1.0
         [Gamma] [HDR] _MTMapDarkColor ("Metallic Matcap Dark Color", Color) = (0.51, 0.3, 0.19, 1.0)
         [Gamma] [HDR] _MTMapLightColor ("Metallic Matcap Light Color", Color) = (1.0, 1.0, 1.0, 1.0)
         [Gamma] _MTShadowMultiColor ("Metallic Matcap Shadow Multiply Color", Color) = (0.78, 0.77, 0.82, 1.0)
         [Gamma] [HDR] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        [Gamma] _MTSharpLayerColor ("Metallic Sharp Layer Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
         [Header(Texture Line Options)] [Space(10)] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
         _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
@@ -321,12 +323,14 @@
         float _MTShininess;
         float _MTSpecularAttenInShadow;
         float _MTSpecularScale;
+        float _MTSharpLayerOffset;
         float _MTUseSpecularRamp;
         float _MetalMaterial;
         vector<float, 4> _MTMapDarkColor;
         vector<float, 4> _MTMapLightColor;
         vector<float, 4> _MTShadowMultiColor;
         vector<float, 4> _MTSpecularColor;
+        vector<float, 4> _MTSharpLayerColor;
 
         float _TextureBiasWhenDithering;
         float _TextureLineSmoothness;

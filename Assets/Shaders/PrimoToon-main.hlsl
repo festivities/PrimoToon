@@ -411,16 +411,22 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         vector<half, 4> metalSpecular = NdotH;
         metalSpecular = saturate(pow(metalSpecular, _MTShininess) * _MTSpecularScale);
 
-        // if _MTUseSpecularRamp is set to 1, shrimply use the specular ramp texture
-        if(_MTUseSpecularRamp != 0){
-            metalSpecular = _MTSpecularRamp.Sample(sampler_MTSpecularRamp, vector<half, 2>(metalSpecular.x, 0.5));
+        if(_MTSharpLayerOffset < metalSpecular.x){
+            metalSpecular = _MTSharpLayerColor;
         }
         else{
-            metalSpecular *= lightmapTex.b;
+            // if _MTUseSpecularRamp is set to 1, shrimply use the specular ramp texture
+            if(_MTUseSpecularRamp != 0){
+                metalSpecular = _MTSpecularRamp.Sample(sampler_MTSpecularRamp, vector<half, 2>(metalSpecular.x, 0.5));
+            }
+            else{
+                metalSpecular *= lightmapTex.b;
+            }
+
+            // apply _MTSpecularColor
+            metalSpecular *= _MTSpecularColor;
         }
-        
-        // apply _MTSpecularColor
-        metalSpecular *= _MTSpecularColor;
+
         // apply _MTSpecularAttenInShadow ONLY to shaded areas
         metalSpecular = lerp(metalSpecular * _MTSpecularAttenInShadow, metalSpecular, saturate(NdotL_buf));
 
