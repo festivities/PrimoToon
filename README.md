@@ -19,7 +19,7 @@ https://user-images.githubusercontent.com/77230051/192085179-8b7fde87-57d5-4c5f-
 ---
 
 ## Temporary guide
-Make sure **ALL** your textures have *Texture Type* set to **Default**, *Compression* set to **None**, and *Generate Mip Maps* **unticked**. Some people have told me that for VRChat, compression and generating mip maps are recommended so that avatars are optimized. In that case, you may enable said options for most of the textures **except** the ramp textures so as to prevent artifacting and precision issues.
+Make sure **ALL** your textures <u>**EXCEPT**</u> the ramp textures have *Texture Type* set to **Default**, *Compression* set to **Very High**, and *Generate Mip Maps* **ticked**. The ramp textures should have no compression and mip mapping to prevent artifacting and precision issues.
 
 All ramp textures should have *Wrap Mode* changed from Repeat to **Clamp**. The specular ramp texture must have the *sRGB (Color Texture)* property **unticked**. 
 
@@ -28,6 +28,11 @@ All lightmaps, normal maps, and the face shadow texture should have their *sRGB 
 Unity projects in the Built-in Rendering Pipeline default to the Gamma option for color management. This is **not** what Genshin Impact uses. To avoid color inaccuracy, make sure that the *Color Space* is set to **Linear** in the [*Project Settings*](https://docs.unity3d.com/Manual/LinearRendering-LinearOrGammaWorkflow.html).
 
 Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure that the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace.
+
+For weapon dissolve/VFX, you must have these common textures:
+- *Eff_WeaponsTotem_Grain_00.png* ---> **Weapon Pattern**
+- *Eff_WeaponsTotem_Dissolve_00.png* ---> **Weapon Dissolve**
+- *Eff_Gradient_Repeat_01.png* ---> **Scan Pattern**
 
 ## Contact / Issues
 - [Discord server](https://discord.gg/85rP9SpAkF)

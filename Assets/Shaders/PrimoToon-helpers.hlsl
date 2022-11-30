@@ -156,3 +156,41 @@ void calculateDissolve(out vector<float, 3> input, vector<float, 2> uvs, float f
 
     input = saturate(vector<float, 3>(buf.x, dissolveTex.y, 0.0));
 }
+
+// apache license: https://gitlab.com/s-ilent/filamented/-/blob/master/Filamented/SharedFilteringLib.hlsl
+vector<float, 4> cubic(float v){
+    vector<float, 4> n = vector<float, 4>(1.0, 2.0, 3.0, 4.0) - v;
+    vector<float, 4> s = n * n * n;
+    float x = s.x;
+    float y = s.y - 4.0 * s.x;
+    float z = s.z - 4.0 * s.y + 6.0 * s.x;
+    float w = 6.0 - x - y - z;
+    return vector<float, 4>(x, y, z, w);
+}
+
+vector<float, 4> SampleTexture2DBicubicFilter(Texture2D tex, SamplerState smp, vector<float, 2> coord, const vector<float, 4> texSize){
+    coord = coord * texSize.xy - 0.5;
+    float fx = frac(coord.x);
+    float fy = frac(coord.y);
+    coord.x -= fx;
+    coord.y -= fy;
+
+    vector<float, 4> xcubic = cubic(fx);
+    vector<float, 4> ycubic = cubic(fy);
+
+    vector<float, 4> c = vector<float, 4>(coord.x - 0.5, coord.x + 1.5, coord.y - 0.5, coord.y + 1.5);
+    vector<float, 4> s = vector<float, 4>(xcubic.x + xcubic.y, xcubic.z + xcubic.w, ycubic.x + ycubic.y, ycubic.z + ycubic.w);
+    vector<float, 4> offset = c + vector<float, 4>(xcubic.y, xcubic.w, ycubic.y, ycubic.w) / s;
+
+    vector<float, 4> sample0 = tex.Sample(smp, vector<float, 2>(offset.x, offset.z) * texSize.zw);
+    vector<float, 4> sample1 = tex.Sample(smp, vector<float, 2>(offset.y, offset.z) * texSize.zw);
+    vector<float, 4> sample2 = tex.Sample(smp, vector<float, 2>(offset.x, offset.w) * texSize.zw);
+    vector<float, 4> sample3 = tex.Sample(smp, vector<float, 2>(offset.y, offset.w) * texSize.zw);
+
+    float sx = s.x / (s.x + s.y);
+    float sy = s.z / (s.z + s.w);
+
+    return lerp(
+        lerp(sample3, sample2, sx),
+        lerp(sample1, sample0, sx), sy);
+}

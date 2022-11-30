@@ -208,10 +208,10 @@
 
         /* properties */
 
-        Texture2D _MainTex;                 SamplerState sampler_MainTex;
-        Texture2D _LightMapTex;             SamplerState sampler_LightMapTex;
-        Texture2D _FaceMap;                 SamplerState sampler_FaceMap;
-        Texture2D _BumpMap;                 SamplerState sampler_BumpMap;
+        Texture2D _MainTex;                 SamplerState sampler_MainTex;                 const vector<float, 4> _MainTex_TexelSize;
+        Texture2D _LightMapTex;             SamplerState sampler_LightMapTex;             const vector<float, 4> _LightMapTex_TexelSize;
+        Texture2D _FaceMap;                 SamplerState sampler_FaceMap;                 const vector<float, 4> _FaceMap_TexelSize;
+        Texture2D _BumpMap;                 SamplerState sampler_BumpMap;                 const vector<float, 4> _BumpMap_TexelSize;
         Texture2D _PackedShadowRampTex;     SamplerState sampler_PackedShadowRampTex;
         Texture2D _MTSpecularRamp;          SamplerState sampler_MTSpecularRamp;
         Texture2D _MTMap;                   SamplerState sampler_MTMap;

@@ -31,10 +31,11 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* TEXTURE CREATION */
 
-    vector<fixed, 4> mainTex = _MainTex.Sample(sampler_MainTex, newUVs);
-    vector<fixed, 4> lightmapTex = _LightMapTex.Sample(sampler_LightMapTex, newUVs);
-    vector<fixed, 4> facemapTex = _FaceMap.Sample(sampler_FaceMap, newUVs);
-    vector<fixed, 4> bumpmapTex = _BumpMap.Sample(sampler_BumpMap, newUVs);
+    // the author's code has the xy and zw elements of _TexelSize swapped so I swizzle them here (?????? wtf)
+    vector<fixed, 4> mainTex = SampleTexture2DBicubicFilter(_MainTex, sampler_MainTex, newUVs, _MainTex_TexelSize.zwxy);
+    vector<fixed, 4> lightmapTex = SampleTexture2DBicubicFilter(_LightMapTex, sampler_LightMapTex, newUVs, _LightMapTex_TexelSize.zwxy);
+    vector<fixed, 4> facemapTex = SampleTexture2DBicubicFilter(_FaceMap, sampler_FaceMap, newUVs, _BumpMap_TexelSize.zwxy);
+    vector<fixed, 4> bumpmapTex = SampleTexture2DBicubicFilter(_BumpMap, sampler_BumpMap, newUVs, _BumpMap_TexelSize.zwxy);
 
     /* END OF TEXTURE CREATION */
 
@@ -66,7 +67,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_UseFaceMapNew != 0){
         /* TEXTURE CREATION */
 
-        vector<fixed, 4> lightmapTex_mirrored = _LightMapTex.Sample(sampler_LightMapTex, vector<half, 2>(1.0 - i.uv.x, i.uv.y));
+        vector<fixed, 4> lightmapTex_mirrored = SampleTexture2DBicubicFilter(_LightMapTex, sampler_LightMapTex, vector<half, 2>(1.0 - i.uv.x, i.uv.y), _LightMapTex_TexelSize.zwxy);
 
         /* END OF TEXTURE CREATION */
 
@@ -419,12 +420,10 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
             if(_MTUseSpecularRamp != 0){
                 metalSpecular = _MTSpecularRamp.Sample(sampler_MTSpecularRamp, vector<half, 2>(metalSpecular.x, 0.5));
             }
-            else{
-                metalSpecular *= lightmapTex.b;
-            }
 
             // apply _MTSpecularColor
             metalSpecular *= _MTSpecularColor;
+            metalSpecular *= lightmapTex.z;
         }
 
         // apply _MTSpecularAttenInShadow ONLY to shaded areas
