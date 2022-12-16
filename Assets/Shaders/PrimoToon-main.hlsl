@@ -34,7 +34,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     // the author's code has the xy and zw elements of _TexelSize swapped so I swizzle them here (?????? wtf)
     vector<fixed, 4> mainTex = SampleTexture2DBicubicFilter(_MainTex, sampler_MainTex, newUVs, _MainTex_TexelSize.zwxy);
     vector<fixed, 4> lightmapTex = SampleTexture2DBicubicFilter(_LightMapTex, sampler_LightMapTex, newUVs, _LightMapTex_TexelSize.zwxy);
-    vector<fixed, 4> facemapTex = SampleTexture2DBicubicFilter(_FaceMap, sampler_FaceMap, newUVs, _BumpMap_TexelSize.zwxy);
+    vector<fixed, 4> facemapTex = SampleTexture2DBicubicFilter(_FaceMap, sampler_FaceMap, newUVs, _FaceMap_TexelSize.zwxy);
     vector<fixed, 4> bumpmapTex = SampleTexture2DBicubicFilter(_BumpMap, sampler_BumpMap, newUVs, _BumpMap_TexelSize.zwxy);
 
     /* END OF TEXTURE CREATION */
