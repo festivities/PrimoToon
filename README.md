@@ -19,7 +19,7 @@ https://user-images.githubusercontent.com/77230051/192085179-8b7fde87-57d5-4c5f-
 ---
 
 ## Temporary guide
-Make sure **ALL** your textures <u>**EXCEPT**</u> the ramp textures have *Texture Type* set to **Default**, *Compression* set to **Very High**, and *Generate Mip Maps* **ticked**. The ramp textures should have no compression and mip mapping to prevent artifacting and precision issues.
+Make sure **ALL** your textures <u>**EXCEPT**</u> the ramp textures have *Texture Type* set to **Default**, *Compression* set to **High Quality**, and *Generate Mip Maps* **ticked**. The ramp textures should have no compression and mip mapping to prevent artifacting and precision issues.
 
 All ramp textures should have *Wrap Mode* changed from Repeat to **Clamp**. The specular ramp texture must have the *sRGB (Color Texture)* property **unticked**. 
 

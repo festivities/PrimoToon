@@ -62,6 +62,9 @@
         _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
         _PulseMaxStrength ("Maximum Pulse Strength", Range(0.0, 1.0)) = 1.0
 
+        [Header(Cutout Transparency)] [Space(10)] [Toggle] _ToggleCutout ("Use Diffuse Alpha as Transparency?", Range(0.0, 1.0)) = 0.0
+        _TransparencyCutoff ("Cutoff", Range(0.0, 1.0)) = 0.5
+
         [Header(Diffuse or Lighting Options)] [Space(10)] _BumpScale ("Bump Scale", Range(0.0, 1.0)) = 0.2
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
@@ -131,7 +134,7 @@
         [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Max Z-Offset", Float) = 1.0
         [Toggle] [HideInInspector] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0
         [KeywordEnum(None, Normal, Tangent)] _OutlineType ("Outline Type", Float) = 1.0
-        [Toggle] _FallbackOutlines ("Fallback Outlines?", Range(0.0, 1.0)) = 0.0
+        [Toggle] _FallbackOutlines ("Fallback Outlines? (default is on temporarily)", Range(0.0, 1.0)) = 1.0
         _OutlineWidth ("Outline Width", Float) = 0.03
         _Scale ("Outline Scale", Float) = 0.01
         [Toggle] [HideInInspector] _UseClipPlane ("Use Clip Plane?", Range(0.0, 1.0)) = 0.0
@@ -272,6 +275,9 @@
         float _PulseSpeed;
         float _PulseMinStrength;
         float _PulseMaxStrength;
+
+        float _ToggleCutout;
+        float _TransparencyCutoff;
 
         float _BumpScale;
         float _LightArea;

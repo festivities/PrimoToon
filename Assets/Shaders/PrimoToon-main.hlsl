@@ -562,10 +562,20 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
             dissolveTex.x = dissolveTex.x < 0.0;
             dissolveTex.x = (buf) ? dissolveTex.x : 0.0;*/
 
+            // apply dissolve
+            clip(dissolve.x - _ClipAlphaThreshold);
+
             /* END OF DISSOLVE */
         }
 
         /* END OF WEAPON */
+
+
+        /* CUTOUT TRANSPARENCY */
+
+        if(_ToggleCutout != 0.0) clip(mainTex.w - 0.03 - _TransparencyCutoff);
+
+        /* END OF CUTOUT TRANSPARENCY */
 
 
         /* COLOR CREATION */
@@ -594,9 +604,6 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
             // apply scan line
             finalColor.xyz += scanLine;
-
-            // apply dissolve
-            clip(dissolve.x - _ClipAlphaThreshold);
         }
 
         /* END OF COLOR CREATION */

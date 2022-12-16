@@ -153,7 +153,7 @@ vsOut vert(vsIn v){
     if(_OutlineType != 0){
         if(_FallbackOutlines != 0){
             // first, form the base outline thickness with vertexcol.w
-            vector<float, 3> calcOutline = o.vertexcol.w * (_OutlineWidth * 0.075);
+            vector<float, 3> calcOutline = o.vertexcol.w * (_OutlineWidth * 0.105);
             // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
             float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
             // clamp distOutline so it doesn't go wild at very far distances
@@ -272,6 +272,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     vector<half, 2> newUVs = (frontFacing) ? i.uv.xy : i.uv.zw;
 
     // sample textures to objects
+    vector<fixed, 4> mainTex = _MainTex.Sample(sampler_MainTex, vector<half, 2>(i.uv.xy));
     vector<fixed, 4> lightmapTex = _LightMapTex.Sample(sampler_LightMapTex, vector<half, 2>(i.uv.xy));
 
 
@@ -305,6 +306,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* END OF ENVIRONMENT LIGHTING */
 
+
     /* COLOR CREATION */
 
     // form outline colors
@@ -327,6 +329,15 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // apply environment lighting
     globalOutlineColor.xyz *= lerp(1, environmentLighting, _EnvironmentLightingStrength).xyz;
+
+    /* END OF COLOR CREATION */
+
+
+    /* CUTOUT TRANSPARENCY */
+
+    if(_ToggleCutout != 0.0) clip(mainTex.w - 0.03 - _TransparencyCutoff);
+
+    /* END OF CUTOUT TRANSPARENCY */
 
 
     /* WEAPON */

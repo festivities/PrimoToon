@@ -28,6 +28,9 @@ v2f vert (appdata v){
 vector<float, 4> frag (v2f i) : SV_Target{
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
+    // sample textures to objects
+    vector<fixed, 4> mainTex = _MainTex.Sample(sampler_MainTex, vector<half, 2>(i.uv.xy));
+
     /* WEAPON */
 
     if(_UseWeapon != 0.0){
@@ -53,6 +56,14 @@ vector<float, 4> frag (v2f i) : SV_Target{
     }
 
     /* END OF WEAPON */
+
+
+    /* CUTOUT TRANSPARENCY */
+
+    if(_ToggleCutout != 0.0) clip(mainTex.w - 0.03 - _TransparencyCutoff);
+
+    /* END OF CUTOUT TRANSPARENCY */
+
 
     return 0;
 }
