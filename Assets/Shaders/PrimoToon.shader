@@ -219,7 +219,7 @@
         Texture2D _MTSpecularRamp;          SamplerState sampler_MTSpecularRamp;
         Texture2D _MTMap;                   SamplerState sampler_MTMap;
         Texture2D _WeaponDissolveTex;       SamplerState sampler_WeaponDissolveTex;
-        Texture2D _WeaponPatternTex;        SamplerState sampler_WeaponPatternTex;
+        Texture2D _WeaponPatternTex;        SamplerState sampler_WeaponPatternTex;        const vector<float, 4> _WeaponPatternTex_TexelSize;
         Texture2D _ScanPatternTex;          SamplerState sampler_ScanPatternTex;
 
         Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;

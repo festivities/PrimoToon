@@ -51,7 +51,7 @@ vector<fixed, 4> calculateEnvLighting(vector<float, 3> vertexWSInput){
     vector<half, 3> pointLightCalc = firstPointLight;
     pointLightCalc = max(pointLightCalc, secondPointLight);
     pointLightCalc = max(pointLightCalc, thirdPointLight);
-    pointLightCalc = max(pointLightCalc, thirdPointLight);
+    pointLightCalc = max(pointLightCalc, fourthPointLight);
 
     // get the color of whichever's greater between the light direction and the strongest nearby point light
     vector<fixed, 4> environmentLighting = max(_LightColor0, vector<fixed, 4>(pointLightCalc, 1));

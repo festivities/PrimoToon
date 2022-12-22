@@ -21,18 +21,20 @@ https://user-images.githubusercontent.com/77230051/192085179-8b7fde87-57d5-4c5f-
 ## Temporary guide
 Make sure **ALL** your textures <u>**EXCEPT**</u> the ramp textures have *Texture Type* set to **Default**, *Compression* set to **High Quality**, and *Generate Mip Maps* **ticked**. The ramp textures should have no compression and mip mapping to prevent artifacting and precision issues.
 
-All ramp textures should have *Wrap Mode* changed from Repeat to **Clamp**. The specular ramp texture must have the *sRGB (Color Texture)* property **unticked**. 
+All ramp textures should have *Wrap Mode* changed from Repeat to **Clamp**. The specular ramp texture must have the *sRGB (Color Texture)* property **unticked**.
 
 All lightmaps, normal maps, and the face shadow texture should have their *sRGB (Color Texture)* property **unticked**. Keep in mind with what I've said earlier, the normal map should have the *Texture Type* set to **Default**. **IGNORE THE NORMAL MAP TEXTURE TYPE!**
-
-Unity projects in the Built-in Rendering Pipeline default to the Gamma option for color management. This is **not** what Genshin Impact uses. To avoid color inaccuracy, make sure that the *Color Space* is set to **Linear** in the [*Project Settings*](https://docs.unity3d.com/Manual/LinearRendering-LinearOrGammaWorkflow.html).
-
-Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure that the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace.
 
 For weapon dissolve/VFX, you must have these common textures:
 - *Eff_WeaponsTotem_Grain_00.png* ---> **Weapon Pattern**
 - *Eff_WeaponsTotem_Dissolve_00.png* ---> **Weapon Dissolve**
 - *Eff_Gradient_Repeat_01.png* ---> **Scan Pattern**
+
+All of the above textures should have *sRGB (Color Texture)* **unticked** and the dissolve texture's *Wrap Mode* set to **Clamp**. Both the dissolve and scan line *(Eff_Gradient_Repeat_01.png)* textures should have no compression and mip mapping.
+
+Unity projects in the Built-in Rendering Pipeline default to the Gamma option for color management. This is **not** what Genshin Impact uses. To avoid color inaccuracy, make sure that the *Color Space* is set to **Linear** in the [*Project Settings*](https://docs.unity3d.com/Manual/LinearRendering-LinearOrGammaWorkflow.html).
+
+Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure that the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace. If your model does not have the custom tangents, you can easily regenerate them with this [script](https://github.com/festivize/PrimoToon/blob/main/Assets/Scripts/AverageNormals.cs).
 
 ## Contact / Issues
 - [Discord server](https://discord.gg/85rP9SpAkF)
@@ -57,11 +59,11 @@ All of this wouldn't be possible if it weren't for:
 - [Manashiku](https://github.com/Manashiku/)
 - The folks over at [知乎专栏](https://zhuanlan.zhihu.com/)
 - JTAOO
-- [Unari](https://twitter.com/UnariVR)
+- [Unari](https://twitter.com/UnariVR/)
 - The VRC Shader Development Discord
 - [Razmoth](https://github.com/Razmoth/)
-- [radioegor146](https://github.com/radioegor146)
-- Mero
+- [radioegor146](https://github.com/radioegor146/)
+- [Mero](https://github.com/GrownNed/)
 
 ## Disclaimer
 This shader isn't meant to be 100% accurate - what I only aim for is to replicate the in-game looks to the best of my ability. Some calculations are exactly how the game does things, some are my own thrown into the mix.

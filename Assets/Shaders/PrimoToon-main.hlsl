@@ -525,7 +525,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
             /* PATTERN */
 
             vector<half, 2> weaponPatternUVs = _Time * _Pattern_Speed + weaponUVs; // tmp1.xy
-            vector<fixed, 4> weaponPatternTex = _WeaponPatternTex.Sample(sampler_WeaponPatternTex, weaponPatternUVs);
+            vector<fixed, 4> weaponPatternTex = SampleTexture2DBicubicFilter(_WeaponPatternTex, sampler_WeaponPatternTex, weaponPatternUVs, _WeaponPatternTex_TexelSize.zwxy);
             half buf = weaponPatternTex;
             weaponPatternTex = sin(((_WeaponDissolveValue - 0.25) * 6.28));
             weaponPatternTex += 1.0;
