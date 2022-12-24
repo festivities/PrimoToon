@@ -2,7 +2,7 @@ https://user-images.githubusercontent.com/77230051/192085179-8b7fde87-57d5-4c5f-
 
 <br>
 <p align="center">
-    <a href="https://github.com/festivize/PrimoToon"><img src="https://user-images.githubusercontent.com/77230051/191998247-effb10b9-4320-4e39-8c32-29019f00a0f8.png" alt="PrimoToon"/></a>
+    <a href="https://github.com/festivize/PrimoToon"><img src="https://user-images.githubusercontent.com/77230051/209431459-32fcd906-57c3-4bba-ba4e-5092ab36a964.png" alt="PrimoToon"/></a>
 </p><br>
 
 <p align="center">
@@ -67,6 +67,7 @@ All of this wouldn't be possible if it weren't for:
 - [Razmoth](https://github.com/Razmoth/)
 - [radioegor146](https://github.com/radioegor146/)
 - [Mero](https://github.com/GrownNed/)
+- [Lunatic](https://github.com/lunaticwhat/)
 
 ## Disclaimer
 This shader isn't meant to be 100% accurate - what I only aim for is to replicate the in-game looks to the best of my ability. Some calculations are exactly how the game does things, some are my own thrown into the mix.
