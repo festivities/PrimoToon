@@ -94,7 +94,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         shadowRange = pow(shadowRange, pow((2 - (_LightArea + 0.50)), 3));
 
         // finally drive faceFactor
-        half faceFactor = smoothstep(shadowRange - _FaceMapSoftness, shadowRange + _FaceMapSoftness, lightmapDir);
+        half faceFactor = smoothstep(shadowRange - _FaceMapSoftness, shadowRange + _FaceMapSoftness, lightmapDir.w);
 
         // use FdotL once again to lerp between shaded and lit for the mouth area
         faceFactor = faceFactor + facemapTex.w * (1 - FdotL);
