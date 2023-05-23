@@ -138,6 +138,9 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         // apply face blush
         finalColor.xyz *= lerp(1, lerp(1, _FaceBlushColor, mainTex.w), _FaceBlushStrength);
 
+        // apply nose blush
+        finalColor.xyz *= lerp(1, lerp(_NoseBlushColor, 1, lightmapTex.z), _NoseBlushStrength);
+
         // apply environment lighting
         finalColor.xyz *= lerp(1.0, environmentLighting, _EnvironmentLightingStrength).xyz;
 

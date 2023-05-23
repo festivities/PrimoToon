@@ -30,6 +30,8 @@
         _FaceMapSoftness ("Face Lighting Softness", Range(0.0, 1.0)) = 0.001
         [Toggle] _flipFaceLighting ("Flip Face Lighting?", Range(0.0, 1.0)) = 0.0
         [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
+        _NoseBlushStrength ("Nose Blush Strength", Range(0.0, 1.0)) = 0.0
+        [Gamma] _NoseBlushColor ("Nose Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
         _FaceBlushStrength ("Face Blush Strength", Range(0.0, 1.0)) = 0.0
         [Gamma] _FaceBlushColor ("Face Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
 
@@ -246,6 +248,8 @@
         float _FaceMapSoftness;
         float _flipFaceLighting;
         float _MaterialID;
+        float _NoseBlushStrength;
+        vector<float, 4> _NoseBlushColor;
         float _FaceBlushStrength;
         vector<float, 4> _FaceBlushColor;
 
