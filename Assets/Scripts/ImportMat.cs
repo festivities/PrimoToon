@@ -20,6 +20,7 @@ internal class m_Floats{
     public float _MTSpecularAttenInShadow;
     public float _MTSpecularScale;
     public float _MTUseSpecularRamp;
+    public float _MainTexAlphaCutoff;
     public float _MainTexAlphaUse;
     public float _MaxOutlineZOffset;
     public float _MetalMaterial;
@@ -128,7 +129,7 @@ public class ImportMat : EditorWindow{
             selectedMaterial.SetFloat("_MTSpecularAttenInShadow", materialProp.m_SavedProperties.m_Floats._MTSpecularAttenInShadow);
             selectedMaterial.SetFloat("_MTSpecularScale", materialProp.m_SavedProperties.m_Floats._MTSpecularScale);
             selectedMaterial.SetFloat("_MTUseSpecularRamp", materialProp.m_SavedProperties.m_Floats._MTUseSpecularRamp);
-            switch(materialProp.m_SavedProperties.m_Floats._MainTexAlphaUse){
+            /*switch(materialProp.m_SavedProperties.m_Floats._MainTexAlphaUse){
                 case 1:
                     selectedMaterial.SetFloat("_ToggleEmission", 0.0f);
                     selectedMaterial.SetFloat("_ToggleCutout", 1.0f);
@@ -141,7 +142,9 @@ public class ImportMat : EditorWindow{
                     selectedMaterial.SetFloat("_ToggleEmission", 0.0f);
                     selectedMaterial.SetFloat("_ToggleCutout", 0.0f);
                     break;
-            }
+            }*/
+            selectedMaterial.SetFloat("_MainTexAlphaCutoff", materialProp.m_SavedProperties.m_Floats._MainTexAlphaCutoff);
+            selectedMaterial.SetFloat("_MainTexAlphaUse", materialProp.m_SavedProperties.m_Floats._MainTexAlphaUse);
             selectedMaterial.SetFloat("_MaxOutlineZOffset", materialProp.m_SavedProperties.m_Floats._MaxOutlineZOffset);
             selectedMaterial.SetFloat("_MetalMaterial", materialProp.m_SavedProperties.m_Floats._MetalMaterial);
             selectedMaterial.SetFloat("_ShadowTransitionRange", materialProp.m_SavedProperties.m_Floats._ShadowTransitionRange);

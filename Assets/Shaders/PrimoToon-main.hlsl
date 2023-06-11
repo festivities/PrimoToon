@@ -476,7 +476,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         vector<fixed, 4> emission = 0;
 
         // toggle between emission being on or not
-        if(_ToggleEmission != 0){
+        if(_MainTexAlphaUse == 2.0){
             // again, this may seem arbitrary but it's an optimization because miHoYo likes their textures very crunchy!
             emissionFactor = saturate(mainTex.w - 0.03);
 
@@ -576,7 +576,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
         /* CUTOUT TRANSPARENCY */
 
-        if(_ToggleCutout != 0.0) clip(mainTex.w - 0.03 - _TransparencyCutoff);
+        if(_MainTexAlphaUse == 1.0) clip(mainTex.w - 0.03 - _MainTexAlphaCutoff);
 
         /* END OF CUTOUT TRANSPARENCY */
 

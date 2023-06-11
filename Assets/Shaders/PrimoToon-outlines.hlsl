@@ -335,7 +335,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* CUTOUT TRANSPARENCY */
 
-    if(_ToggleCutout != 0.0) clip(mainTex.w - 0.03 - _TransparencyCutoff);
+    if(_MainTexAlphaUse == 1.0) clip(mainTex.w - 0.03 - _MainTexAlphaCutoff);
 
     /* END OF CUTOUT TRANSPARENCY */
 

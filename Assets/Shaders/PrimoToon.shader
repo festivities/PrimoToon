@@ -51,8 +51,9 @@
         [Toggle] _ScanDirection_Switch ("Scan Direction Switch", Range(0.0, 1.0)) = 0.0
         _ScanSpeed ("Scan Speed", Float) = 0.8
 
-        [Header(Emission Options)] [Space(10)] [Toggle] _ToggleEmission ("Toggle Emission?", Range(0.0, 1.0)) = 0.0
-        [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
+        [Header(Alpha Options)] [Space(10)] [IntRange] _MainTexAlphaUse ("Use diffuse alpha channel for nothing, transparency, or glow?", Range(0.0, 2.0)) = 0.0
+
+        [Header(Emission Options)] [Space(10)] [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
         [KeywordEnum(Default, Custom)] _EmissionType ("Emission Type", Float) = 0.0
         [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture", 2D) = "black"{}
         [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission AO", 2D) = "white"{}
@@ -64,8 +65,7 @@
         _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
         _PulseMaxStrength ("Maximum Pulse Strength", Range(0.0, 1.0)) = 1.0
 
-        [Header(Cutout Transparency)] [Space(10)] [Toggle] _ToggleCutout ("Use Diffuse Alpha as Transparency?", Range(0.0, 1.0)) = 0.0
-        _TransparencyCutoff ("Cutoff", Range(0.0, 1.0)) = 0.5
+        [Header(Cutout Transparency)] [Space(10)] _MainTexAlphaCutoff ("Cutoff", Range(0.0, 1.0)) = 0.5
 
         [Header(Diffuse or Lighting Options)] [Space(10)] _BumpScale ("Bump Scale", Range(0.0, 1.0)) = 0.2
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
@@ -269,7 +269,8 @@
         float _ScanDirection_Switch;
         float _ScanSpeed;
 
-        float _ToggleEmission;
+        float _MainTexAlphaUse;
+
         float _ToggleEyeGlow;
         float _EmissionType;
         vector<float, 4> _EmissionColor;
@@ -280,8 +281,7 @@
         float _PulseMinStrength;
         float _PulseMaxStrength;
 
-        float _ToggleCutout;
-        float _TransparencyCutoff;
+        float _MainTexAlphaCutoff;
 
         float _BumpScale;
         float _LightArea;
