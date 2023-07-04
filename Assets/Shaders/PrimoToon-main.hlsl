@@ -385,7 +385,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         half metalFactor = (lightmapTex.r > 0.9) * _MetalMaterial;
 
         // multiply world space normals with view matrix
-        vector<half, 3> viewNormal = mul(UNITY_MATRIX_V, modifiedNormalsWS);
+        vector<half, 3> viewNormal = mul(UNITY_MATRIX_V, finalNormalsWS);
         // https://github.com/poiyomi/PoiyomiToonShader/blob/master/_PoiyomiShaders/Shaders/8.0/Poiyomi.shader#L8397
         // this part (all 5 lines) i literally do not understand but it fixes the skewing that occurs when the camera 
         // views the mesh at the edge of the screen (PLEASE LET ME GO BACK TO BLENDER)
@@ -688,7 +688,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnVertexColorB != 0){ return vector<fixed, 4>(i.vertexcol.zzz, 1.0); }
     if(_ReturnVertexColorA != 0){ return vector<fixed, 4>(i.vertexcol.www, 1.0); }
     if(_ReturnRimLight != 0){ return vector<fixed, 4>(rimLight.xxx, 1.0); }
-    if(_ReturnNormals != 0){ return vector<fixed, 4>(modifiedNormalsWS, 1.0); }
+    if(_ReturnNormals != 0){ return vector<fixed, 4>(finalNormalsWS, 1.0); }
     if(_ReturnRawNormals != 0){ return vector<fixed, 4>(rawNormalsWS, 1.0); }
     if(_ReturnTangents != 0){ return i.tangent; }
     if(_ReturnMetal != 0){ return metal; }
