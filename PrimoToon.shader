@@ -1,43 +1,86 @@
-﻿Shader ".festivity/PrimoToon/PrimoToon"{
-    Properties{
-        [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _MainTex ("Diffuse", 2D) = "white"{}
-        [NoScaleOffset] _LightMapTex ("Lightmap", 2D) = "white"{}
-        [NoScaleOffset] _FaceMap ("Face Shadow (only if face shader is used)", 2D) = "white"{}
-        [NoScaleOffset] _BumpMap ("Bump Map", 2D) = "bump"{}
-        [NoScaleOffset] [HDR] _PackedShadowRampTex ("Shadow Ramp", 2D) = "white"{}
-        [NoScaleOffset] _MTSpecularRamp ("Specular Ramp", 2D) = "white"{}
-        [NoScaleOffset] [HDR] _MTMap ("Metallic Matcap", 2D) = "white"{}
-        [NoScaleOffset] _WeaponDissolveTex ("Weapon Dissolve", 2D) = "white"{}
-        [NoScaleOffset] _WeaponPatternTex ("Weapon Pattern", 2D) = "white"{}
-        [NoScaleOffset] _ScanPatternTex ("Scan Pattern", 2D) = "black"{}
+﻿Shader ".festivity/PrimoToon"{
+    Properties 
+  { 
+        //Header
+        [HideInInspector] shader_master_label ("✧<b><i><color=#C69ECE>PrimoToon 2.0</color></i></b>✧", Float) = 0
+		[HideInInspector] shader_is_using_thry_editor ("", Float) = 0
+		[HideInInspector] footer_github ("{texture:{name:github},action:{type:URL,data:https://github.com/festivities/PrimoToon},hover:GITHUB}", Float) = 0
+		[HideInInspector] footer_discord ("{texture:{name:discord},action:{type:URL,data:https://discord.gg/85rP9SpAkF},hover:GITHUB}", Float) = 0
+        //Header End
+        
 
-        [Header(Miscellaneous and Lighting Options)] [Space(10)] _DayOrNight ("Nighttime?", Range(0.0, 1.0)) = 0.0
-        _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
-        [KeywordEnum(Add, Color Dodge)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
-        _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
-        _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
-        [Toggle] _VertexColorLinear ("Linear Vertex Colors?", Range(0.0, 1.0)) = 0.0
+        //Material Type
+        [ThryWideEnum(Base, 0, Face, 1, Weapon, 2)]variant_selector("Material Type--{on_value_actions:[
+		{value:0,actions:[{type:SET_PROPERTY,data:_UseFaceMapNew=0.0}, {type:SET_PROPERTY,data:_UseWeapon=0.0}]},
+		{value:1,actions:[{type:SET_PROPERTY,data:_UseFaceMapNew=1.0}, {type:SET_PROPERTY,data:_UseWeapon=0.0}]},
+        {value:2,actions:[{type:SET_PROPERTY,data:_UseFaceMapNew=0.0}, {type:SET_PROPERTY,data:_UseWeapon=1.0}
+		}]}]}", Int) = 0
+        //Material Type End
 
-        [Header(Fresnel Options)] [Space(10)] [Toggle] _UseFresnel ("Use Fresnel?", Range(0.0, 1.0)) = 1.0
-        [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
-        [Gamma] [HideInInspector] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
-        _HitColorScaler ("Fresnel Color Scaler", Float) = 6
-        _HitColorFresnelPower ("Fresnel Power", Float) = 1.5
 
-        [Header(Face Shader Specific Settings)] [Space(10)] [Toggle] _UseFaceMapNew ("Use Face Shader?", Range(0.0, 1.0)) = 0.0
-        _headForwardVector ("Forward Vector, ignore the last element", Vector) = (0, 1, 0, 0)
-        _headRightVector ("Right Vector, ignore the last element", Vector) = (0, 0, -1, 0)
+        //Main
+        [HideInInspector] m_start_main ("Main", Float) = 0
+        [SmallTexture]_MainTex("Main Texture",2D)= "white" { }
+        [SmallTexture]_LightMapTex("Lightmap",2D)= "white" { }
+        [Enum(UV0, 0, UV1, 1)] _UseBackFaceUV2("Backface UV", int) = 1.0
+        [Toggle] _VertexColorLinear ("Enable Linear Vertex Colors", Range(0.0, 1.0)) = 0.0
+        [Toggle]_DayOrNight ("Enable Nighttime", Range(0.0, 1.0)) = 0.0
+        [HideInInspector] m_start_mainalpha ("Alpha Options", Float) = 0
+        [Enum(Off, 0, Transparency, 1, Glow, 2)] _MainTexAlphaUse("Diffuse Alpha Channel", Int) = 0
+        _MainTexAlphaCutoff("Alpha Cuttoff", Range(0, 1.0)) = 0.5
+        [HideInInspector] m_end_mainalpha ("", Float) = 0
+        [HideInInspector] m_start_maindetail ("Details", Float) = 0
+        [Toggle] _TextureLineUse ("Texture Line", Range(0.0, 1.0)) = 0.0
+        _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
+        _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
+        _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
+        [Gamma] [HDR] _TextureLineMultiplier ("Texture Line Multiplier", Color) = (0.6, 0.6, 0.6, 1.0)
+        [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
+        [HideInInspector] m_end_maindetail ("", Float) = 0
+        [HideInInspector] m_start_matid ("Material IDs", Float) = 0
+        [Toggle] _UseMaterial2 ("Enable Material 2", Float) = 1.0
+        [Toggle] _UseMaterial3 ("Enable Material 3", Float) = 1.0
+        [Toggle] _UseMaterial4 ("Enable Material 4", Float) = 1.0
+        [Toggle] _UseMaterial5 ("Enable Material 5", Float) = 1.0
+        [HideInInspector] m_end_matid ("", Float) = 0
+        [HideInInspector] m_end_main ("", Float) = 0
+        //Main End
+
+        //Normal Map
+        [HideInInspector] m_start_normalmap ("Normal Map", Float) = 0
+        [Toggle] _UseBumpMap("Normal Map", Float) = 0.0
+        [SmallTexture]_BumpMap("Normal Map",2D)= "white"{ }
+        _BumpScale ("Normal Map Scale", Range(0.0, 1.0)) = 0.2
+        [HideInInspector] m_end_normalmap ("", Float) = 0
+        //Normal Map End
+
+
+        //Face Shading
+        [HideInInspector] m_start_faceshading("Face--{condition_show:{type:PROPERTY_BOOL,data:_UseFaceMapNew==1.0}}", Float) = 0
+        [Toggle] _flipFaceLighting ("Flip Face Lighting", Range(0.0, 1.0)) = 0.0
+        [SmallTexture]_FaceMap ("Face Shadow Ramp",2D)= "white"{ }
+        [HideInInspector] _UseFaceMapNew ("Enable Face Shader", Range(0.0, 1.0)) = 0.0
         _FaceMapSoftness ("Face Lighting Softness", Range(0.0, 1.0)) = 0.001
-        [Toggle] _flipFaceLighting ("Flip Face Lighting?", Range(0.0, 1.0)) = 0.0
-        [IntRange] _MaterialID ("Material ID", Range(1.0, 5.0)) = 2.0
+        [IntRange] _MaterialID ("Face Material ID", Range(1.0, 5.0)) = 2.0
+        _headForwardVector ("Forward Vector", Vector) = (0, 1, 0, 0)
+        _headRightVector ("Right Vector, ignore the last element", Vector) = (0, 0, -1, 0)
+        [HideInInspector] m_start_faceblush ("Blush", Float) = 0
         _NoseBlushStrength ("Nose Blush Strength", Range(0.0, 1.0)) = 0.0
-        [Gamma] _NoseBlushColor ("Nose Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
         _FaceBlushStrength ("Face Blush Strength", Range(0.0, 1.0)) = 0.0
+        [Gamma] _NoseBlushColor ("Nose Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
         [Gamma] _FaceBlushColor ("Face Blush Color", Color) = (1.0, 0.8, 0.7, 1.0)
+        [HideInInspector] m_end_faceblush ("", Float) = 0
+        [HideInInspector] m_end_faceshading ("", Float) = 0
+        //Face Shading End
 
-        [Header(Weapon Specific Settings)] [Space(10)] [Toggle] _UseWeapon ("Use Weapon Shader?", Range(0.0, 1.0)) = 0.0
-        [Toggle] _UsePattern ("Use Weapon Pattern?", Range(0.0, 1.0)) = 1.0
-        [Toggle] _ProceduralUVs ("No UV1?", Range(0.0, 1.0)) = 0.0
+        //Weapon Shading
+        [HideInInspector] m_start_weaponshading("Weapon--{condition_show:{type:PROPERTY_BOOL,data:_UseWeapon==1.0}}", Float) = 0
+        [HideInInspector]_UseWeapon ("Weapon Shader", Range(0.0, 1.0)) = 0.0
+        [Toggle] _UsePattern ("Enable Weapon Pattern", Range(0.0, 1.0)) = 1.0
+        [Toggle] _ProceduralUVs ("Disable UV1", Range(0.0, 1.0)) = 0.0
+        [SmallTexture]_WeaponDissolveTex("Weapon Dissolve",2D)= "white"{ }
+        [SmallTexture]_WeaponPatternTex("Weapon Pattern",2D)= "white"{ }
+        [SmallTexture]_ScanPatternTex("Scan Pattern",2D)= "black"{ }
         _ClipAlphaThreshold ("Dissolve Clipping Threshold", Range(0, 1)) = 1.0
         _WeaponDissolveValue ("Weapon Dissolve Value", Range(-1.0, 2.0)) = 1.0
         [Toggle] _DissolveDirection_Toggle ("Dissolve Direction Toggle", Range(0.0, 1.0)) = 0.0
@@ -46,30 +89,29 @@
         [HideInInspector] _SkillEmisssionPower ("Skill Emisssion Power", Float) = 0.6
         [Gamma] [HideInInspector] _SkillEmisssionColor ("Skill Emisssion Color", Vector) = (0.0, 0.0, 0.0, 0.0)
         [HideInInspector] _SkillEmissionScaler ("Skill Emission Scaler", Float) = 3.2
+        [HideInInspector] m_start_weaponscan ("Scan", Float) = 0
         _ScanColorScaler ("Scan Color Scaler", Float) = 0.0
         [Gamma] _ScanColor ("Scan Color", Color) = (0.8970588, 0.8970588, 0.8970588, 1.0)
         [Toggle] _ScanDirection_Switch ("Scan Direction Switch", Range(0.0, 1.0)) = 0.0
         _ScanSpeed ("Scan Speed", Float) = 0.8
+        [HideInInspector] m_end_weaponscan ("", Float) = 0
+        [HideInInspector] m_end_weaponshading ("", Float) = 0
+        //Weapon Shading End
 
-        [Header(Alpha Options)] [Space(10)] [IntRange] _MainTexAlphaUse ("Use diffuse alpha channel for nothing, transparency, or glow?", Range(0.0, 2.0)) = 0.0
 
-        [Header(Emission Options)] [Space(10)] [Toggle] _ToggleEyeGlow ("Toggle Eye Glow?", Range(0.0, 1.0)) = 1.0
-        [KeywordEnum(Default, Custom)] _EmissionType ("Emission Type", Float) = 0.0
-        [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture", 2D) = "black"{}
-        [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission AO", 2D) = "white"{}
-        [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
-        _EyeGlowStrength ("Eye Glow Strength", Float) = 1.0
-        _EmissionStrength ("Emission Strength", Float) = 1.0
-        [Toggle] _TogglePulse ("Toggle Pulse?", Range(0.0, 1.0)) = 0.0
-        _PulseSpeed ("Pulse Speed", Float) = 1.0
-        _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
-        _PulseMaxStrength ("Maximum Pulse Strength", Range(0.0, 1.0)) = 1.0
+        //Lightning Options
+        [HideInInspector] m_start_lighting("Lighting Options", Float) = 0
+        [HideInInspector] g_start_light("", Int) = 0
+        [HideInInspector] m_start_lightandshadow("Shadow", Float) = 0
+        [SmallTexture]_PackedShadowRampTex("Shadow Ramp",2D)= "white"{ }
+        [Toggle] _UseLightMapColorAO ("Use Lightmap Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
+        [Toggle] _UseShadowRamp ("Use Shadow Ramp Texture?", Float) = 1.0
+        [Toggle] _UseVertexColorAO ("Use Vertex Color Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
+        _EnvironmentLightingStrength ("Environment Lighting Strength", Range(0.0, 1.0)) = 1.0
 
-        [Header(Cutout Transparency)] [Space(10)] _MainTexAlphaCutoff ("Cutoff", Range(0.0, 1.0)) = 0.5
-
-        [Header(Diffuse or Lighting Options)] [Space(10)] _BumpScale ("Bump Scale", Range(0.0, 1.0)) = 0.2
         _LightArea ("Shadow Position", Range(0.0, 2.0)) = 0.55
         _ShadowRampWidth ("Ramp Width", Range(0.2, 3.0)) = 1.0
+        [HideInInspector] m_start_shadowtransitions("Shadow Transition", Float) = 0
         _ShadowTransitionRange ("Shadow Transition Range 1", Range(0.0, 1.0)) = 0.01
         _ShadowTransitionRange2 ("Shadow Transition Range 2", Range(0.0, 1.0)) = 0.01
         _ShadowTransitionRange3 ("Shadow Transition Range 3", Range(0.0, 1.0)) = 0.01
@@ -80,76 +122,132 @@
         _ShadowTransitionSoftness3 ("Shadow Transition Softness 3", Range(0.0, 1.0)) = 0.5
         _ShadowTransitionSoftness4 ("Shadow Transition Softness 4", Range(0.0, 1.0)) = 0.5
         _ShadowTransitionSoftness5 ("Shadow Transition Softness 5", Range(0.0, 1.0)) = 0.5
-        [Toggle] _UseBackFaceUV2 ("Use second UV for backfaces?", Float) = 1.0
-        [Toggle] _UseBumpMap ("Use Normal Map?", Float) = 1.0
-        [Toggle] _UseLightMapColorAO ("Use Lightmap Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
-        [Toggle] _UseMaterial2 ("Toggle Material 2", Float) = 1.0
-        [Toggle] _UseMaterial3 ("Toggle Material 3", Float) = 1.0
-        [Toggle] _UseMaterial4 ("Toggle Material 4", Float) = 1.0
-        [Toggle] _UseMaterial5 ("Toggle Material 5", Float) = 1.0
-        [Toggle] _UseShadowRamp ("Use Shadow Ramp Texture?", Float) = 1.0
-        [Toggle] _UseVertexColorAO ("Use Vertex Color Ambient Occlusion?", Range(0.0, 1.0)) = 1.0
-        [Gamma] _CoolShadowMultColor ("Nighttime Shadow Color 1", Color) = (0.9, 0.7, 0.75, 1)
-        [Gamma] _CoolShadowMultColor2 ("Nighttime Shadow Color 2", Color) = (0.9, 0.7, 0.75, 1)
-        [Gamma] _CoolShadowMultColor3 ("Nighttime Shadow Color 3", Color) = (0.9, 0.7, 0.75, 1)
-        [Gamma] _CoolShadowMultColor4 ("Nighttime Shadow Color 4", Color) = (0.9, 0.7, 0.75, 1)
-        [Gamma] _CoolShadowMultColor5 ("Nighttime Shadow Color 5", Color) = (0.9, 0.7, 0.75, 1)
+        [HideInInspector] m_end_shadowtransitions ("", Float) = 0
+        [HideInInspector] m_start_shadowcolorsday("DayTime Colors", Float) = 0
         [Gamma] _FirstShadowMultColor ("Daytime Shadow Color 1", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor2 ("Daytime Shadow Color 2", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor3 ("Daytime Shadow Color 3", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor4 ("Daytime Shadow Color 4", Color) = (0.9, 0.7, 0.75, 1)
         [Gamma] _FirstShadowMultColor5 ("Daytime Shadow Color 5", Color) = (0.9, 0.7, 0.75, 1)
+        [HideInInspector] m_end_shadowcolorsday ("", Float) = 0
+        [HideInInspector] m_start_shadowcolorsnight("NightTime Colors", Float) = 0
+        [Gamma] _CoolShadowMultColor ("Nighttime Shadow Color 1", Color) = (0.9, 0.7, 0.75, 1)
+        [Gamma] _CoolShadowMultColor2 ("Nighttime Shadow Color 2", Color) = (0.9, 0.7, 0.75, 1)
+        [Gamma] _CoolShadowMultColor3 ("Nighttime Shadow Color 3", Color) = (0.9, 0.7, 0.75, 1)
+        [Gamma] _CoolShadowMultColor4 ("Nighttime Shadow Color 4", Color) = (0.9, 0.7, 0.75, 1)
+        [Gamma] _CoolShadowMultColor5 ("Nighttime Shadow Color 5", Color) = (0.9, 0.7, 0.75, 1)
+        [HideInInspector] m_end_shadowcolorsnight ("", Float) = 0
+        [HideInInspector] m_end_lightandshadow ("", Float) = 0
+        [HideInInspector] m_start_rimlight("Rim Light", Float) = 0
+        [Enum(Add, 0, Color Dodge, 1)] _RimLightType ("Rim Light Blend Mode", Float) = 0.0
+        _RimLightIntensity ("Rim Light Intensity", Float) = 1.0
+        _RimLightThickness ("Rim Light Thickness", Range(0.0, 10.0)) = 1.0
+        [HideInInspector] m_end_rimlight ("", Float) = 0
+        [HideInInspector] g_end_light("", Int) = 0
+        [HideInInspector] m_end_lightning ("", Float) = 0
+        //Lightning Options End
 
-        [Header(Specular Options)] [Space(10)] _Shininess ("Shininess 1", Float) = 10
-        _Shininess2 ("Shininess 2", Float) = 10
-        _Shininess3 ("Shininess 3", Float) = 10
-        _Shininess4 ("Shininess 4", Float) = 10
-        _Shininess5 ("Shininess 5", Float) = 10
-        _SpecMulti ("Specular Multiplier 1", Float) = 0.1
-        _SpecMulti2 ("Specular Multiplier 2", Float) = 0.1
-        _SpecMulti3 ("Specular Multiplier 3", Float) = 0.1
-        _SpecMulti4 ("Specular Multiplier 4", Float) = 0.1
-        _SpecMulti5 ("Specular Multiplier 5", Float) = 0.1
-        [Gamma] _SpecularColor ("Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
-        [Header(Metallic Options)] [Space(10)] _MTMapBrightness ("Metallic Matcap Brightness", Float) = 3.0
-        _MTMapTileScale ("Metallic Matcap Tile Scale", Range(0.0, 2.0)) = 1.0
-        _MTShininess ("Metallic Specular Shininess", Float) = 90.0
-        _MTSpecularAttenInShadow ("Metallic Specular Attenuation in Shadow", Range(0.0, 1.0)) = 0.2
-        _MTSpecularScale ("Metallic Specular Scale", Float) = 15.0
-        _MTSharpLayerOffset ("Metallic Sharp Layer Offset", Range(0.001, 1.0)) = 1.0
-        [Toggle] _MTUseSpecularRamp ("Use Specular Ramp Texture?", Float) = 0.0
-        [Toggle] _MetalMaterial ("Enable Metallic?", Range(0.0, 1.0)) = 1.0
+         //Reflections
+        [HideInInspector] m_start_reflections("Reflections", Float) = 0
+        [HideInInspector] m_start_metallics("Metallics", Int) = 0
+        [Toggle] _MetalMaterial ("Enable Metallic", Range(0.0, 1.0)) = 1.0
+        [SmallTexture]_MTMap("Metallic Matcap--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}",2D)= "white"{ }
+        _MTMapBrightness ("Metallic Matcap Brightness--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Float) = 3.0
+        _MTShininess ("Metallic Specular Shininess--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Float) = 90.0
+        _MTSpecularScale ("Metallic Specular Scale--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Float) = 15.0 
+        _MTMapTileScale ("Metallic Matcap Tile Scale--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Range(0.0, 2.0)) = 1.0
+        _MTSpecularAttenInShadow ("Metallic Specular Attenuation in Shadow--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Range(0.0, 1.0)) = 0.2
+        _MTSharpLayerOffset ("Metallic Sharp Layer Offset--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Range(0.001, 1.0)) = 1.0
+        [HideInInspector] m_start_metallicscolor("Metallic Colors--{condition_show:{type:PROPERTY_BOOL,data:_MetalMaterial==1.0}}", Int) = 0
         [Gamma] [HDR] _MTMapDarkColor ("Metallic Matcap Dark Color", Color) = (0.51, 0.3, 0.19, 1.0)
         [Gamma] [HDR] _MTMapLightColor ("Metallic Matcap Light Color", Color) = (1.0, 1.0, 1.0, 1.0)
         [Gamma] _MTShadowMultiColor ("Metallic Matcap Shadow Multiply Color", Color) = (0.78, 0.77, 0.82, 1.0)
         [Gamma] [HDR] _MTSpecularColor ("Metallic Specular Color", Color) = (1.0, 1.0, 1.0, 1.0)
         [Gamma] _MTSharpLayerColor ("Metallic Sharp Layer Color", Color) = (1.0, 1.0, 1.0, 1.0)
-
-        [Header(Texture Line Options)] [Space(10)] _TextureLineSmoothness ("Texture Line Smoothness", Range(0.0, 1.0)) = 0.15
-        _TextureLineThickness ("Texture Line Thickness", Range(0.0, 1.0)) = 0.55
-        [Toggle] _TextureLineUse ("Use Texture Line?", Range(0.0, 1.0)) = 0.0
-        _TextureLineDistanceControl ("Texture Line Distance Control", Vector) = (0.1, 0.6, 1.0, 1.0)
-        [Gamma] [HDR] _TextureLineMultiplier ("Texture Line Multiplier", Color) = (0.6, 0.6, 0.6, 1.0)
-        [HideInInspector] _TextureBiasWhenDithering ("Texture Dithering Bias", Float) = -1.0
-
-        [Header(Outline Options)] [Space(10)] _MaxOutlineZOffset ("Max Z-Offset", Float) = 1.0
+        [HideInInspector] m_end_metallicscolor ("", Int) = 0
+        [HideInInspector] m_end_metallics("", Int) = 0
+        [HideInInspector] m_start_specular("Specular Reflections", Int) = 0
+        [Toggle] _MTUseSpecularRamp ("Enable Specular", Float) = 0.0
+        [SmallTexture]_MTSpecularRamp("Specular Ramp--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}",2D)= "white"{ }
+        _Shininess ("Shininess 1--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 10
+        _Shininess2 ("Shininess 2--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 10
+        _Shininess3 ("Shininess 3--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 10
+        _Shininess4 ("Shininess 4--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 10
+        _Shininess5 ("Shininess 5--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 10
+        _SpecMulti ("Specular Multiplier 1--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 0.1
+        _SpecMulti2 ("Specular Multiplier 2--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 0.1
+        _SpecMulti3 ("Specular Multiplier 3--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 0.1
+        _SpecMulti4 ("Specular Multiplier 4--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 0.1
+        _SpecMulti5 ("Specular Multiplier 5--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Float) = 0.1
+        [Gamma] _SpecularColor ("Specular Color--{condition_show:{type:PROPERTY_BOOL,data:_MTUseSpecularRamp==1.0}}", Color) = (1.0, 1.0, 1.0, 1.0)
+        [HideInInspector] m_end_specular("", Int) = 0
+        [HideInInspector] m_end_reflections ("", Float) = 0
+        //Reflections End
+        
+        //Outlines
+        [HideInInspector] m_start_outlines("Outlines", Float) = 0
+        [Enum(None, 0, Normal, 1,  Tangent, 2)] _OutlineType ("Outline Type", Float) = 1.0
+        [Toggle] _FallbackOutlines ("Enable Fallback Outlines", Range(0.0, 1.0)) = 1.0
         [Toggle] [HideInInspector] _ClipPlaneWorld ("Clip Plane World", Range(0.0, 1.0)) = 1.0
-        [KeywordEnum(None, Normal, Tangent)] _OutlineType ("Outline Type", Float) = 1.0
-        [Toggle] _FallbackOutlines ("Fallback Outlines? (default is on temporarily)", Range(0.0, 1.0)) = 1.0
         _OutlineWidth ("Outline Width", Float) = 0.03
         _Scale ("Outline Scale", Float) = 0.01
         [Toggle] [HideInInspector] _UseClipPlane ("Use Clip Plane?", Range(0.0, 1.0)) = 0.0
         [HideInInspector] _ClipPlane ("Clip Plane", Vector) = (0.0, 0.0, 0.0, 0.0)
+        [HideInInspector] m_start_outlinescolor("Outline Colors", Float) = 0
         [Gamma] _OutlineColor ("Outline Color 1", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor2 ("Outline Color 2", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor3 ("Outline Color 3", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor4 ("Outline Color 4", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] _OutlineColor5 ("Outline Color 5", Color) = (0.0, 0.0, 0.0, 1.0)
+        [HideInInspector] m_end_outlinescolor ("", Float) = 0
+        [HideInInspector] m_start_outlinesoffset("Outline Offset & Adjustments", Float) = 0
         _OutlineWidthAdjustScales ("Outline Width Adjust Scales", Vector) = (0.01, 0.245, 0.6, 0.0)
         _OutlineWidthAdjustZs ("Outline Width Adjust Zs", Vector) = (0.001, 2.0, 6.0, 0.0)
+        _MaxOutlineZOffset ("Max Z-Offset", Float) = 1.0
+        [HideInInspector] m_end_outlinesoffset ("", Float) = 0
+        [HideInInspector] m_end_outlines ("", Float) = 0
+        //Outlines End
 
-        [Header(Debugging)] [Space(10)] [Toggle] _ReturnDiffuseRGB ("Show Diffuse", Range(0.0, 1.0)) = 0.0
+        //Special Effects
+        [HideInInspector] m_start_specialeffects("Special Effects", Float) = 0
+        [HideInInspector] m_start_emissionglow("Emission / Archon Glow", Float) = 0
+        [Enum(Default, 0, Custom, 1)] _EmissionType("Emission Type", Float) = 1.0
+        [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
+        [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "black"{}
+        [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission AO--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "white"{}
+        _EmissionStrength ("Emission Strength", Float) = 1.0
+        [HideInInspector] m_start_emissioneyeglow("Eye & Archon Glow", Float) = 0
+        [Toggle] _ToggleEyeGlow ("Enable Eye & Archon Glow", Range(0.0, 1.0)) = 1.0
+        _EyeGlowStrength ("Eye & Archon Glow Strength", Float) = 1.0
+        [HideInInspector] m_end_emissioneyeglow ("", Float) = 0
+        [HideInInspector] m_start_emissionpulse("Pulsing Emission", Float) = 0
+        [Toggle] _TogglePulse ("Enable Pulse", Range(0.0, 1.0)) = 0.0
+        _PulseSpeed ("Pulse Speed", Float) = 1.0
+        _PulseMinStrength ("Minimum Pulse Strength", Range(0.0, 1.0)) = 0.0
+        _PulseMaxStrength ("Maximum Pulse Strength", Range(0.0, 1.0)) = 1.0
+        [HideInInspector] m_end_emissionpulse ("", Float) = 0
+        [HideInInspector] m_end_emissionglow ("", Float) = 0
+
+        [HideInInspector] m_start_fresnel("Fresnel", Float) = 0
+        [Toggle] _UseFresnel ("Enable Fresnel", Range(0.0, 1.0)) = 1.0
+        [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
+        [Gamma] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
+        _HitColorScaler ("Fresnel Color Scaler", Float) = 6
+        _HitColorFresnelPower ("Fresnel Power", Float) = 1.5
+        [HideInInspector] m_end_fresnel ("", Float) = 0
+        [HideInInspector] m_end_specialeffects ("", Float) = 0
+        //Special Effects End
+
+        //Rendering Options
+        [HideInInspector] m_start_renderingOptions("Rendering Options", Float) = 0
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 0
+        [Enum(Off, 0, On, 1)] _ZWrite("ZWrite", Int) = 1
+        [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source Blend", Int) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination Blend", Int) = 0
+        [HideInInspector] m_start_debugOptions("Debug", Float) = 0
+        [Toggle] _ReturnDiffuseRGB ("Show Diffuse", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnDiffuseA ("Show Diffuse Alpha", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnLightmapR ("Show Lightmap Red", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnLightmapG ("Show Lightmap Green", Range(0.0, 1.0)) = 0.0
@@ -170,26 +268,22 @@
         [Toggle] _ReturnEmissionFactor ("Show Emission Factor", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnForwardVector ("Show Forward Vector (it should look blue)", Range(0.0, 1.0)) = 0.0
         [Toggle] _ReturnRightVector ("Show Right Vector (it should look red)", Range(0.0, 1.0)) = 0.0
-
-        [Header(Rendering Options)] [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
-        //[Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("ZTest", Float) = 4
-        [Enum(Off, 0, On, 1)] _ZWrite ("ZWrite", Int) = 1
+        [HideInInspector] m_end_debugOptions("Debug", Float) = 0
         //[Enum(Thry.ColorMask)] _ColorMask ("Color Mask", Int) = 15
         //_OffsetFactor ("Offset Factor", Float) = 0.0
         //_OffsetUnits ("Offset Units", Float) = 0.0
         //[ToggleUI]_RenderingReduceClipDistance ("Reduce Clip Distance", Float) = 0
         //[ToggleUI]_IgnoreFog ("Ignore Fog", Float) = 0
         //[HideInInspector] Instancing ("Instancing", Float) = 0 //add this property for instancing variants settings to be shown
-
-        [Header(Blending Options)] //[Enum(Thry.BlendOp)]_BlendOp ("RGB Blend Op", Int) = 0
+        
         //[Enum(Thry.BlendOp)]_BlendOpAlpha ("Alpha Blend Op", Int) = 0
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend ("Source Blend", Int) = 1
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend ("Destination Blend", Int) = 0
         //[Space][ThryHeaderLabel(Additive Blending, 13)]
         //[Enum(Thry.BlendOp)]_AddBlendOp ("RGB Blend Op", Int) = 0
         //[Enum(Thry.BlendOp)]_AddBlendOpAlpha ("Alpha Blend Op", Int) = 0
         //[Enum(UnityEngine.Rendering.BlendMode)] _AddSrcBlend ("Source Blend", Int) = 1
         //[Enum(UnityEngine.Rendering.BlendMode)] _AddDstBlend ("Destination Blend", Int) = 1
+        [HideInInspector] m_end_renderingOptions("Rendering Options", Float) = 0
+        //Rendering Options End
     }
     SubShader{
         Tags{ "RenderType"="Opaque" "Queue"="Geometry" }
@@ -444,4 +538,5 @@
             ENDHLSL
         }
     }
+    CustomEditor "Thry.ShaderEditor"
 }
