@@ -678,7 +678,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnDiffuseRGB != 0){ return vector<fixed, 4>(mainTex.xyz, 1.0); }
     if(_ReturnDiffuseA != 0){ return vector<fixed, 4>(mainTex.www, 1.0); }
     if(_ReturnLightmapR != 0){ return vector<fixed, 4>(lightmapTex.xxx, 1.0); }
-    if(_ReturnNormals != 0){ return vector<fixed, 4>(finalNormalsWS, 1.0); }
+    if(_ReturnLightmapG != 0){ return vector<fixed, 4>(lightmapTex.yyy, 1.0); }
     if(_ReturnLightmapB != 0){ return vector<fixed, 4>(lightmapTex.zzz, 1.0); }
     if(_ReturnLightmapA != 0){ return vector<fixed, 4>(lightmapTex.www, 1.0); }
     if(_ReturnNormalMap != 0){ return vector<fixed, 4>(bumpmapTex.xyz, 1.0); }
@@ -688,7 +688,7 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     if(_ReturnVertexColorB != 0){ return vector<fixed, 4>(i.vertexcol.zzz, 1.0); }
     if(_ReturnVertexColorA != 0){ return vector<fixed, 4>(i.vertexcol.www, 1.0); }
     if(_ReturnRimLight != 0){ return vector<fixed, 4>(rimLight.xxx, 1.0); }
-    if(_ReturnNormals != 0){ return vector<fixed, 4>(modifiedNormalsWS, 1.0); }
+    if(_ReturnNormals != 0){ return vector<fixed, 4>(finalNormalsWS, 1.0); }
     if(_ReturnRawNormals != 0){ return vector<fixed, 4>(rawNormalsWS, 1.0); }
     if(_ReturnTangents != 0){ return i.tangent; }
     if(_ReturnMetal != 0){ return metal; }
