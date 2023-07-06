@@ -58,7 +58,7 @@
         //Face Shading
         [HideInInspector] m_start_faceshading("Face--{condition_show:{type:PROPERTY_BOOL,data:_UseFaceMapNew==1.0}}", Float) = 0
         [Toggle] _flipFaceLighting ("Flip Face Lighting", Range(0.0, 1.0)) = 0.0
-        [SmallTexture]_FaceMap ("Face Shadow Ramp",2D)= "white"{ }
+        [SmallTexture]_FaceMap ("Face Shadow",2D)= "white"{ }
         [HideInInspector] _UseFaceMapNew ("Enable Face Shader", Range(0.0, 1.0)) = 0.0
         _FaceMapSoftness ("Face Lighting Softness", Range(0.0, 1.0)) = 0.001
         [IntRange] _MaterialID ("Face Material ID", Range(1.0, 5.0)) = 2.0
@@ -212,7 +212,7 @@
         //Special Effects
         [HideInInspector] m_start_specialeffects("Special Effects", Float) = 0
         [HideInInspector] m_start_emissionglow("Emission / Archon Glow", Float) = 0
-        [Enum(Default, 0, Custom, 1)] _EmissionType("Emission Type", Float) = 1.0
+        [Enum(Default, 0, Custom, 1)] _EmissionType("Emission Type", Float) = 0.0
         [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
         [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "black"{}
         [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission AO--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "white"{}

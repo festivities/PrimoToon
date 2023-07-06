@@ -474,14 +474,15 @@ namespace Thry
             GUIShaderVersioning();
 
             // Add a logo to the top of the inspector
-            Texture2D logo = Resources.Load<Texture2D>("primosmall");
+            Texture logo = Resources.Load<Texture2D>("primosmall");
+            GUIContent guiContent = new GUIContent(logo);
+            GUIStyle styll = new GUIStyle(); styll.fixedHeight = 145.0f;
+            styll.margin = new RectOffset(105, 0, 0, 0);
+
             if (logo != null)
             {
                 GUILayout.BeginHorizontal();
-                GUILayout.FlexibleSpace();
-                Rect logoRect = GUILayoutUtility.GetRect(logo.width, logo.height);
-                GUI.DrawTexture(logoRect, logo, ScaleMode.ScaleToFit);
-                GUILayout.FlexibleSpace();
+                GUILayout.Box(logo, styll);
                 GUILayout.EndHorizontal();
                 GUILayout.Space(10); // Add some space after the logo
             }
