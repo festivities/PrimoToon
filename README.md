@@ -33,7 +33,7 @@ All of the above textures should have *sRGB (Color Texture)* **unticked** and th
 
 Unity projects in the Built-in Rendering Pipeline default to the Gamma option for color management. This is **not** what Genshin Impact uses. To avoid color inaccuracy, make sure that the *Color Space* is set to **Linear** in the [*Project Settings*](https://docs.unity3d.com/Manual/LinearRendering-LinearOrGammaWorkflow.html).
 
-Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure that the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace. If your model does not have the custom tangents, you can easily regenerate them with this [script](https://github.com/festivities/PrimoToon/blob/main/Assets/Scripts/AverageNormals.cs).
+Genshin Impact models have custom tangents within them. If your model is properly ripped, you'll want to make sure that the *Tangents* property is set to **Import** instead of the default Calculate Mikktspace. If your model does not have the custom tangents, you can easily regenerate them with this [script](https://github.com/festivities/PrimoToon/blob/main/Scripts/Festivity%20Scripts/Editor/AverageNormals.cs).
 
 ## Contact / Issues
 - [Discord server](https://discord.gg/85rP9SpAkF)
