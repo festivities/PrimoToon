@@ -475,39 +475,37 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
         vector<fixed, 4> emission = 0;
 
-        // toggle between emission being on or not
-        if(_MainTexAlphaUse == 2.0){
-            // again, this may seem arbitrary but it's an optimization because miHoYo likes their textures very crunchy!
-            emissionFactor = saturate(mainTex.w - 0.03);
+        // toggle between game (independent of custom) emission being on or not
+        if(_MainTexAlphaUse == 2.0) emissionFactor = saturate(mainTex.w - 0.03);
 
-            // toggle between game-like emission or user's own custom emission texture, idk why i used a switch here btw
-            switch(_EmissionType){
-                case 0:
-                    emission = _EmissionStrength * vector<fixed, 4>(mainTex.xyz, 1) * _EmissionColor;
-                    break;
-                case 1:
-                    emission = _EmissionStrength * _EmissionColor * 
-                            vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
-                    // apply custom emission factor
-                    emissionFactor = saturate(emissionFactor + _CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).x);
-                    break;
-                default:
-                    break;
-            }
-
-            // pulsing emission
-            if(_TogglePulse != 0){
-                // form the sine wave
-                half emissionPulse = sin(_PulseSpeed * _Time.y);    
-                // remap from ranges { -1, 1 } to { 0, 1 }
-                emissionPulse = emissionPulse * 0.5 + 0.5;
-                // ensure emissionPulse never goes below or above the minimum and maximum values set by the user
-                emissionPulse = mapRange(0, 1, _PulseMinStrength, _PulseMaxStrength, emissionPulse);
-                // apply pulse
-                emission = lerp((_EmissionType != 0) ? 0 : vector<fixed, 4>(mainTex.xyz, 1) * _EmissionColor, 
-                                emission, emissionPulse);
-            }
+        // toggle between game-like emission or user's own custom emission texture, idk why i used a switch here btw
+        switch(_EmissionType){
+            case 0:
+                emission = _EmissionStrength * vector<fixed, 4>(mainTex.xyz, 1) * _EmissionColor;
+                break;
+            case 1:
+                emission = _EmissionStrength * _EmissionColor * 
+                        vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
+                // apply custom emission factor
+                emissionFactor = saturate(emissionFactor + _CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).x);
+                break;
+            default:
+                break;
         }
+
+        // pulsing emission
+        if(_TogglePulse != 0){
+            // form the sine wave
+            half emissionPulse = sin(_PulseSpeed * _Time.y);    
+            // remap from ranges { -1, 1 } to { 0, 1 }
+            emissionPulse = emissionPulse * 0.5 + 0.5;
+            // ensure emissionPulse never goes below or above the minimum and maximum values set by the user
+            emissionPulse = mapRange(0, 1, _PulseMinStrength, _PulseMaxStrength, emissionPulse);
+            // apply pulse
+            emission = lerp((_EmissionType != 0) ? 0 : vector<fixed, 4>(mainTex.xyz, 1) * _EmissionColor, 
+                            emission, emissionPulse);
+        }
+
         // eye glow stuff
         if(_ToggleEyeGlow != 0 && lightmapTex.g > 0.95){
             emissionFactor += 1;
