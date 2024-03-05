@@ -129,6 +129,20 @@ public class ImportMat : EditorWindow{
             selectedMaterial.SetFloat("_MTSpecularAttenInShadow", materialProp.m_SavedProperties.m_Floats._MTSpecularAttenInShadow);
             selectedMaterial.SetFloat("_MTSpecularScale", materialProp.m_SavedProperties.m_Floats._MTSpecularScale);
             selectedMaterial.SetFloat("_MTUseSpecularRamp", materialProp.m_SavedProperties.m_Floats._MTUseSpecularRamp);
+            /*switch(materialProp.m_SavedProperties.m_Floats._MainTexAlphaUse){
+                case 1:
+                    selectedMaterial.SetFloat("_ToggleEmission", 0.0f);
+                    selectedMaterial.SetFloat("_ToggleCutout", 1.0f);
+                    break;
+                case 2:
+                    selectedMaterial.SetFloat("_ToggleEmission", 1.0f);
+                    selectedMaterial.SetFloat("_ToggleCutout", 0.0f);
+                    break;
+                default:
+                    selectedMaterial.SetFloat("_ToggleEmission", 0.0f);
+                    selectedMaterial.SetFloat("_ToggleCutout", 0.0f);
+                    break;
+            }*/
             selectedMaterial.SetFloat("_MainTexAlphaCutoff", materialProp.m_SavedProperties.m_Floats._MainTexAlphaCutoff);
             selectedMaterial.SetFloat("_MainTexAlphaUse", materialProp.m_SavedProperties.m_Floats._MainTexAlphaUse);
             selectedMaterial.SetFloat("_MaxOutlineZOffset", materialProp.m_SavedProperties.m_Floats._MaxOutlineZOffset);
@@ -159,7 +173,6 @@ public class ImportMat : EditorWindow{
             selectedMaterial.SetFloat("_UseBackFaceUV2", materialProp.m_SavedProperties.m_Floats._UseBackFaceUV2);
             selectedMaterial.SetFloat("_UseBumpMap", materialProp.m_SavedProperties.m_Floats._UseBumpMap);
             selectedMaterial.SetFloat("_UseFaceMapNew", materialProp.m_SavedProperties.m_Floats._UseFaceMapNew);
-            selectedMaterial.SetFloat("variant_selector", materialProp.m_SavedProperties.m_Floats._UseFaceMapNew);
             selectedMaterial.SetFloat("_UseLightMapColorAO", materialProp.m_SavedProperties.m_Floats._UseLightMapColorAO);
             selectedMaterial.SetFloat("_UseMaterial2", materialProp.m_SavedProperties.m_Floats._UseMaterial2);
             selectedMaterial.SetFloat("_UseMaterial3", materialProp.m_SavedProperties.m_Floats._UseMaterial3);

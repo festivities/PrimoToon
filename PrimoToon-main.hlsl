@@ -488,8 +488,8 @@ vector<fixed, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
                 case 1:
                     emission = _EmissionStrength * _EmissionColor * 
                             vector<fixed, 4>(_CustomEmissionTex.Sample(sampler_CustomEmissionTex, newUVs).xyz, 1);
-                    // apply emission AO
-                    emission *= vector<fixed, 4>(_CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).xyz, 1);
+                    // apply custom emission factor
+                    emissionFactor = saturate(emissionFactor + _CustomEmissionAOTex.Sample(sampler_CustomEmissionAOTex, newUVs).x);
                     break;
                 default:
                     break;

@@ -215,7 +215,7 @@
         [Enum(Default, 0, Custom, 1)] _EmissionType("Emission Type", Float) = 0.0
         [Gamma] _EmissionColor ("Emission Tint", Color) = (1.0, 1.0, 1.0, 1.0)
         [NoScaleOffset] [HDR] _CustomEmissionTex ("Custom Emission Texture--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "black"{}
-        [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission AO--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "white"{}
+        [NoScaleOffset] _CustomEmissionAOTex ("Custom Emission Factor--{condition_show:{type:PROPERTY_BOOL,data:_EmissionType==1}}", 2D) = "black"{}
         _EmissionStrength ("Emission Strength", Float) = 1.0
         [HideInInspector] m_start_emissioneyeglow("Eye & Archon Glow", Float) = 0
         [Toggle] _ToggleEyeGlow ("Enable Eye & Archon Glow", Range(0.0, 1.0)) = 1.0
